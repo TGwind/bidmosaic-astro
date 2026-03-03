@@ -1,0 +1,172 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import CtaSection from '@components/CtaSection.astro';
+import { useTranslations, getLocalePath } from '@i18n/utils';
+
+const locale = 'zh';
+const t = useTranslations(locale);
+
+const features = [
+  { title: t.hive_dsp.feature1_title, desc: t.hive_dsp.feature1_desc, icon: 'M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 14.5M14.25 3.104c.251.023.501.05.75.082M19.8 14.5l-2.303 2.303a2.25 2.25 0 01-1.838.668l-2.909-.33a2.25 2.25 0 00-2.5 2.5l.33 2.91a2.25 2.25 0 01-.668 1.837L7.5 26.8' },
+  { title: t.hive_dsp.feature2_title, desc: t.hive_dsp.feature2_desc, icon: 'M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418' },
+  { title: t.hive_dsp.feature3_title, desc: t.hive_dsp.feature3_desc, icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z' },
+  { title: t.hive_dsp.feature4_title, desc: t.hive_dsp.feature4_desc, icon: 'M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z' },
+];
+
+const metrics = [
+  { value: t.hive_dsp.metric1_value, label: t.hive_dsp.metric1_label },
+  { value: t.hive_dsp.metric2_value, label: t.hive_dsp.metric2_label },
+  { value: t.hive_dsp.metric3_value, label: t.hive_dsp.metric3_label },
+];
+---
+
+<BaseLayout title={t.hive_dsp.title} locale={locale}>
+  <!-- Hero Banner -->
+  <section class="relative py-32 overflow-hidden">
+    <div class="absolute inset-0 z-0" style="background: var(--gradient-hero);"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none" style="background: var(--gradient-glow);"></div>
+    <div class="container relative z-10 text-center" data-animate>
+
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[var(--bg-dark)] mb-4">{t.hive_dsp.title}</h1>
+      <p class="text-xl sm:text-2xl text-[var(--text-secondary)] mb-8 max-w-2xl mx-auto">{t.hive_dsp.tagline}</p>
+      <a href={getLocalePath('/contact/', locale)} class="btn btn-primary text-base px-8 py-3.5">
+        {t.product_common.cta_btn}
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Product Description -->
+  <section class="section-darker py-20">
+    <div class="container max-w-3xl" data-animate>
+      <p class="text-lg text-[var(--text-secondary)] leading-relaxed text-center">{t.hive_dsp.desc}</p>
+    </div>
+  </section>
+
+  <!-- Module Overview: HiveX DSP -->
+  <section class="py-20" style="background: #fff; border-top: 1px solid #e2e8f0;">
+    <div class="container">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto" data-animate>
+        <!-- Left: text -->
+        <div>
+          <h2 class="text-3xl font-bold mb-4" style="color: #1e293b;">
+            HiveX DSP<br>
+            <span style="color: #ffb800;">专注电商的程序化平台</span>
+          </h2>
+          <p class="mb-8 leading-relaxed" style="font-size: 15px; color: #64748b; line-height: 1.75;">
+            接入电商 RTA 实时购物数据，精准锁定高意向买家；联合 Oppo、Vivo、小米、传音四大品牌手机 OEM 独家流量资源，覆盖东南亚·非洲·南亚新兴市场 200+ 电商商家。
+          </p>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex items-start gap-3 p-3.5 rounded-xl" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+              <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(255,184,0,0.1); color: #ffb800;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-0.5" style="font-size: 13px; color: #1e293b;">电商 RTA 数据</h4>
+                <p style="font-size: 12px; color: #64748b; line-height: 1.5;">对接实时购物行为，精准匹配高意向买家</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3.5 rounded-xl" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+              <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(255,184,0,0.1); color: #ffb800;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-0.5" style="font-size: 13px; color: #1e293b;">OEM 独家流量</h4>
+                <p style="font-size: 12px; color: #64748b; line-height: 1.5;">Oppo/Vivo/小米/传音设备级精准触达</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3.5 rounded-xl" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+              <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(255,184,0,0.1); color: #ffb800;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-0.5" style="font-size: 13px; color: #1e293b;">RTB 实时竞价</h4>
+                <p style="font-size: 12px; color: #64748b; line-height: 1.5;">毫秒级响应，全球 Tier-1 流量直连</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3.5 rounded-xl" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+              <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(255,184,0,0.1); color: #ffb800;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-0.5" style="font-size: 13px; color: #1e293b;">多平台协同</h4>
+                <p style="font-size: 12px; color: #64748b; line-height: 1.5;">TikTok Shop / Shopee / Lazada 统一竞价</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Right: metrics -->
+        <div class="rounded-2xl p-7 flex flex-col gap-3" style="background: linear-gradient(135deg, #0f172a 0%, #1a1200 100%);">
+          <div class="flex items-center justify-between rounded-xl px-4 py-3.5" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);">
+            <div>
+              <div style="font-size: 12px; color: rgba(255,255,255,0.55);">合作电商商家</div>
+              <div style="font-size: 20px; font-weight: 700; color: #fff;">200+</div>
+            </div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 600;">↑ 持续扩量</div>
+          </div>
+          <div class="flex items-center justify-between rounded-xl px-4 py-3.5" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);">
+            <div>
+              <div style="font-size: 12px; color: rgba(255,255,255,0.55);">日均曝光量</div>
+              <div style="font-size: 20px; font-weight: 700; color: #fff;">8.4亿</div>
+            </div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 600;">↑ 15.7%</div>
+          </div>
+          <div class="flex items-center justify-between rounded-xl px-4 py-3.5" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);">
+            <div>
+              <div style="font-size: 12px; color: rgba(255,255,255,0.55);">Shopee 日支出</div>
+              <div style="font-size: 20px; font-weight: 700; color: #fff;">$20–50K</div>
+            </div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 600;">稳定预算规模</div>
+          </div>
+          <div class="flex items-center justify-between rounded-xl px-4 py-3.5" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);">
+            <div>
+              <div style="font-size: 12px; color: rgba(255,255,255,0.55);">OEM 合作品牌</div>
+              <div style="font-size: 20px; font-weight: 700; color: #fff;">4 大厂商</div>
+            </div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 600;">独家合作</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section-dark py-24">
+    <div class="container">
+      <h2 class="text-3xl font-bold text-[var(--text-primary)] text-center mb-16" data-animate>{t.product_common.features_title}</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto items-stretch" data-stagger-parent>
+        {features.map((f) => (
+          <div class="glow-card p-7 flex items-start gap-5 h-full" data-stagger-child>
+            <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-[#ffcf0d]/20 flex items-center justify-center">
+              <svg class="w-5 h-5 text-[#1a1a2e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d={f.icon} />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-[var(--text-primary)] mb-1.5">{f.title}</h3>
+              <p class="text-sm text-[var(--text-secondary)] leading-relaxed">{f.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Metrics -->
+  <section class="section-darker py-20">
+    <div class="container">
+      <h2 class="text-3xl font-bold text-[var(--text-primary)] text-center mb-12" data-animate>{t.product_common.cases_title}</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto items-stretch" data-stagger-parent>
+        {metrics.map((m) => (
+          <div class="glow-card p-8 text-center h-full" data-stagger-child>
+            <div class="text-3xl sm:text-4xl font-bold text-[#e6b800] mb-2">{m.value}</div>
+            <div class="text-sm text-[var(--text-muted)]">{m.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <CtaSection locale={locale} />
+</BaseLayout>

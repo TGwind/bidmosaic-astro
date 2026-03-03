@@ -1,0 +1,738 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ============================================================
+   Design Tokens — Dark Tech Theme
+   ============================================================ */
+
+:root {
+  /* Backgrounds */
+  --bg-primary:    #0a0a1a;
+  --bg-secondary:  #111827;
+  --bg-card:       #1e293b;
+  --bg-elevated:   #263348;
+  --bg-dark:       #0a0a1a;
+
+  /* Text */
+  --text-primary:  #f1f5f9;
+  --text-secondary:#94a3b8;
+  --text-muted:    #64748b;
+
+  /* Accent colors */
+  --accent-blue:   #3b82f6;
+  --accent-cyan:   #06b6d4;
+  --accent-purple: #8b5cf6;
+  --accent-amber:  #06b6d4;
+
+  /* Gradients */
+  --gradient-hero:   linear-gradient(135deg, #0a0a1a 0%, #111827 50%, #0a0a1a 100%);
+  --gradient-accent: linear-gradient(135deg, #06b6d4, #3b82f6, #8b5cf6);
+  --gradient-glow:   radial-gradient(circle, rgba(6,182,212,0.15) 0%, transparent 70%);
+
+  /* Glow effects */
+  --glow-blue:     0 0 20px rgba(59, 130, 246, 0.4);
+  --glow-cyan:     0 0 20px rgba(6, 182, 212, 0.3);
+  --glow-card:     0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  /* Glass */
+  --glass-bg:      rgba(10, 10, 26, 0.85);
+  --glass-border:  1px solid rgba(255, 255, 255, 0.08);
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgb(0 0 0 / 0.2), 0 1px 2px rgb(0 0 0 / 0.1);
+  --shadow-md:  0 4px 12px rgb(0 0 0 / 0.25), 0 2px 4px rgb(0 0 0 / 0.15);
+  --shadow-lg:  0 12px 32px rgb(0 0 0 / 0.3), 0 4px 8px rgb(0 0 0 / 0.2);
+
+  /* Timing */
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 400ms;
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Typography */
+  --font-heading: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-body:    'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ============================================================
+   Global Reset / Base
+   ============================================================ */
+
+html {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   Utility Classes
+   ============================================================ */
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.container-wide {
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+  padding-inline: 2rem;
+}
+
+/* ============================================================
+   Glass Effect
+   ============================================================ */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: var(--glass-border);
+}
+
+/* ============================================================
+   Glow Card
+   ============================================================ */
+
+.glow-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .glow-card:hover {
+    transform: none;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(6, 182, 212, 0.1);
+    border-color: rgba(6, 182, 212, 0.2);
+  }
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    transform var(--dur-fast) ease,
+    box-shadow var(--dur-base) var(--ease-out),
+    background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--gradient-accent);
+  color: #ffffff;
+  border: none;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 8px 25px rgba(6, 182, 212, 0.3);
+  transform: scale(1.03);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-cta {
+  background-color: #06b6d4;
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+}
+
+.btn-cta:hover {
+  background-color: #0891b2;
+  box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
+  transform: scale(1.03);
+}
+
+/* ============================================================
+   Section Alternating Backgrounds
+   ============================================================ */
+
+.section-dark {
+  background-color: var(--bg-primary);
+}
+
+.section-darker {
+  background-color: var(--bg-secondary);
+}
+
+.section-gradient {
+  background: var(--gradient-hero);
+}
+
+/* ============================================================
+   Scrollbar Styling
+   ============================================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #06b6d4;
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0891b2;
+}
+
+/* ============================================================
+   Selection
+   ============================================================ */
+
+::selection {
+  background: rgba(6, 182, 212, 0.3);
+  color: #f1f5f9;
+}
+
+/* ============================================================
+   Scroll Progress Bar
+   ============================================================ */
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #06b6d4, #3b82f6, #8b5cf6);
+  z-index: 9999;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+}
+
+/* ============================================================
+   Back to Top Button
+   ============================================================ */
+
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--gradient-accent);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4), 0 0 20px rgba(6, 182, 212, 0.3);
+  transform: translateY(-4px);
+}
+
+/* ============================================================
+   Custom Cursor Glow
+   ============================================================ */
+
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+
+/* ============================================================
+   Text Reveal Animation
+   ============================================================ */
+
+.text-reveal-char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* ============================================================
+   Section Divider Waves
+   ============================================================ */
+
+.section-divider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  margin-top: -1px;
+}
+
+.section-divider svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 60px;
+}
+
+.section-divider-flip {
+  transform: rotate(180deg);
+}
+
+/* ============================================================
+   Animated Gradient Border
+   ============================================================ */
+
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.animated-border {
+  --border-angle: 0deg;
+  border: 2px solid transparent;
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  animation: rotate-border 4s linear infinite;
+}
+
+@keyframes rotate-border {
+  to { --border-angle: 360deg; }
+}
+
+/* ============================================================
+   Button Ripple Effect
+   ============================================================ */
+
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0);
+  animation: ripple-expand 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple-expand {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   Animated gradient shimmer for section titles
+   ============================================================ */
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--text-primary) 0%,
+    var(--text-primary) 40%,
+    #06b6d4 50%,
+    var(--text-primary) 60%,
+    var(--text-primary) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 100% 0; }
+  50% { background-position: -100% 0; }
+}
+
+/* ============================================================
+   Animated Gradient Underline for Section Titles
+   ============================================================ */
+
+[data-text-reveal] {
+  position: relative;
+  display: inline-block;
+}
+
+[data-text-reveal]::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #06b6d4, #3b82f6, #06b6d4, transparent);
+  transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+[data-text-reveal].revealed::after {
+  width: 60%;
+}
+
+/* ============================================================
+   Scroll-triggered fade-up with scale
+   ============================================================ */
+
+[data-animate-scale] {
+  opacity: 0;
+  transform: scale(0.95) translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+[data-animate-scale].visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* ============================================================
+   Floating particle dots
+   ============================================================ */
+
+.floating-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #06b6d4;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* ============================================================
+   Glow pulse animation
+   ============================================================ */
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(6, 182, 212, 0.4), 0 0 60px rgba(6, 182, 212, 0.1); }
+}
+
+/* ============================================================
+   Reduced Motion
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .cursor-glow { display: none; }
+  .scroll-progress { transition: none; }
+}
+
+/* ============================================================
+   Article Content Typography
+   ============================================================ */
+
+.article-content {
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  color: var(--text-secondary);
+}
+
+/* Headings */
+.article-content h2 {
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-left: 0.75rem;
+  border-left: 4px solid var(--accent-cyan);
+  line-height: 1.35;
+}
+
+.article-content h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.article-content h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.45;
+}
+
+/* Paragraphs */
+.article-content p {
+  margin-bottom: 1.25rem;
+}
+
+/* Links */
+.article-content a {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-cyan);
+  text-underline-offset: 3px;
+  transition: color var(--dur-fast) ease, text-decoration-color var(--dur-fast) ease;
+}
+
+.article-content a:hover {
+  color: var(--accent-cyan);
+  text-decoration-color: currentColor;
+}
+
+/* Strong & Em */
+.article-content strong {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.article-content em {
+  font-style: italic;
+}
+
+/* Lists */
+.article-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.article-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.article-content li {
+  margin-bottom: 0.4rem;
+  padding-left: 0.25rem;
+}
+
+.article-content li::marker {
+  color: var(--accent-cyan);
+}
+
+/* Blockquotes */
+.article-content blockquote {
+  border-left: 4px solid var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.08);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.article-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Inline code */
+.article-content :not(pre) > code {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--text-primary);
+}
+
+/* Code blocks */
+.article-content pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.article-content pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* Horizontal rules */
+.article-content hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  margin: 2.5rem 0;
+}
+
+/* Images */
+.article-content img {
+  border-radius: var(--radius-md);
+  margin: 1.5rem 0;
+  max-width: 100%;
+  height: auto;
+}
+
+.article-content figure {
+  margin: 1.5rem 0;
+}
+
+.article-content figcaption {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+/* Tables */
+.article-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+.article-content th,
+.article-content td {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+
+.article-content th {
+  background: rgba(255, 255, 255, 0.04);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 640px) {
+  .article-content {
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+
+  .article-content h2 {
+    font-size: 1.375rem;
+  }
+
+  .article-content h3 {
+    font-size: 1.15rem;
+  }
+
+  .article-content pre {
+    padding: 1rem;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .article-content {
+    font-size: 1.125rem;
+    line-height: 1.9;
+  }
+
+  .article-content h2 {
+    font-size: 1.75rem;
+  }
+}
+
+/* ---- Chinese locale adjustments ---- */
+
+.article-content[lang="zh"] {
+  line-height: 1.95;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 1024px) {
+  .article-content[lang="zh"] {
+    line-height: 2;
+  }
+}

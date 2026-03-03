@@ -1,0 +1,62 @@
+---
+interface Props {
+  from?: 'primary' | 'secondary' | 'dark';
+  to?: 'primary' | 'secondary' | 'dark';
+  variant?: 'wave' | 'curve' | 'tilt';
+}
+
+const { from = 'primary', to = 'secondary', variant = 'wave' } = Astro.props;
+
+const colorMap: Record<string, string> = {
+  primary: 'var(--bg-primary)',
+  secondary: 'var(--bg-secondary)',
+  dark: 'var(--bg-dark)',
+};
+
+const topColor = colorMap[from];
+const bottomColor = colorMap[to];
+---
+
+<div class="section-divider-wrapper" style={`background: ${topColor};`}>
+  {variant === 'wave' && (
+    <svg class="section-divider-svg" viewBox="0 0 1440 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 40C240 80 480 0 720 40C960 80 1200 0 1440 40V80H0V40Z" fill={bottomColor} />
+    </svg>
+  )}
+
+  {variant === 'curve' && (
+    <svg class="section-divider-svg" viewBox="0 0 1440 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 80L0 30C360 80 720 0 1080 30C1260 45 1380 60 1440 30V80H0Z" fill={bottomColor} />
+    </svg>
+  )}
+
+  {variant === 'tilt' && (
+    <svg class="section-divider-svg" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 60L1440 0V60H0Z" fill={bottomColor} />
+    </svg>
+  )}
+</div>
+
+<style>
+  .section-divider-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    margin-top: -1px;
+    margin-bottom: -1px;
+  }
+
+  .section-divider-svg {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 60px;
+  }
+
+  @media (min-width: 768px) {
+    .section-divider-svg {
+      height: 80px;
+    }
+  }
+</style>

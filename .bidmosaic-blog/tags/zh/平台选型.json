@@ -1,0 +1,18 @@
+[
+  {
+    "id": "eb0ae96a-5415-4f4c-9ef4-3ccf94a065a3",
+    "slug": "dsp-platform-guide",
+    "locale": "zh",
+    "title": "DSP平台选型指南：广告主必读的核心评估维度",
+    "description": "从流量质量、AI能力、数据透明度等7个维度，帮助广告主选择最适合的DSP程序化广告平台。",
+    "date": "2026-02-05",
+    "author": "Bidmosaic",
+    "tags": [
+      "DSP",
+      "平台选型",
+      "程序化广告",
+      "广告技术"
+    ],
+    "image": "/images/blog/dsp-guide.jpg"
+  }
+]

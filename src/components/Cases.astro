@@ -1,0 +1,386 @@
+---
+import type { Locale } from '@i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const copy = locale === 'zh'
+  ? {
+      title: '情报内容示例',
+      subtitle: '看看 AI 情报管线每天为你生产什么样的内容',
+      filters: [
+        { key: 'all', label: '全部' },
+        { key: 'tech', label: '科技' },
+        { key: 'finance', label: '金融' },
+        { key: 'ai', label: 'AI' },
+      ],
+      empty: '暂无匹配内容',
+      cases: [
+        { module: 'tech', tag: '科技', title: 'OpenAI 发布 GPT-5 模型能力评测', desc: 'AI 解读：GPT-5 在推理能力上实现质的飞跃，对开发者生态和 AI 应用市场将产生深远影响。', metric: '重要性评分', value: '9/10', color: 'blue' },
+        { module: 'tech', tag: '科技', title: 'Hacker News 热门：Rust 在系统编程的崛起', desc: 'AI 摘要：Rust 语言在系统级编程中的采用率持续增长，Linux 内核已接受 Rust 代码贡献。', metric: 'AI 分析', value: '深度', color: 'cyan' },
+        { module: 'finance', tag: '金融', title: '宁德时代(300750) 今日涨 3.52%', desc: 'AI 信号：趋势偏强，建议持有。量价配合良好，短期有望继续上行。风险提示：注意板块轮动。', metric: '操作信号', value: '持有', color: 'purple' },
+        { module: 'finance', tag: '金融', title: 'A股大盘行情速览', desc: 'AI 点评：沪指微涨 0.3%，创业板走强。市场情绪回暖，成交量环比放大，短期看多。', metric: '市场情绪', value: '偏多', color: 'blue' },
+        { module: 'ai', tag: 'AI', title: 'Anthropic 发布 Claude 新功能', desc: 'AI 解读：Claude 新增工具调用和多模态能力，进一步缩小与 GPT-4 的差距，企业级 AI 竞争加剧。', metric: '行业影响', value: '高', color: 'cyan' },
+        { module: 'ai', tag: 'AI', title: 'AI Agent 框架 LangGraph 2.0 发布', desc: 'AI 分析：LangGraph 2.0 大幅简化多 Agent 编排，降低 AI 应用开发门槛，利好 AI 应用层创业。', metric: '技术评级', value: '前沿', color: 'purple' },
+        { module: 'tech', tag: '电商', title: 'Shopify 2025 年度 GMV 突破 $2000 亿', desc: 'AI 解读：电商 SaaS 龙头持续增长，AI 驱动的个性化推荐成为核心增长引擎。', metric: '商业价值', value: '极高', color: 'blue' },
+      ],
+    }
+  : {
+      title: 'Intelligence Content Examples',
+      subtitle: 'See what our AI pipeline produces for you every day.',
+      filters: [
+        { key: 'all', label: 'All' },
+        { key: 'tech', label: 'Tech' },
+        { key: 'finance', label: 'Finance' },
+        { key: 'ai', label: 'AI' },
+      ],
+      empty: 'No matching content',
+      cases: [
+        { module: 'tech', tag: 'Tech', title: 'OpenAI Releases GPT-5 Capability Benchmarks', desc: 'AI Analysis: GPT-5 achieves qualitative leap in reasoning, with profound implications for developer ecosystems and AI application markets.', metric: 'Importance', value: '9/10', color: 'blue' },
+        { module: 'tech', tag: 'Tech', title: 'HN Trending: The Rise of Rust in Systems Programming', desc: 'AI Summary: Rust adoption in systems programming continues to grow, with Linux kernel now accepting Rust contributions.', metric: 'AI Analysis', value: 'Deep', color: 'cyan' },
+        { module: 'finance', tag: 'Finance', title: 'CATL (300750) Up 3.52% Today', desc: 'AI Signal: Trend is bullish, recommend hold. Good volume-price coordination, likely to continue upward short-term. Risk: Watch sector rotation.', metric: 'Signal', value: 'Hold', color: 'purple' },
+        { module: 'finance', tag: 'Finance', title: 'A-Share Market Overview', desc: 'AI Commentary: Shanghai index up 0.3%, ChiNext strengthens. Market sentiment warming, volume expanding. Short-term outlook: bullish.', metric: 'Sentiment', value: 'Bullish', color: 'blue' },
+        { module: 'ai', tag: 'AI', title: 'Anthropic Launches New Claude Features', desc: 'AI Analysis: Claude adds tool use and multimodal capabilities, narrowing the gap with GPT-4. Enterprise AI competition intensifies.', metric: 'Impact', value: 'High', color: 'cyan' },
+        { module: 'ai', tag: 'AI', title: 'LangGraph 2.0 Framework Released', desc: 'AI Analysis: LangGraph 2.0 simplifies multi-agent orchestration, lowering AI application development barriers. Bullish for AI app-layer startups.', metric: 'Tech Rating', value: 'Cutting Edge', color: 'purple' },
+        { module: 'tech', tag: 'E-commerce', title: 'Shopify 2025 Annual GMV Exceeds $200B', desc: 'AI Analysis: E-commerce SaaS leader continues growth, with AI-driven personalization as core growth engine.', metric: 'Business Value', value: 'Very High', color: 'blue' },
+      ],
+    };
+
+const tagColors: Record<string, { bg: string; text: string }> = {
+  blue:   { bg: 'bg-blue-500/20', text: 'text-blue-400' },
+  cyan:   { bg: 'bg-cyan-500/20', text: 'text-cyan-400' },
+  purple: { bg: 'bg-purple-500/20', text: 'text-purple-400' },
+};
+---
+
+<section id="cases" class="section-darker py-24 relative overflow-hidden">
+  <div class="cases-cross-hatch absolute inset-0 z-0 pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute top-20 right-10 w-[200px] h-[200px] rounded-full pointer-events-none z-[1]" style="background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%);" data-parallax="0.08" aria-hidden="true"></div>
+  <div class="absolute bottom-20 left-10 w-[150px] h-[150px] rounded-full pointer-events-none z-[1]" style="background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%);" data-parallax="-0.06" aria-hidden="true"></div>
+
+  <div class="cases-hex cases-hex-1 absolute z-0 pointer-events-none" aria-hidden="true">
+    <svg width="60" height="60" viewBox="0 0 60 60" fill="none"><polygon points="30,2 55,16 55,44 30,58 5,44 5,16" stroke="#06b6d4" stroke-width="0.8" opacity="0.06" fill="none"/></svg>
+  </div>
+  <div class="cases-hex cases-hex-2 absolute z-0 pointer-events-none" aria-hidden="true">
+    <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><polygon points="20,2 37,11 37,29 20,38 3,29 3,11" stroke="#3b82f6" stroke-width="0.6" opacity="0.05" fill="none"/></svg>
+  </div>
+
+  <div class="container relative">
+    <div class="text-center mb-16" data-animate>
+      <h2 class="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4" data-text-reveal>{copy.title}</h2>
+      <p class="text-[var(--text-secondary)] max-w-2xl mx-auto">{copy.subtitle}</p>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-2 mb-8" id="caseFilters">
+      {copy.filters.map((filter, idx) => (
+        <button
+          type="button"
+          class={`case-filter px-4 py-2 rounded-full text-sm border transition ${idx === 0 ? 'bg-cyan-500 text-white border-cyan-500' : 'bg-white/5 text-[var(--text-secondary)] border-white/10 hover:border-cyan-500/50 hover:text-[var(--text-primary)]'}`}
+          data-filter={filter.key}
+        >
+          {filter.label}
+        </button>
+      ))}
+    </div>
+
+    <div class="case-row-shell" data-stagger-parent>
+      <div class="case-row-fade case-row-fade-left" aria-hidden="true"></div>
+      <div class="case-row-fade case-row-fade-right" aria-hidden="true"></div>
+      <div class="case-row-track" id="caseGrid">
+        {copy.cases.map((item) => {
+          const colors = tagColors[item.color];
+          return (
+            <div class="case-card-wrapper" data-stagger-child data-case-tilt data-module={item.module}>
+              <div class="case-card glow-card p-8 flex flex-col h-full">
+                <div class="case-card-glow" aria-hidden="true"></div>
+                <div class="case-card-shine" aria-hidden="true"></div>
+
+                <span class={`inline-block self-start px-3 py-1 rounded-full text-xs font-semibold ${colors.bg} ${colors.text} mb-4`}>
+                  {item.tag}
+                </span>
+
+                <h3 class="text-lg font-bold text-[var(--text-primary)] mb-3">
+                  {item.title}
+                </h3>
+
+                <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-6 flex-1">
+                  {item.desc}
+                </p>
+
+                <div class="pt-4 border-t border-white/6 mt-auto">
+                  <div class="text-xs text-[var(--text-muted)] mb-1">{item.metric}</div>
+                  <div class="case-metric text-2xl font-bold text-cyan-400">{item.value}</div>
+                </div>
+
+                <div class="case-accent" aria-hidden="true"></div>
+                <div class="case-progress-bar" aria-hidden="true"></div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+    <div id="caseEmpty" class="hidden text-center text-sm text-[var(--text-muted)] mt-8">{copy.empty}</div>
+  </div>
+</section>
+
+<style>
+  .cases-cross-hatch {
+    background-image:
+      linear-gradient(45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    animation: cross-hatch-shift 25s linear infinite;
+  }
+
+  @keyframes cross-hatch-shift {
+    from { background-position: 0 0, 0 0; }
+    to { background-position: 40px 40px, -40px 40px; }
+  }
+
+  .cases-hex-1 {
+    top: 10%;
+    right: 5%;
+    animation: hex-float 16s ease-in-out infinite;
+  }
+
+  .cases-hex-2 {
+    bottom: 15%;
+    left: 8%;
+    animation: hex-float 20s ease-in-out infinite reverse;
+  }
+
+  @keyframes hex-float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(12px, -18px) rotate(8deg); }
+    66% { transform: translate(-8px, 12px) rotate(-5deg); }
+  }
+
+  .case-card-wrapper {
+    perspective: 800px;
+    scroll-snap-align: start;
+  }
+
+  .case-card {
+    position: relative;
+    overflow: hidden;
+    transition:
+      transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      box-shadow 0.3s ease;
+    height: 100%;
+  }
+
+  .case-card-wrapper:hover .case-card {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  }
+
+  .case-card-glow {
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s ease;
+    z-index: 0;
+  }
+
+  .case-card-wrapper:hover .case-card-glow {
+    opacity: 1;
+  }
+
+  .case-card-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.03) 50%, transparent 55%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .case-card-wrapper:hover .case-card-shine {
+    animation: case-shine 0.7s ease-in-out;
+  }
+
+  @keyframes case-shine {
+    0% { left: -100%; }
+    100% { left: 150%; }
+  }
+
+  .case-accent {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, transparent 50%, rgba(6, 182, 212, 0.06) 50%);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+  }
+
+  .case-card-wrapper:hover .case-accent {
+    opacity: 1;
+  }
+
+  .case-card-wrapper:hover .case-metric {
+    animation: metric-pulse 0.6s ease;
+  }
+
+  @keyframes metric-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+
+  .case-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    background: linear-gradient(90deg, #06b6d4, #3b82f6, #06b6d4);
+    transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .case-card-wrapper:hover .case-progress-bar {
+    width: 100%;
+  }
+
+  .case-row-shell {
+    position: relative;
+  }
+
+  .case-row-track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(350px, calc(100vw - 48px));
+    grid-auto-rows: 1fr;
+    gap: 1.5rem;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 0.25rem 0.25rem 1rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(6, 182, 212, 0.3) transparent;
+    animation: case-row-drift 16s ease-in-out infinite;
+  }
+
+  .case-row-track::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .case-row-track::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(6, 182, 212, 0.3);
+  }
+
+  .case-row-shell:hover .case-row-track {
+    animation-play-state: paused;
+  }
+
+  .case-row-fade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 64px;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .case-row-fade-left {
+    left: 0;
+    background: linear-gradient(90deg, rgba(17, 24, 39, 0.96), rgba(17, 24, 39, 0));
+  }
+
+  .case-row-fade-right {
+    right: 0;
+    background: linear-gradient(270deg, rgba(17, 24, 39, 0.96), rgba(17, 24, 39, 0));
+  }
+
+  @keyframes case-row-drift {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-18px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case-card-wrapper:hover .case-card { transform: none; }
+    .case-card-wrapper:hover .case-metric { animation: none; }
+    .case-card-shine { display: none; }
+    .case-card-glow { display: none; }
+    .case-progress-bar { display: none; }
+    .cases-cross-hatch { animation: none; }
+    .cases-hex-1, .cases-hex-2 { animation: none; }
+    .case-row-track { animation: none; }
+  }
+</style>
+
+<script>
+  const caseFilters = document.querySelectorAll<HTMLButtonElement>('#caseFilters .case-filter');
+  const caseCards = document.querySelectorAll<HTMLElement>('#caseGrid [data-module]');
+  const caseEmpty = document.getElementById('caseEmpty');
+
+  function applyCaseFilter(filter: string) {
+    let visibleCount = 0;
+    caseCards.forEach((card) => {
+      const match = filter === 'all' || card.dataset.module === filter;
+      card.style.display = match ? '' : 'none';
+      if (match) visibleCount += 1;
+    });
+    if (caseEmpty) caseEmpty.classList.toggle('hidden', visibleCount > 0);
+  }
+
+  caseFilters.forEach((button) => {
+    button.addEventListener('click', () => {
+      const nextFilter = button.dataset.filter ?? 'all';
+      caseFilters.forEach((item) => {
+        const active = item === button;
+        item.classList.toggle('bg-cyan-500', active);
+        item.classList.toggle('text-white', active);
+        item.classList.toggle('border-cyan-500', active);
+        item.classList.toggle('bg-white/5', !active);
+        item.classList.toggle('text-[var(--text-secondary)]', !active);
+        item.classList.toggle('border-white/10', !active);
+      });
+      applyCaseFilter(nextFilter);
+    });
+  });
+
+  applyCaseFilter('all');
+
+  document.querySelectorAll<HTMLElement>('[data-case-tilt]').forEach((wrapper) => {
+    const card = wrapper.querySelector<HTMLElement>('.case-card');
+    const glow = wrapper.querySelector<HTMLElement>('.case-card-glow');
+    if (!card || !glow) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    wrapper.addEventListener('mousemove', (e) => {
+      const rect = wrapper.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = ((y - centerY) / centerY) * -6;
+      const rotateY = ((x - centerX) / centerX) * 6;
+      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+      glow.style.left = `${x}px`;
+      glow.style.top = `${y}px`;
+    });
+
+    wrapper.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+</script>

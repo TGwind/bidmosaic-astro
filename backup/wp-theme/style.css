@@ -1,0 +1,556 @@
+/*
+Theme Name:   Astra Child
+Template:     astra
+Version:      1.0.0
+*/
+
+/* ============================================================
+   CSS 自定义属性
+   ============================================================ */
+
+:root {
+  --mk-blue: #0057ff;
+  --mk-amber: #ffb800;
+  --mk-dark: #111827;
+  --mk-gray: #6b7280;
+  --mk-radius: 8px;
+
+  /* 动画时长 */
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 400ms;
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.10), 0 2px 4px rgb(0 0 0 / 0.06);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.12), 0 4px 8px rgb(0 0 0 / 0.08);
+
+  /* 焦点环 */
+  --focus-ring: 0 0 0 3px rgba(0, 87, 255, 0.35);
+}
+
+/* ============================================================
+   全局过渡 / 滚动行为
+   ============================================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ============================================================
+   布局工具类
+   ============================================================ */
+
+/* 居中容器 */
+.mk-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* Flex 行 */
+.mk-flex {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* 响应式两列 → 单列 */
+.mk-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .mk-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   进入动画（Intersection Observer 配合）
+   需要 JS 给元素添加 .is-visible 类
+   ============================================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity var(--dur-slow) var(--ease-out),
+      transform var(--dur-slow) var(--ease-out);
+  }
+
+  .animate-fade-up.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 延迟级联（用于卡片列表等） */
+  .animate-fade-up:nth-child(2) { transition-delay: 80ms; }
+  .animate-fade-up:nth-child(3) { transition-delay: 160ms; }
+  .animate-fade-up:nth-child(4) { transition-delay: 240ms; }
+  .animate-fade-up:nth-child(5) { transition-delay: 320ms; }
+  .animate-fade-up:nth-child(6) { transition-delay: 400ms; }
+}
+
+/* Reduced-motion 回退：确保内容可见 */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================
+   交互动画 — 卡片悬停
+   ============================================================ */
+
+.mk-card {
+  border-radius: var(--mk-radius);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mk-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+/* ============================================================
+   交互动画 — 链接下划线滑入
+   ============================================================ */
+
+.mk-link-underline {
+  position: relative;
+  text-decoration: none;
+}
+
+.mk-link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mk-link-underline:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* ============================================================
+   在此处继续添加自定义样式
+   ============================================================ */
+
+/* ============================================================
+   首页优化 / Homepage Optimizations
+   ============================================================ */
+
+/* ── 1. 导航悬停下划线 + 当前页指示器 ──────────────────────── */
+
+.main-header-bar-navigation .menu-link {
+  position: relative;
+  transition: color var(--dur-fast) ease;
+}
+
+/* 琥珀色下划线动画（::after 滑入）— 仅桌面端 */
+@media (min-width: 922px) {
+  .main-header-bar-navigation .menu-item > .menu-link::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 3px;
+    background: var(--mk-amber);
+    border-radius: 2px 2px 0 0;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  .main-header-bar-navigation .menu-item > .menu-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* 当前页始终显示下划线 */
+  .main-header-bar-navigation .current-menu-item > .menu-link::after {
+    transform: scaleX(1);
+  }
+}
+
+/* 当前页链接加粗 */
+.main-header-bar-navigation .current-menu-item > .menu-link {
+  font-weight: 700;
+}
+
+
+/* ── 2. Hero 遮罩加深 / Darken hero overlay for contrast ──── */
+
+/*
+ * UAGB 生成的 ::before 遮罩仅约 28% 有效不透明度（0.33 × 0.85），
+ * 导致深圳夜景背景严重干扰文字可读性。
+ * 覆盖为更深的从上至下渐变，opacity 重置为 1。
+ */
+.wp-block-uagb-container.section-hero::before {
+  background-image: linear-gradient(
+    175deg,
+    rgba(8, 12, 28, 0.58) 0%,
+    rgba(8, 12, 28, 0.75) 100%
+  ) !important;
+  opacity: 1 !important;
+}
+
+
+/* ── 3. Hero 文字投影 / Hero text shadow for legibility ────── */
+
+.wp-block-uagb-container.section-hero h2,
+.wp-block-uagb-container.section-hero h1,
+.wp-block-uagb-container.section-hero p.has-large-font-size {
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.65);
+}
+
+
+/* ── 4. Hero 主 CTA — "Purchase premium traffic" ────────────
+   主操作按钮：琥珀色实心，深色文字，高对比度
+   ─────────────────────────────────────────────────────────── */
+
+.wp-block-uagb-buttons .btn-primary-cta .uagb-buttons-repeater.wp-block-button__link {
+  background-color: var(--mk-amber) !important;
+  color: var(--mk-dark) !important;
+  border: 2px solid var(--mk-amber) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em;
+}
+
+.wp-block-uagb-buttons .btn-primary-cta .uagb-buttons-repeater.wp-block-button__link:hover {
+  background-color: #e5a500 !important;
+  border-color: #e5a500 !important;
+  box-shadow: 0 6px 20px rgba(255, 184, 0, 0.50) !important;
+}
+
+.wp-block-uagb-buttons .btn-primary-cta .uagb-buttons-repeater.wp-block-button__link:focus-visible {
+  outline: 3px solid var(--mk-amber);
+  outline-offset: 3px;
+}
+
+
+/* ── 5. Hero 次 CTA — "Start Earning" ───────────────────────
+   次操作按钮：白色描边透明，视觉上明显低于主按钮
+   ─────────────────────────────────────────────────────────── */
+
+.wp-block-uagb-buttons .btn-ghost .uagb-buttons-repeater.wp-block-button__link {
+  background: transparent !important;
+  color: #ffffff !important;
+  border: 2px solid rgba(255, 255, 255, 0.78) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em;
+}
+
+.wp-block-uagb-buttons .btn-ghost .uagb-buttons-repeater.wp-block-button__link:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-color: #ffffff !important;
+}
+
+.wp-block-uagb-buttons .btn-ghost .uagb-buttons-repeater.wp-block-button__link:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+
+/* ============================================================
+   合作伙伴 Logo 无限滚动轮播 / Partner Logo Marquee
+   ============================================================ */
+
+.mk-marquee {
+  overflow: hidden;
+  width: 100%;
+  padding: 2.5rem 0;
+  background: var(--ast-global-color-5, #ffffff);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.mk-marquee__track {
+  display: flex;
+  align-items: center;
+  gap: 3.5rem;
+  width: max-content;
+  animation: mk-scroll 40s linear infinite;
+}
+
+.mk-marquee__track img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity var(--dur-base, 250ms) ease;
+}
+
+.mk-marquee__track img:hover {
+  opacity: 1;
+}
+
+@keyframes mk-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* 无障碍：尊重减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .mk-marquee__track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    padding-inline: 1.5rem;
+  }
+
+  .mk-marquee__track img {
+    opacity: 1;
+  }
+}
+
+/* 悬停时暂停滚动 */
+.mk-marquee:hover .mk-marquee__track {
+  animation-play-state: paused;
+}
+
+
+/* ============================================================
+   按钮悬停 / 点击微交互
+   ============================================================ */
+
+body .wp-block-uagb-buttons-child.uagb-buttons__outer-wrap .uagb-buttons-repeater,
+.wp-block-button__link {
+  transition:
+    background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body .wp-block-uagb-buttons-child.uagb-buttons__outer-wrap .uagb-buttons-repeater:hover,
+  .wp-block-button__link:hover {
+    transform: scale(1.03);
+  }
+
+  body .wp-block-uagb-buttons-child.uagb-buttons__outer-wrap .uagb-buttons-repeater:active,
+  .wp-block-button__link:active {
+    transform: scale(0.97);
+  }
+}
+
+
+/* ============================================================
+   响应式断点 — 平板 (≤ 921px)
+   ============================================================ */
+
+@media (max-width: 921px) {
+  .mk-container {
+    padding-inline: 1rem;
+  }
+
+  .mk-marquee__track img {
+    width: 44px;
+    height: 44px;
+  }
+
+  .mk-marquee__track {
+    gap: 2.5rem;
+  }
+}
+
+
+/* ============================================================
+   响应式断点 — 手机 (≤ 480px)
+   ============================================================ */
+
+@media (max-width: 480px) {
+  .mk-container {
+    padding-inline: 0.75rem;
+  }
+
+  .mk-marquee__track img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .mk-marquee__track {
+    gap: 2rem;
+  }
+}
+
+
+/* ============================================================
+   移动端 Hero 按钮全宽 (≤ 544px)
+   ============================================================ */
+
+@media (max-width: 544px) {
+  .wp-block-uagb-buttons .btn-primary-cta .uagb-buttons-repeater.wp-block-button__link,
+  .wp-block-uagb-buttons .btn-ghost .uagb-buttons-repeater.wp-block-button__link {
+    width: 100% !important;
+    padding: 1rem 1.5rem !important;
+    text-align: center;
+  }
+}
+
+
+/* ============================================================
+   触摸反馈 — 移动端
+   ============================================================ */
+
+@media (hover: none) and (pointer: coarse) {
+  .mk-card:active {
+    transform: scale(0.98);
+  }
+
+  body .wp-block-uagb-buttons-child.uagb-buttons__outer-wrap .uagb-buttons-repeater:active,
+  .wp-block-button__link:active {
+    transform: scale(0.97);
+  }
+
+  /* 移动端菜单链接点击高亮 */
+  .ast-header-break-point .menu-link {
+    transition: background-color var(--dur-fast) ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .ast-header-break-point .menu-link:active {
+    background-color: rgba(0, 87, 255, 0.08);
+  }
+}
+
+
+/* ============================================================
+   Contact Form 7 主题化
+   ============================================================ */
+
+.wpcf7 input[type="text"],
+.wpcf7 input[type="email"],
+.wpcf7 input[type="tel"],
+.wpcf7 input[type="url"],
+.wpcf7 textarea,
+.wpcf7 select {
+  border: 1px solid #d1d5db;
+  border-radius: var(--mk-radius);
+  padding: 0.65rem 0.85rem;
+  transition:
+    border-color var(--dur-fast) ease,
+    box-shadow var(--dur-fast) ease;
+}
+
+.wpcf7 input[type="text"]:focus,
+.wpcf7 input[type="email"]:focus,
+.wpcf7 input[type="tel"]:focus,
+.wpcf7 input[type="url"]:focus,
+.wpcf7 textarea:focus,
+.wpcf7 select:focus {
+  border-color: var(--mk-blue);
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+/* CF7 校验失败状态 */
+.wpcf7 .wpcf7-not-valid {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+}
+
+/* CF7 提交按钮 — 复用主 CTA 琥珀色样式 */
+.wpcf7 input[type="submit"] {
+  background-color: var(--mk-amber) !important;
+  color: var(--mk-dark) !important;
+  border: 2px solid var(--mk-amber) !important;
+  border-radius: var(--mk-radius);
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) ease;
+}
+
+.wpcf7 input[type="submit"]:hover {
+  background-color: #e5a500 !important;
+  border-color: #e5a500 !important;
+  box-shadow: 0 6px 20px rgba(255, 184, 0, 0.4);
+  transform: scale(1.03);
+}
+
+.wpcf7 input[type="submit"]:active {
+  transform: scale(0.97);
+}
+
+.wpcf7 input[type="submit"]:focus-visible {
+  outline: 3px solid var(--mk-amber);
+  outline-offset: 3px;
+}
+
+/* CF7 成功 / 失败提示 */
+.wpcf7-response-output {
+  border-radius: var(--mk-radius) !important;
+  padding: 0.75rem 1rem !important;
+}
+
+.wpcf7 form.sent .wpcf7-response-output {
+  background-color: rgba(16, 185, 129, 0.08);
+  border-color: #10b981 !important;
+  color: #065f46;
+}
+
+.wpcf7 form.failed .wpcf7-response-output,
+.wpcf7 form.aborted .wpcf7-response-output,
+.wpcf7 form.spam .wpcf7-response-output {
+  background-color: rgba(239, 68, 68, 0.08);
+  border-color: #ef4444 !important;
+  color: #991b1b;
+}
+
+
+/* ============================================================
+   回到顶部按钮 (#ast-scroll-top)
+   ============================================================ */
+
+#ast-scroll-top {
+  background-color: var(--mk-blue) !important;
+  color: #ffffff !important;
+  border-radius: 50%;
+  box-shadow: var(--shadow-md);
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+#ast-scroll-top:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+#ast-scroll-top:focus-visible {
+  outline: 3px solid var(--mk-blue);
+  outline-offset: 3px;
+}

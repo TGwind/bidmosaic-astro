@@ -1,0 +1,1064 @@
+---
+interface Props {
+  locale?: 'zh' | 'en';
+}
+
+const { locale = 'zh' } = Astro.props;
+const isEn = locale === 'en';
+const copy = isEn
+  ? {
+      title: 'Bidmosaic AI Assistant',
+      welcome:
+        'Hi! I can help with **HIVE.DSP**, **HIVEX.ADN**, and **H5 Engine**. Ask anything and I will reply in real time.',
+      openLabel: 'Open chat',
+      closeLabel: 'Close chat',
+      inputPlaceholder: 'Type your question...',
+      send: 'Send',
+      shortcuts: {
+        dsp: 'Learn HIVE.DSP',
+        adn: 'Learn HIVEX.ADN',
+        h5: 'Learn H5 Engine',
+      },
+      thinking: 'Thinking...',
+      error: 'Request failed, please try again.',
+      online: 'Online',
+    }
+  : {
+      title: 'Bidmosaic AI 助手',
+      welcome:
+        '你好！我可以帮你了解 **HIVE.DSP**、**HIVEX.ADN** 和 **H5 内容引擎**。你发消息后我会实时回复。',
+      openLabel: '打开客服',
+      closeLabel: '关闭客服',
+      inputPlaceholder: '请输入你的问题...',
+      send: '发送',
+      shortcuts: {
+        dsp: '了解 HIVE.DSP',
+        adn: '了解 HIVEX.ADN',
+        h5: '了解 H5 引擎',
+      },
+      thinking: '思考中...',
+      error: '请求失败，请稍后重试。',
+      online: '在线',
+    };
+---
+
+<div
+  class="oc-chat"
+  id="oc-chat"
+  data-locale={locale}
+  data-page={Astro.url.pathname}
+  data-welcome={copy.welcome}
+  data-thinking={copy.thinking}
+  data-error={copy.error}
+>
+  <!-- FAB -->
+  <button class="oc-fab" id="oc-chat-fab" aria-label={copy.openLabel}>
+    <svg class="oc-fab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/>
+    </svg>
+    <span class="oc-fab__pulse" aria-hidden="true"></span>
+  </button>
+
+  <!-- Chat Panel -->
+  <section class="oc-panel" id="oc-chat-panel" aria-hidden="true">
+    <!-- Header -->
+    <header class="oc-panel__header">
+      <div class="oc-panel__header-info">
+        <div class="oc-panel__avatar oc-panel__avatar--header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 4-4 4 4"/><path d="m14 14 4-4 4 4"/></svg>
+        </div>
+        <div>
+          <strong class="oc-panel__title">{copy.title}</strong>
+          <span class="oc-panel__status"><span class="oc-panel__status-dot"></span>{copy.online}</span>
+        </div>
+      </div>
+      <button class="oc-panel__close" id="oc-chat-close" aria-label={copy.closeLabel}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </header>
+
+    <!-- Messages -->
+    <div class="oc-messages" id="oc-chat-messages">
+      <div class="oc-msg oc-msg--bot">
+        <div class="oc-msg__avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 4-4 4 4"/><path d="m14 14 4-4 4 4"/></svg>
+        </div>
+        <div class="oc-msg__bubble oc-msg__bubble--bot oc-rich" id="oc-welcome-msg"></div>
+      </div>
+      <div class="oc-shortcuts" id="oc-chat-shortcuts">
+        <button type="button" data-prompt={copy.shortcuts.dsp}>{copy.shortcuts.dsp}</button>
+        <button type="button" data-prompt={copy.shortcuts.adn}>{copy.shortcuts.adn}</button>
+        <button type="button" data-prompt={copy.shortcuts.h5}>{copy.shortcuts.h5}</button>
+      </div>
+    </div>
+
+    <!-- Contact Buttons -->
+    <div class="oc-contact" id="oc-contact-links">
+      <a href="#" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+      <a href="#" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a href="#" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href="#" target="_blank" rel="noopener noreferrer">Facebook</a>
+    </div>
+
+    <!-- Input -->
+    <form class="oc-input" id="oc-chat-form">
+      <textarea id="oc-chat-text" rows="1" placeholder={copy.inputPlaceholder} autocomplete="off"></textarea>
+      <button id="oc-chat-send" type="submit" aria-label={copy.send}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9Z"/></svg>
+      </button>
+    </form>
+  </section>
+</div>
+
+<script>
+  /* ── Lightweight Markdown → HTML ────────────────────────── */
+  const escapeHtml = (s: string) =>
+    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  const renderMarkdown = (src: string): string => {
+    const lines = src.split('\n');
+    const out: string[] = [];
+    let inCode = false;
+    let codeLang = '';
+    let codeLines: string[] = [];
+    let inList: 'ul' | 'ol' | '' = '';
+
+    const flushList = () => {
+      if (inList) { out.push(inList === 'ul' ? '</ul>' : '</ol>'); inList = ''; }
+    };
+
+    const inlineRender = (line: string): string => {
+      let s = escapeHtml(line);
+      s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      s = s.replace(/\*(.+?)\*/g, '<em>$1</em>');
+      s = s.replace(/`([^`]+?)`/g, '<code>$1</code>');
+      s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      return s;
+    };
+
+    for (const raw of lines) {
+      const line = raw;
+
+      // Fenced code block toggle
+      if (line.trimStart().startsWith('```')) {
+        if (!inCode) {
+          flushList();
+          inCode = true;
+          codeLang = line.trimStart().slice(3).trim();
+          codeLines = [];
+        } else {
+          out.push(`<pre><code${codeLang ? ` class="lang-${escapeHtml(codeLang)}"` : ''}>${escapeHtml(codeLines.join('\n'))}</code></pre>`);
+          inCode = false;
+          codeLang = '';
+        }
+        continue;
+      }
+      if (inCode) { codeLines.push(raw); continue; }
+
+      const trimmed = line.trim();
+      if (!trimmed) { flushList(); out.push(''); continue; }
+
+      // Headings
+      const hMatch = trimmed.match(/^(#{1,4})\s+(.+)$/);
+      if (hMatch) {
+        flushList();
+        const level = hMatch[1].length;
+        out.push(`<h${level}>${inlineRender(hMatch[2])}</h${level}>`);
+        continue;
+      }
+
+      // Indented lines (2+ spaces / tab) → treat as sub-item in current list
+      const indent = raw.match(/^(\s+)/)?.[1]?.length || 0;
+      if (indent >= 2 && inList) {
+        // Indented content inside an existing list → append to last <li> or add as sub-item
+        if (/^[-*]\s+/.test(trimmed)) {
+          out.push(`<li>${inlineRender(trimmed.replace(/^[-*]\s+/, ''))}</li>`);
+        } else if (/^\d+[.)]\s+/.test(trimmed)) {
+          out.push(`<li>${inlineRender(trimmed.replace(/^\d+[.)]\s+/, ''))}</li>`);
+        } else {
+          out.push(`<li>${inlineRender(trimmed)}</li>`);
+        }
+        continue;
+      }
+
+      // Unordered list
+      if (/^[-*]\s+/.test(trimmed)) {
+        if (inList !== 'ul') { flushList(); inList = 'ul'; out.push('<ul>'); }
+        out.push(`<li>${inlineRender(trimmed.replace(/^[-*]\s+/, ''))}</li>`);
+        continue;
+      }
+
+      // Ordered list
+      if (/^\d+[.)]\s+/.test(trimmed)) {
+        if (inList !== 'ol') { flushList(); inList = 'ol'; out.push('<ol>'); }
+        out.push(`<li>${inlineRender(trimmed.replace(/^\d+[.)]\s+/, ''))}</li>`);
+        continue;
+      }
+
+      flushList();
+      out.push(`<p>${inlineRender(trimmed)}</p>`);
+    }
+
+    if (inCode) {
+      out.push(`<pre><code>${escapeHtml(codeLines.join('\n'))}</code></pre>`);
+    }
+    flushList();
+
+    return out.filter(Boolean).join('\n');
+  };
+
+  /* ── DOM refs ───────────────────────────────────────────── */
+  type Role = 'user' | 'assistant' | 'system';
+  type Message = { role: Role; content: string };
+
+  const root = document.getElementById('oc-chat')!;
+  const fab = document.getElementById('oc-chat-fab') as HTMLButtonElement;
+  const panel = document.getElementById('oc-chat-panel') as HTMLElement;
+  const closeBtn = document.getElementById('oc-chat-close') as HTMLButtonElement;
+  const form = document.getElementById('oc-chat-form') as HTMLFormElement;
+  const input = document.getElementById('oc-chat-text') as HTMLTextAreaElement;
+  const sendBtn = document.getElementById('oc-chat-send') as HTMLButtonElement;
+  const messagesEl = document.getElementById('oc-chat-messages') as HTMLElement;
+  const shortcutsEl = document.getElementById('oc-chat-shortcuts') as HTMLElement | null;
+  const welcomeMsg = document.getElementById('oc-welcome-msg') as HTMLElement;
+
+  const locale = root.dataset.locale === 'en' ? 'en' : 'zh';
+  const pagePath = root.dataset.page || '/';
+  const thinkingText = root.dataset.thinking || 'Thinking...';
+  const errorText = root.dataset.error || 'Request failed';
+
+  // Render welcome message as rich text
+  welcomeMsg.innerHTML = renderMarkdown(root.dataset.welcome || '');
+
+  /* ── Context-aware system prompts ───────────────────────── */
+  const basePrompts = {
+    zh: `你是 Bidmosaic 官网智能客服，请结合当前页面给出简洁、专业、可执行的回答。
+当用户询问“联系商务/合作/报价/案例/联系方式”时，请明确提示：可点击聊天框下方 4 个按钮联系商务（WhatsApp / Telegram / LinkedIn / Facebook）。`,
+    en: `You are Bidmosaic website support. Reply with concise, practical, business-oriented guidance based on the current page.
+When users ask about contact, partnership, pricing, or case studies, explicitly guide them to the 4 contact buttons below the chat (WhatsApp / Telegram / LinkedIn / Facebook).`,
+  } as const;
+
+  const prompts = {
+    zh: {
+      '/hive-dsp': '我在 HIVE.DSP 页面，介绍一下投放能力和适合的行业。',
+      '/hivex-adn': '我在 HIVEX.ADN 页面，介绍一下接入方式和收益模式。',
+      '/h5-engine': '我在 H5 引擎页面，介绍一下创意能力和案例。',
+      '/contact': '我在联系页面，帮我快速梳理合作流程。',
+      default: '',
+    },
+    en: {
+      '/hive-dsp': 'I am on the HIVE.DSP page. Explain ad capabilities and ideal use cases.',
+      '/hivex-adn': 'I am on the HIVEX.ADN page. Explain integration flow and monetization model.',
+      '/h5-engine': 'I am on the H5 Engine page. Explain creative capabilities and case examples.',
+      '/contact': 'I am on the contact page. Give me a quick collaboration process.',
+      default: '',
+    },
+  } as const;
+
+  const normalizedPath = pagePath.replace(/\/+$/g, '') || '/';
+  const pageKey = normalizedPath.replace(/^\/(zh|en)(?=\/|$)/, '') || '/';
+  const pagePrompt = (prompts[locale] as Record<string, string>)[pageKey] || prompts[locale].default;
+  const contextPrompt = `${basePrompts[locale]}\n${pagePrompt}`.trim();
+  const history: Message[] = [{ role: 'system', content: contextPrompt }];
+
+  /* ── Panel open / close ─────────────────────────────────── */
+  const openPanel = () => {
+    panel.classList.add('is-open');
+    panel.setAttribute('aria-hidden', 'false');
+    fab.classList.add('is-hidden');
+    window.setTimeout(() => input.focus(), 200);
+  };
+
+  const closePanel = () => {
+    panel.classList.remove('is-open');
+    panel.setAttribute('aria-hidden', 'true');
+    fab.classList.remove('is-hidden');
+  };
+
+  /* ── Message helpers ────────────────────────────────────── */
+  const scrollToBottom = () => {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  };
+
+  const appendMessage = (role: 'user' | 'assistant', text: string): HTMLElement => {
+    const row = document.createElement('div');
+    row.className = `oc-msg oc-msg--${role === 'user' ? 'user' : 'bot'}`;
+
+    if (role === 'assistant') {
+      const avatar = document.createElement('div');
+      avatar.className = 'oc-msg__avatar';
+      avatar.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 4-4 4 4"/><path d="m14 14 4-4 4 4"/></svg>';
+      row.appendChild(avatar);
+    }
+
+    const bubble = document.createElement('div');
+    bubble.className = `oc-msg__bubble oc-msg__bubble--${role === 'user' ? 'user' : 'bot'}`;
+
+    if (role === 'user') {
+      bubble.textContent = text;
+    } else {
+      bubble.classList.add('oc-rich');
+      bubble.textContent = text; // will be replaced with innerHTML when streaming completes
+    }
+
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    scrollToBottom();
+    return bubble;
+  };
+
+  const createThinkingIndicator = (): HTMLElement => {
+    const row = document.createElement('div');
+    row.className = 'oc-msg oc-msg--bot';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'oc-msg__avatar';
+    avatar.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="m2 14 4-4 4 4"/><path d="m14 14 4-4 4 4"/></svg>';
+    row.appendChild(avatar);
+
+    const bubble = document.createElement('div');
+    bubble.className = 'oc-msg__bubble oc-msg__bubble--bot oc-rich';
+    bubble.innerHTML = '<div class="oc-typing"><span></span><span></span><span></span></div>';
+    row.appendChild(bubble);
+
+    messagesEl.appendChild(row);
+    scrollToBottom();
+    return bubble;
+  };
+
+  const setSending = (sending: boolean) => {
+    input.disabled = sending;
+    sendBtn.disabled = sending;
+  };
+
+  /* ── SSE stream parsing ─────────────────────────────────── */
+  const extractText = (payload: unknown): string => {
+    if (!payload || typeof payload !== 'object') return '';
+    const data = payload as Record<string, unknown>;
+    const choices = Array.isArray(data.choices) ? (data.choices[0] as Record<string, unknown> | undefined) : undefined;
+    const delta = choices?.delta as Record<string, unknown> | undefined;
+    const message = choices?.message as Record<string, unknown> | undefined;
+    if (typeof delta?.content === 'string') return delta.content;
+    if (typeof message?.content === 'string') return message.content;
+    if (typeof data.content === 'string') return data.content;
+    if (typeof data.text === 'string') return data.text;
+    return '';
+  };
+
+  const extractContentFromBrokenLine = (line: string): string => {
+    const match = line.match(/"content"\s*:\s*"((?:\\.|[^"\\])*)"/);
+    if (!match?.[1]) return '';
+    try { return JSON.parse(`"${match[1]}"`) as string; }
+    catch { return match[1]; }
+  };
+
+  /* ── Stream reply ───────────────────────────────────────── */
+  const streamReply = async (bubbleNode: HTMLElement) => {
+    const lastUser = [...history].reverse().find((m) => m.role === 'user');
+    const response = await fetch('/api/openclaw/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: lastUser?.content ?? '' }),
+    });
+
+    if (!response.ok) {
+      const raw = await response.text().catch(() => '');
+      let reason = raw;
+      try {
+        const parsed = JSON.parse(raw) as { error?: string };
+        reason = parsed.error || raw;
+      } catch { /* keep raw */ }
+      throw new Error(`HTTP ${response.status}${reason ? `: ${reason}` : ''}`);
+    }
+    if (!response.body) throw new Error('Empty response body');
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let output = '';
+    let buffer = '';
+    let rawBody = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunkText = decoder.decode(value, { stream: true });
+      rawBody += chunkText;
+      buffer += chunkText;
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (const rawLine of lines) {
+        const line = rawLine.trim();
+        if (!line) continue;
+        const payload = line.startsWith('data:') ? line.slice(5).trim() : line;
+        if (payload === '[DONE]') continue;
+
+        try {
+          const chunk = JSON.parse(payload);
+          const fragment = extractText(chunk);
+          if (fragment) {
+            output += fragment;
+            bubbleNode.innerHTML = renderMarkdown(output);
+            scrollToBottom();
+          }
+        } catch {
+          const recovered = extractContentFromBrokenLine(payload);
+          if (recovered) {
+            output += recovered;
+            bubbleNode.innerHTML = renderMarkdown(output);
+            scrollToBottom();
+          }
+        }
+      }
+    }
+
+    if (!output && rawBody.trim()) {
+      try { output = extractText(JSON.parse(rawBody)); } catch { /* ignore */ }
+    }
+
+    if (output) {
+      bubbleNode.innerHTML = renderMarkdown(output);
+    } else {
+      bubbleNode.textContent = errorText;
+    }
+    history.push({ role: 'assistant', content: output || errorText });
+  };
+
+  /* ── Submit ─────────────────────────────────────────────── */
+  const submitMessage = async (text: string) => {
+    const content = text.trim();
+    if (!content) return;
+
+    appendMessage('user', content);
+    history.push({ role: 'user', content });
+
+    if (shortcutsEl) shortcutsEl.style.display = 'none';
+
+    setSending(true);
+    const bubbleNode = createThinkingIndicator();
+
+    try {
+      await streamReply(bubbleNode);
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : errorText;
+      bubbleNode.innerHTML = `<p>${escapeHtml(errorText)}</p><p style="opacity:.6;font-size:12px">${escapeHtml(msg)}</p>`;
+    } finally {
+      setSending(false);
+      input.focus();
+    }
+  };
+
+  /* ── Textarea auto-grow ───────────────────────────────────── */
+  const autoGrow = () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  };
+
+  input.addEventListener('input', autoGrow);
+
+  const resetInput = () => {
+    input.value = '';
+    input.style.height = 'auto';
+  };
+
+  /* ── Event listeners ────────────────────────────────────── */
+  fab.addEventListener('click', openPanel);
+  closeBtn.addEventListener('click', closePanel);
+
+  // Enter to send, Shift+Enter for new line
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.dispatchEvent(new Event('submit', { cancelable: true }));
+    }
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const text = input.value;
+    resetInput();
+    await submitMessage(text);
+  });
+
+  if (shortcutsEl) {
+    shortcutsEl.addEventListener('click', async (e) => {
+      const target = e.target as HTMLElement | null;
+      const prompt = target?.getAttribute('data-prompt');
+      if (!prompt) return;
+      openPanel();
+      await submitMessage(prompt);
+    });
+  }
+</script>
+
+<style is:global>
+  /* ── Root container ─────────────────────────────────────── */
+  .oc-chat {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 10000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* ── FAB ─────────────────────────────────────────────────── */
+  .oc-fab {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+    color: #ffcf0d;
+    cursor: pointer;
+    box-shadow:
+      0 8px 32px rgb(0 0 0 / 0.3),
+      0 0 0 1px rgb(255 207 13 / 0.15);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  }
+
+  .oc-fab:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow:
+      0 12px 40px rgb(0 0 0 / 0.35),
+      0 0 0 2px rgb(255 207 13 / 0.3);
+  }
+
+  .oc-fab:active {
+    transform: translateY(-1px) scale(0.97);
+  }
+
+  .oc-fab.is-hidden {
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .oc-fab__icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .oc-fab__pulse {
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 2px solid rgb(255 207 13 / 0.5);
+    animation: ocPulse 2.5s ease-out infinite;
+    pointer-events: none;
+  }
+
+  /* ── Panel ───────────────────────────────────────────────── */
+  .oc-panel {
+    position: absolute;
+    right: 0;
+    bottom: 72px;
+    width: 400px;
+    max-width: calc(100vw - 32px);
+    height: 580px;
+    max-height: 80vh;
+    background: #f5f6f8;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow:
+      0 24px 80px rgb(0 0 0 / 0.2),
+      0 0 0 1px rgb(0 0 0 / 0.06);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(16px) scale(0.96);
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .oc-panel.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+
+  /* ── Header ──────────────────────────────────────────────── */
+  .oc-panel__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .oc-panel__header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .oc-panel__avatar--header {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgb(255 207 13 / 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .oc-panel__avatar--header svg {
+    width: 20px;
+    height: 20px;
+    color: #ffcf0d;
+  }
+
+  .oc-panel__title {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .oc-panel__status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 2px;
+    font-size: 12px;
+    color: rgb(255 255 255 / 0.65);
+  }
+
+  .oc-panel__status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 6px rgb(74 222 128 / 0.6);
+  }
+
+  .oc-panel__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 0.08);
+    color: rgb(255 255 255 / 0.7);
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .oc-panel__close svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .oc-panel__close:hover {
+    background: rgb(255 255 255 / 0.15);
+    color: #fff;
+  }
+
+  /* ── Messages area ───────────────────────────────────────── */
+  .oc-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    scroll-behavior: smooth;
+  }
+
+  .oc-messages::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .oc-messages::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .oc-messages::-webkit-scrollbar-thumb {
+    background: rgb(0 0 0 / 0.12);
+    border-radius: 10px;
+  }
+
+  /* ── Message row ─────────────────────────────────────────── */
+  .oc-msg {
+    display: flex;
+    gap: 8px;
+    max-width: 88%;
+    animation: ocMsgIn 0.3s ease both;
+  }
+
+  .oc-msg--bot {
+    margin-right: auto;
+    align-items: flex-start;
+  }
+
+  .oc-msg--user {
+    margin-left: auto;
+    flex-direction: row-reverse;
+  }
+
+  .oc-msg__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .oc-msg__avatar svg {
+    width: 15px;
+    height: 15px;
+    color: #ffcf0d;
+  }
+
+  /* ── Bubbles ─────────────────────────────────────────────── */
+  .oc-msg__bubble {
+    padding: 10px 14px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  .oc-msg__bubble--bot {
+    background: #fff;
+    color: #1a1a2e;
+    border-radius: 4px 14px 14px 14px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.06);
+  }
+
+  .oc-msg__bubble--user {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+    color: #fff;
+    border-radius: 14px 4px 14px 14px;
+    white-space: pre-wrap;
+  }
+
+  /* ── Rich text inside bot bubbles ────────────────────────── */
+  .oc-rich p {
+    margin: 0 0 4px;
+  }
+
+  .oc-rich p:last-child {
+    margin-bottom: 0;
+  }
+
+  .oc-rich strong {
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+
+  .oc-rich em {
+    font-style: italic;
+    color: #4a4a5a;
+  }
+
+  .oc-rich code {
+    background: #f0f0f3;
+    color: #c7254e;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+  }
+
+  .oc-rich pre {
+    background: #1a1a2e;
+    color: #e4e4e7;
+    padding: 8px 10px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 4px 0;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .oc-rich pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+    font-size: inherit;
+  }
+
+  .oc-rich h1, .oc-rich h2, .oc-rich h3, .oc-rich h4 {
+    font-weight: 600;
+    margin: 6px 0 2px;
+    line-height: 1.3;
+    color: #1a1a2e;
+  }
+
+  .oc-rich h1 { font-size: 15px; }
+  .oc-rich h2 { font-size: 14px; }
+  .oc-rich h3 { font-size: 13.5px; }
+  .oc-rich h4 { font-size: 13px; }
+
+  .oc-rich ul, .oc-rich ol {
+    margin: 2px 0;
+    padding-left: 18px;
+  }
+
+  .oc-rich li {
+    margin-bottom: 1px;
+  }
+
+  .oc-rich li::marker {
+    color: #ffcf0d;
+  }
+
+  .oc-rich a {
+    color: #2563eb;
+    text-decoration: underline;
+    text-decoration-color: rgb(37 99 235 / 0.3);
+    text-underline-offset: 2px;
+    transition: text-decoration-color 0.15s ease;
+  }
+
+  .oc-rich a:hover {
+    text-decoration-color: #2563eb;
+  }
+
+  /* ── Typing indicator ────────────────────────────────────── */
+  .oc-typing {
+    display: flex;
+    gap: 4px;
+    padding: 4px 0;
+  }
+
+  .oc-typing span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #b0b0b8;
+    animation: ocBounce 1.2s ease-in-out infinite;
+  }
+
+  .oc-typing span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .oc-typing span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  /* ── Shortcuts ───────────────────────────────────────────── */
+  .oc-shortcuts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 4px 0 8px 38px;
+  }
+
+  .oc-shortcuts button {
+    border: 1.5px solid #ffcf0d;
+    background: #fff;
+    color: #1a1a2e;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  }
+
+  .oc-shortcuts button:hover {
+    background: #ffcf0d;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgb(255 207 13 / 0.3);
+  }
+
+  .oc-shortcuts button:active {
+    transform: translateY(0);
+  }
+
+  .oc-contact {
+    display: flex;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #fff;
+    border-top: 1px solid rgb(0 0 0 / 0.06);
+    border-bottom: 1px solid rgb(0 0 0 / 0.06);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-shrink: 0;
+  }
+
+  .oc-contact a {
+    flex: 0 0 auto;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #fff;
+    border: 1px solid transparent;
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+
+  .oc-contact a:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+  }
+
+  .oc-contact a:nth-child(1) { background: #25D366; }
+  .oc-contact a:nth-child(2) { background: #2CA5E0; }
+  .oc-contact a:nth-child(3) { background: #0A66C2; }
+  .oc-contact a:nth-child(4) { background: #1877F2; }
+
+  /* ── Input area ──────────────────────────────────────────── */
+  .oc-input {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 12px 14px;
+    background: #fff;
+    border-top: 1px solid rgb(0 0 0 / 0.06);
+    flex-shrink: 0;
+  }
+
+  .oc-input textarea {
+    flex: 1;
+    min-width: 0;
+    border: 1.5px solid #e5e5ea;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 1.45;
+    background: #f9f9fb;
+    color: #1a1a2e;
+    outline: none;
+    resize: none;
+    overflow-y: auto;
+    max-height: 120px;
+    font-family: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .oc-input textarea::placeholder {
+    color: #a0a0aa;
+  }
+
+  .oc-input textarea:focus {
+    border-color: #ffcf0d;
+    box-shadow: 0 0 0 3px rgb(255 207 13 / 0.15);
+    background: #fff;
+  }
+
+  .oc-input button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+    color: #ffcf0d;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .oc-input button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .oc-input button:hover:not(:disabled) {
+    transform: scale(1.06);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.2);
+  }
+
+  .oc-input button:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+
+  .oc-input button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  /* ── Mobile ──────────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .oc-chat {
+      right: 16px;
+      bottom: 16px;
+    }
+
+    .oc-fab {
+      width: 52px;
+      height: 52px;
+    }
+
+    .oc-fab__icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    .oc-panel {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      max-height: 100%;
+      border-radius: 0;
+      transform: translateY(100%);
+    }
+
+    .oc-panel.is-open {
+      transform: translateY(0);
+    }
+  }
+
+  /* ── Animations ──────────────────────────────────────────── */
+  @keyframes ocPulse {
+    0% {
+      transform: scale(0.95);
+      opacity: 0.7;
+    }
+    70% {
+      transform: scale(1.25);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1.25);
+      opacity: 0;
+    }
+  }
+
+  @keyframes ocMsgIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes ocBounce {
+    0%, 60%, 100% {
+      transform: translateY(0);
+    }
+    30% {
+      transform: translateY(-5px);
+    }
+  }
+</style>

@@ -1,0 +1,136 @@
+---
+interface Props {
+  post: {
+    id: string;
+    slug?: string;
+    data: {
+      title: string;
+      description: string;
+      date: string;
+      author: string;
+      tags: string[];
+      image?: string;
+      readingTime?: string;
+    };
+  };
+  locale: 'zh' | 'en';
+  prevPost: Props['post'] | null;
+  nextPost: Props['post'] | null;
+}
+
+const { post, locale, prevPost, nextPost } = Astro.props;
+
+const isZh = locale === 'zh';
+const prefix = isZh ? 'zh-' : 'en-';
+const blogBase = isZh ? '/zh/blog' : '/blog';
+const backLabel = isZh ? '返回博客' : 'Back to Blog';
+const prevLabel = isZh ? '上一篇' : 'Previous';
+const nextLabel = isZh ? '下一篇' : 'Next';
+const dateLocale = isZh ? 'zh-CN' : 'en-US';
+
+const dirPrefix = isZh ? 'zh/' : 'en/';
+const slugFromId = (id: string) =>
+  id
+    .replace(new RegExp(`^${prefix}`), '')
+    .replace(new RegExp(`^${dirPrefix}`), '');
+const slugFromPost = (p: { id: string; slug?: string }) => (p.slug && p.slug.trim() ? p.slug.trim() : slugFromId(p.id));
+
+const formattedDate = new Date(post.data.date).toLocaleDateString(dateLocale, {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Estimate reading time (~300 chars/min for Chinese, ~200 words/min for English)
+const readingTime = post.data.readingTime || (isZh ? '5 分钟阅读' : '5 min read');
+
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": post.data.title,
+  "description": post.data.description,
+  "datePublished": post.data.date,
+  "author": {
+    "@type": "Organization",
+    "name": post.data.author,
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Bidmosaic",
+    "url": "https://www.bidmosaic.com",
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": new URL(`${blogBase}/${slugFromPost(post)}/`, 'https://www.bidmosaic.com').href,
+  },
+  ...(post.data.image ? { "image": new URL(post.data.image, 'https://www.bidmosaic.com').href } : {}),
+});
+---
+
+<article class="pt-32 pb-24" style="background: var(--bg-secondary);">
+  <div class="container max-w-3xl">
+    <!-- Back -->
+    <a
+      href={`${blogBase}/`}
+      class="inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors mb-8"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+      </svg>
+      {backLabel}
+    </a>
+
+    <!-- Header -->
+    <header class="mb-12" data-animate>
+      <div class="flex flex-wrap gap-2 mb-4">
+        {post.data.tags.map((tag: string) => (
+          <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-[var(--bg-primary)] text-[var(--text-secondary)]">
+            {tag}
+          </span>
+        ))}
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] leading-tight mb-4">
+        {post.data.title}
+      </h1>
+      <div class="flex items-center gap-4 text-sm text-[var(--text-muted)]">
+        <span>{post.data.author}</span>
+        <span>&middot;</span>
+        <time datetime={post.data.date}>{formattedDate}</time>
+        <span>&middot;</span>
+        <span>{readingTime}</span>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div
+      class="article-content prose prose-lg max-w-none"
+      lang={isZh ? 'zh' : 'en'}
+      data-animate
+    >
+      <slot />
+    </div>
+
+    <!-- Navigation -->
+    <nav class="mt-16 pt-8 border-t border-[var(--text-muted)]/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {prevPost && (
+        <a href={`${blogBase}/${slugFromPost(prevPost)}/`} class="glow-card p-5 group">
+          <span class="text-xs text-[var(--text-muted)] mb-1 block">{prevLabel}</span>
+          <span class="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[#e6b800] transition-colors line-clamp-2">
+            {prevPost.data.title}
+          </span>
+        </a>
+      )}
+      {nextPost && (
+        <a href={`${blogBase}/${slugFromPost(nextPost)}/`} class="glow-card p-5 group text-right sm:col-start-2">
+          <span class="text-xs text-[var(--text-muted)] mb-1 block">{nextLabel}</span>
+          <span class="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[#e6b800] transition-colors line-clamp-2">
+            {nextPost.data.title}
+          </span>
+        </a>
+      )}
+    </nav>
+  </div>
+</article>
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json" set:html={jsonLd} />

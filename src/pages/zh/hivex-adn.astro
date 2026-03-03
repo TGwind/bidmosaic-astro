@@ -1,0 +1,172 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import CtaSection from '@components/CtaSection.astro';
+import { useTranslations, getLocalePath } from '@i18n/utils';
+
+const locale = 'zh';
+const t = useTranslations(locale);
+
+const features = [
+  { title: t.hivex_adn.feature1_title, desc: t.hivex_adn.feature1_desc, icon: 'M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z' },
+  { title: t.hivex_adn.feature2_title, desc: t.hivex_adn.feature2_desc, icon: 'M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3' },
+  { title: t.hivex_adn.feature3_title, desc: t.hivex_adn.feature3_desc, icon: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z' },
+  { title: t.hivex_adn.feature4_title, desc: t.hivex_adn.feature4_desc, icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z' },
+];
+
+const metrics = [
+  { value: t.hivex_adn.metric1_value, label: t.hivex_adn.metric1_label },
+  { value: t.hivex_adn.metric2_value, label: t.hivex_adn.metric2_label },
+  { value: t.hivex_adn.metric3_value, label: t.hivex_adn.metric3_label },
+];
+---
+
+<BaseLayout title={t.hivex_adn.title} locale={locale}>
+  <!-- Hero Banner -->
+  <section class="relative py-32 overflow-hidden">
+    <div class="absolute inset-0 z-0" style="background: var(--gradient-hero);"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none" style="background: var(--gradient-glow);"></div>
+    <div class="container relative z-10 text-center" data-animate>
+
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[var(--bg-dark)] mb-4">{t.hivex_adn.title}</h1>
+      <p class="text-xl sm:text-2xl text-[var(--text-secondary)] mb-8 max-w-2xl mx-auto">{t.hivex_adn.tagline}</p>
+      <a href={getLocalePath('/contact/', locale)} class="btn btn-primary text-base px-8 py-3.5">
+        {t.product_common.cta_btn}
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Product Description -->
+  <section class="section-darker py-20">
+    <div class="container max-w-3xl" data-animate>
+      <p class="text-lg text-[var(--text-secondary)] leading-relaxed text-center">{t.hivex_adn.desc}</p>
+    </div>
+  </section>
+
+  <!-- Module Overview: HiveX ADN -->
+  <section class="py-20" style="background: #fff; border-top: 1px solid #e2e8f0;">
+    <div class="container">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto" data-animate>
+        <!-- Left: text -->
+        <div>
+          <h2 class="text-3xl font-bold mb-4" style="color: #1e293b;">
+            HiveX ADN<br>
+            <span style="color: #ffb800;">全球广告联盟 · 擅长美洲市场</span>
+          </h2>
+          <p class="mb-8 leading-relaxed" style="font-size: 15px; color: #64748b; line-height: 1.75;">
+            Bidmosaic 旗下全球广告联盟，整合海量优质流量资源，支持 CPA/CPS/CPI/CPL 多种效果计费模式。深耕北美·拉美 Tier 1 核心市场，自研效果营销引擎，帮助企业低成本高回报地实现用户增长。
+          </p>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex items-start gap-3 p-3.5 rounded-xl" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+              <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(255,184,0,0.1); color: #ffb800;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-0.5" style="font-size: 13px; color: #1e293b;">CPA/CPS/CPI/CPL</h4>
+                <p style="font-size: 12px; color: #64748b; line-height: 1.5;">多种效果计费模式，精准匹配不同企业的增长需求</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3.5 rounded-xl" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+              <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(255,184,0,0.1); color: #ffb800;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-0.5" style="font-size: 13px; color: #1e293b;">厂商流量</h4>
+                <p style="font-size: 12px; color: #64748b; line-height: 1.5;">互联网、APP、媒体厂商独家优质流量，资源独家、用户精准</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3.5 rounded-xl" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+              <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(255,184,0,0.1); color: #ffb800;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-0.5" style="font-size: 13px; color: #1e293b;">效果营销引擎</h4>
+                <p style="font-size: 12px; color: #64748b; line-height: 1.5;">自主研发智能系统，广告花最少的钱获取最多有效转化</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3.5 rounded-xl" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+              <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(255,184,0,0.1); color: #ffb800;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-0.5" style="font-size: 13px; color: #1e293b;">美洲市场专注</h4>
+                <p style="font-size: 12px; color: #64748b; line-height: 1.5;">深耕北美·拉美 Tier 1 GEO，服务 BetMGM 等头部博彩品牌</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Right: metrics -->
+        <div class="rounded-2xl p-7 flex flex-col gap-3" style="background: linear-gradient(135deg, #0f172a 0%, #1a1200 100%);">
+          <div class="flex items-center justify-between rounded-xl px-4 py-3.5" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);">
+            <div>
+              <div style="font-size: 12px; color: rgba(255,255,255,0.55);">CPA 日均转化</div>
+              <div style="font-size: 20px; font-weight: 700; color: #fff;">300+</div>
+            </div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 600;">↑ 稳定输出</div>
+          </div>
+          <div class="flex items-center justify-between rounded-xl px-4 py-3.5" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);">
+            <div>
+              <div style="font-size: 12px; color: rgba(255,255,255,0.55);">月安装量</div>
+              <div style="font-size: 20px; font-weight: 700; color: #fff;">30,000+</div>
+            </div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 600;">↑ 持续增长</div>
+          </div>
+          <div class="flex items-center justify-between rounded-xl px-4 py-3.5" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);">
+            <div>
+              <div style="font-size: 12px; color: rgba(255,255,255,0.55);">CPI 最优降幅</div>
+              <div style="font-size: 20px; font-weight: 700; color: #fff;">-45%</div>
+            </div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 600;">↓ 持续优化</div>
+          </div>
+          <div class="flex items-center justify-between rounded-xl px-4 py-3.5" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);">
+            <div>
+              <div style="font-size: 12px; color: rgba(255,255,255,0.55);">核心市场</div>
+              <div style="font-size: 20px; font-weight: 700; color: #fff;">Tier 1</div>
+            </div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 600;">美洲·英国</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section-dark py-24">
+    <div class="container">
+      <h2 class="text-3xl font-bold text-[var(--text-primary)] text-center mb-16" data-animate>{t.product_common.features_title}</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto items-stretch" data-stagger-parent>
+        {features.map((f) => (
+          <div class="glow-card p-7 flex items-start gap-5 h-full" data-stagger-child>
+            <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-[#ffcf0d]/20 flex items-center justify-center">
+              <svg class="w-5 h-5 text-[#1a1a2e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d={f.icon} />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-[var(--text-primary)] mb-1.5">{f.title}</h3>
+              <p class="text-sm text-[var(--text-secondary)] leading-relaxed">{f.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Metrics -->
+  <section class="section-darker py-20">
+    <div class="container">
+      <h2 class="text-3xl font-bold text-[var(--text-primary)] text-center mb-12" data-animate>{t.product_common.cases_title}</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto items-stretch" data-stagger-parent>
+        {metrics.map((m) => (
+          <div class="glow-card p-8 text-center h-full" data-stagger-child>
+            <div class="text-3xl sm:text-4xl font-bold text-[#e6b800] mb-2">{m.value}</div>
+            <div class="text-sm text-[var(--text-muted)]">{m.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <CtaSection locale={locale} />
+</BaseLayout>

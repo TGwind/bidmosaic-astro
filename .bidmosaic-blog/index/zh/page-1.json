@@ -1,0 +1,68 @@
+[
+  {
+    "id": "b750ff48-9ccf-4635-bf69-345392478873",
+    "slug": "bidmosaic-h5-interactive-ads-introduction",
+    "locale": "zh",
+    "title": "Bidmosaic H5互动广告解决方案：让创意与转化真正同频",
+    "description": "在流量红利见顶的时代，单一素材已难以打动用户。本文系统介绍 Bidmosaic H5 互动广告解决方案的核心能力、应用场景与实操流程，帮助出海广告主提升点击率、参与度与转化效果。",
+    "date": "2026-03-03",
+    "author": "Bidmosaic",
+    "tags": [
+      "Bidmosaic",
+      "H5互动广告",
+      "移动广告",
+      "出海营销",
+      "效果广告"
+    ],
+    "readingTime": "6 分钟阅读"
+  },
+  {
+    "id": "52068b21-e90f-43f2-abc2-05e86a9c88ab",
+    "slug": "ai-programmatic-advertising-trends-2026",
+    "locale": "zh",
+    "title": "AI程序化广告的未来：2026年行业趋势展望",
+    "description": "深入分析2026年AI程序化广告的六大趋势，包括大模型驱动的智能出价、H5互动创意自动化、隐私计算与无Cookie定向等前沿话题。",
+    "date": "2026-02-20",
+    "author": "Bidmosaic",
+    "tags": [
+      "AI",
+      "程序化广告",
+      "行业趋势",
+      "智能营销"
+    ],
+    "image": "/images/blog/ai-trends.jpg"
+  },
+  {
+    "id": "eb0ae96a-5415-4f4c-9ef4-3ccf94a065a3",
+    "slug": "dsp-platform-guide",
+    "locale": "zh",
+    "title": "DSP平台选型指南：广告主必读的核心评估维度",
+    "description": "从流量质量、AI能力、数据透明度等7个维度，帮助广告主选择最适合的DSP程序化广告平台。",
+    "date": "2026-02-05",
+    "author": "Bidmosaic",
+    "tags": [
+      "DSP",
+      "平台选型",
+      "程序化广告",
+      "广告技术"
+    ],
+    "image": "/images/blog/dsp-guide.jpg"
+  },
+  {
+    "id": "9ceb92dc-b8a0-451b-8d89-2966acd1b47d",
+    "slug": "cpa-cpi-cpl-settlement-models",
+    "locale": "zh",
+    "title": "CPA vs CPI vs CPL：效果广告结算模式全解析",
+    "description": "详细对比CPA、CPI、CPS、CPL等主流效果广告结算模式的适用场景、优劣势和选择策略，助力广告主优化投放策略。",
+    "date": "2026-01-20",
+    "author": "Bidmosaic",
+    "tags": [
+      "效果广告",
+      "CPA",
+      "CPI",
+      "结算模式",
+      "广告投放"
+    ],
+    "image": "/images/blog/settlement-models.jpg"
+  }
+]

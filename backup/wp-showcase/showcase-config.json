@@ -1,0 +1,35 @@
+{
+    "contacts": [
+        {
+            "platform": "linkedin",
+            "label": "LinkedIn",
+            "url": "https:\/\/www.linkedin.com\/company\/bidmosaic\/posts\/?feedView=all&viewAsMember=true",
+            "qr": "\/showcase\/uploads\/qr-0.png"
+        },
+        {
+            "platform": "whatsapp",
+            "label": "WhatsApp",
+            "url": "https:\/\/wa.me\/8618989466574",
+            "qr": "\/showcase\/uploads\/qr-1.png"
+        },
+        {
+            "platform": "telegram",
+            "label": "Telegram",
+            "url": "https:\/\/t.me\/+8618989466574",
+            "qr": "\/showcase\/uploads\/qr-2.png"
+        },
+        {
+            "platform": "teams",
+            "label": "Teams",
+            "url": "",
+            "qr": ""
+        },
+        {
+            "platform": "wechat",
+            "label": "微信",
+            "url": "",
+            "qr": ""
+        }
+    ],
+    "caseImages": {}
+}

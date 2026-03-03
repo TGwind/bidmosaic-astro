@@ -1,0 +1,311 @@
+---
+import Nav from '@components/Nav.astro';
+import Footer from '@components/Footer.astro';
+import OpenclawWidget from '@components/chat/OpenclawWidget.astro';
+import { getLocalePath } from '@i18n/utils';
+import '@styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  locale?: 'zh' | 'en';
+}
+
+const {
+  title,
+  description = 'Bidmosaic - AI 驱动的效果型程序化增长平台',
+  locale = 'zh',
+} = Astro.props;
+
+const alternateLocale = locale === 'zh' ? 'en' : 'zh';
+const currentPath = Astro.url.pathname;
+const basePath = currentPath.replace(/^\/(zh|en)(?=\/|$)/, '') || '/';
+const alternatePath = getLocalePath(basePath, alternateLocale);
+---
+
+<!doctype html>
+<html lang={locale === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={`${title} | Bidmosaic`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={new URL(currentPath, 'https://www.bidmosaic.com').href} />
+    <meta property="og:site_name" content="Bidmosaic" />
+    <meta property="og:locale" content={locale === 'zh' ? 'zh_CN' : 'en_US'} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} | Bidmosaic`} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={new URL(currentPath, 'https://www.bidmosaic.com').href} />
+
+    <!-- Alternate language -->
+    <link rel="alternate" hreflang={locale === 'zh' ? 'zh-Hans' : 'en'} href={new URL(currentPath, 'https://www.bidmosaic.com').href} />
+    <link rel="alternate" hreflang={alternateLocale === 'zh' ? 'zh-Hans' : 'en'} href={new URL(alternatePath, 'https://www.bidmosaic.com').href} />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon-bidmosaic-bee.png" />
+
+    <title>{title} | Bidmosaic</title>
+  </head>
+  <body class="min-h-screen overflow-x-hidden">
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress" class="scroll-progress" aria-hidden="true"></div>
+
+    <!-- Custom Cursor Glow (desktop only) -->
+    <div id="cursor-glow" class="cursor-glow" aria-hidden="true"></div>
+
+    <Nav locale={locale} />
+    <main>
+      <slot />
+    </main>
+    <Footer locale={locale} />
+    <OpenclawWidget locale={locale} />
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top" aria-label="Back to top">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      </svg>
+    </button>
+
+    <!-- GSAP -->
+    <script>
+      import { gsap } from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // ========== Scroll Progress Bar ==========
+      const progressBar = document.getElementById('scroll-progress');
+      if (progressBar) {
+        window.addEventListener('scroll', () => {
+          const scrollTop = window.scrollY;
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+          progressBar.style.width = `${progress}%`;
+        }, { passive: true });
+      }
+
+      // ========== Back to Top Button ==========
+      const backToTop = document.getElementById('back-to-top');
+      if (backToTop) {
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 600) {
+            backToTop.classList.add('visible');
+          } else {
+            backToTop.classList.remove('visible');
+          }
+        }, { passive: true });
+        backToTop.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      // ========== Custom Cursor Glow (desktop) ==========
+      const cursorGlow = document.getElementById('cursor-glow');
+      if (cursorGlow && !prefersReducedMotion && window.innerWidth >= 1024) {
+        let mouseX = 0, mouseY = 0;
+        let glowX = 0, glowY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+          glowX += (mouseX - glowX) * 0.15;
+          glowY += (mouseY - glowY) * 0.15;
+          cursorGlow.style.transform = `translate(${glowX - 200}px, ${glowY - 200}px)`;
+          requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Show/hide on mouse enter/leave
+        document.addEventListener('mouseenter', () => { cursorGlow.style.opacity = '1'; });
+        document.addEventListener('mouseleave', () => { cursorGlow.style.opacity = '0'; });
+      }
+
+      // ========== Magnetic Buttons ==========
+      if (!prefersReducedMotion && window.innerWidth >= 1024) {
+        document.querySelectorAll<HTMLElement>('.btn-primary, .btn-cta').forEach((btn) => {
+          btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px) scale(1.03)`;
+          });
+          btn.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+          });
+        });
+      }
+
+      // ========== Button Ripple Effect ==========
+      document.querySelectorAll<HTMLElement>('.btn').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          const rect = btn.getBoundingClientRect();
+          const ripple = document.createElement('span');
+          ripple.className = 'btn-ripple';
+          const size = Math.max(rect.width, rect.height);
+          ripple.style.width = ripple.style.height = `${size}px`;
+          ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+          ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+          btn.appendChild(ripple);
+          ripple.addEventListener('animationend', () => ripple.remove());
+        });
+      });
+
+      // Skip scroll animations if user prefers reduced motion
+      if (!prefersReducedMotion) {
+        // Animate all elements with data-animate attribute
+        gsap.utils.toArray<HTMLElement>('[data-animate]').forEach((el) => {
+          gsap.from(el, {
+            y: 60,
+            opacity: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 85%',
+              once: true,
+            },
+          });
+        });
+
+        // Staggered card animations
+        gsap.utils.toArray<HTMLElement>('[data-stagger-parent]').forEach((parent) => {
+          const children = parent.querySelectorAll('[data-stagger-child]');
+          const isBlogGrid = !!parent.querySelector('.blog-card');
+
+          // Pre-hint for smoother 3D cards animation.
+          gsap.set(children, {
+            willChange: 'transform, opacity, filter',
+            transformPerspective: 1000,
+            transformOrigin: '50% 100%',
+          });
+
+          gsap.fromTo(children, {
+            y: isBlogGrid ? 20 : 36,
+            scale: isBlogGrid ? 0.97 : 0.95,
+            rotateX: isBlogGrid ? 6 : 10,
+            rotateY: isBlogGrid ? 0 : -2,
+            filter: 'blur(8px)',
+            opacity: 0,
+          }, {
+            y: 0,
+            scale: 1,
+            rotateX: 0,
+            rotateY: 0,
+            filter: 'blur(0px)',
+            opacity: 1,
+            duration: isBlogGrid ? 0.8 : 0.9,
+            stagger: {
+              each: 0.12,
+              from: 'start',
+            },
+            ease: 'back.out(1.35)',
+            overwrite: 'auto',
+            onComplete: () => {
+              // Remove inline styles left by GSAP to avoid persistent visual offsets.
+              gsap.set(children, { clearProps: 'transform,opacity,filter,will-change,perspective,transform-origin' });
+            },
+            scrollTrigger: {
+              trigger: parent,
+              start: 'top 80%',
+              once: true,
+            },
+          });
+        });
+
+        // Counter animations
+        gsap.utils.toArray<HTMLElement>('[data-counter]').forEach((el) => {
+          const target = parseFloat(el.dataset.counter || '0');
+          const suffix = el.dataset.counterSuffix || '';
+          const obj = { val: 0 };
+          gsap.to(obj, {
+            val: target,
+            duration: 2,
+            ease: 'power1.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 90%',
+              once: true,
+            },
+            onUpdate: () => {
+              el.textContent = Math.floor(obj.val).toLocaleString() + suffix;
+            },
+          });
+        });
+
+        // ========== Section title text reveal ==========
+        gsap.utils.toArray<HTMLElement>('[data-text-reveal]').forEach((el) => {
+          const text = el.textContent || '';
+          el.innerHTML = text.split('').map((char) =>
+            char === ' ' ? ' ' : `<span class="text-reveal-char">${char}</span>`
+          ).join('');
+
+          gsap.from(el.querySelectorAll('.text-reveal-char'), {
+            opacity: 0,
+            y: 20,
+            rotateX: -90,
+            stagger: 0.03,
+            duration: 0.5,
+            ease: 'back.out(1.7)',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 85%',
+              once: true,
+            },
+            onComplete: () => {
+              el.classList.add('revealed');
+            },
+          });
+        });
+
+        // ========== Scroll-triggered scale animations ==========
+        gsap.utils.toArray<HTMLElement>('[data-animate-scale]').forEach((el) => {
+          ScrollTrigger.create({
+            trigger: el,
+            start: 'top 85%',
+            once: true,
+            onEnter: () => el.classList.add('visible'),
+          });
+        });
+
+        // ========== Parallax floating backgrounds ==========
+        gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {
+          const speed = parseFloat(el.dataset.parallax || '0.1');
+          gsap.to(el, {
+            y: () => window.innerHeight * speed,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: el.parentElement,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1,
+            },
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

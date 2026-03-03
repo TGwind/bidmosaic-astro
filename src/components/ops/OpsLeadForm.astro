@@ -1,0 +1,660 @@
+---
+interface Props {
+  appId: string;
+  entryId: string;
+}
+
+const { appId, entryId } = Astro.props;
+---
+
+<section class="ops-page">
+  <div class="ops-container">
+    <header class="ops-header" data-animate>
+      <h1>线索录入</h1>
+      <p>拍摄或上传名片，AI 自动提取后提交到简道云</p>
+    </header>
+
+    <div class="ops-grid" data-animate>
+      <!-- 上传区 -->
+      <div class="ops-box">
+        <h2 class="ops-box-title">上传名片</h2>
+        <div id="uploadZone" class="upload-zone">
+          <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <p class="mobile-hint">拍摄名片或从相册选取</p>
+          <div class="upload-actions">
+            <span class="upload-btn" id="cameraBtn">拍照</span>
+            <span class="upload-btn secondary" id="uploadBtn">选择图片</span>
+          </div>
+          <p class="upload-hint">支持 JPG / PNG / WEBP · 最大 10MB</p>
+        </div>
+
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" />
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" />
+
+        <div id="previewArea" class="preview-area">
+          <img id="previewImg" class="preview-img" alt="preview" />
+          <span class="re-upload-btn" id="reUploadBtn">↩ 重新上传</span>
+        </div>
+
+        <div id="statusBar"></div>
+      </div>
+
+      <!-- 信息填写区 -->
+      <div class="ops-box">
+        <h2 class="ops-box-title">客户信息</h2>
+
+        <div class="section-label">AI 识别字段</div>
+        <label class="field-group">
+          <span class="field-label">客户公司名称</span>
+          <input type="text" id="f_company_name" placeholder="识别后自动填入，可修改" autocomplete="off" />
+        </label>
+        <label class="field-group">
+          <span class="field-label">客户姓名</span>
+          <input type="text" id="f_customer_name" placeholder="识别后自动填入，可修改" autocomplete="off" />
+        </label>
+        <label class="field-group">
+          <span class="field-label">职位</span>
+          <input type="text" id="f_position" placeholder="识别后自动填入，可修改" autocomplete="off" />
+        </label>
+        <label class="field-group">
+          <span class="field-label">工作邮箱</span>
+          <input type="text" id="f_work_email" placeholder="识别后自动填入，可修改" autocomplete="off" inputmode="email" />
+        </label>
+        <label class="field-group">
+          <span class="field-label">联系方式</span>
+          <input type="text" id="f_contact_info" placeholder="邮箱 / 手机号 / LinkedIn 等" autocomplete="off" />
+        </label>
+        <label class="field-group">
+          <span class="field-label">总结信息</span>
+          <textarea id="f_summary" rows="3" placeholder="AI 自动总结名片关键信息"></textarea>
+        </label>
+
+        <div class="section-label">手动填写字段</div>
+        <label class="field-group">
+          <span class="field-label">线索来源</span>
+          <select id="f_lead_source">
+            <option value="">请选择</option>
+            <option value="展会">展会</option>
+            <option value="客户推介">客户推介</option>
+            <option value="陌拜">陌拜</option>
+            <option value="社交媒体">社交媒体</option>
+            <option value="其他">其他</option>
+          </select>
+        </label>
+
+        <button class="submit-btn" id="submitBtn" type="button">确认提交到简道云</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</section>
+
+<style>
+  .ops-page { padding: 1.75rem 1rem 4rem; background: #f0f6ff; min-height: calc(100vh - 52px); }
+  .ops-container { max-width: 1120px; margin: 0 auto; }
+
+  /* 页头 */
+  .ops-header { text-align: center; margin-bottom: 1.75rem; }
+  .ops-header h1 {
+    font-size: clamp(1.35rem, 3vw, 1.9rem);
+    color: #0f172a;
+    margin: 0 0 .45rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+  }
+  .ops-header p { color: #64748b; margin: 0; font-size: .9rem; }
+
+  /* 双列网格 */
+  .ops-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+
+  /* 卡片 */
+  .ops-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.25rem;
+    border: 1px solid #e2ecf8;
+    box-shadow: 0 4px 20px rgba(3,105,161,.07), 0 1px 4px rgba(0,0,0,.04);
+  }
+  .ops-box-title {
+    margin: 0 0 1rem;
+    font-size: .95rem;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .ops-box-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 1em;
+    background: linear-gradient(180deg, #0369a1, #0ea5e9);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* 上传区 */
+  .upload-zone {
+    border: 2px dashed #bfdbfe;
+    border-radius: 12px;
+    padding: 1.5rem .75rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .85rem;
+    background: #fafcff;
+  }
+  .upload-zone:hover, .upload-zone.drag-over { border-color: #0ea5e9; background: #eff8ff; }
+  .upload-icon { width: 38px; height: 38px; color: #93c5fd; }
+  .mobile-hint { color: #64748b; font-size: .9rem; margin: 0; }
+  .upload-actions { display: flex; gap: .55rem; flex-wrap: wrap; justify-content: center; }
+  .upload-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 1.1rem;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #0369a1, #0ea5e9);
+    color: #fff;
+    font-weight: 600;
+    font-size: .87rem;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(14,165,233,.3);
+  }
+  .upload-btn.secondary {
+    background: #fff;
+    color: #0369a1;
+    border: 1.5px solid #bae6fd;
+    box-shadow: none;
+  }
+  .upload-hint { margin: 0; color: #94a3b8; font-size: .75rem; }
+  #fileInput, #cameraInput { display: none; }
+
+  .preview-area { display: none; }
+  .preview-img { width: 100%; max-height: 260px; object-fit: contain; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; }
+  .re-upload-btn { display: inline-flex; margin-top: .65rem; color: #0369a1; cursor: pointer; font-size: .875rem; }
+
+  #statusBar { margin-top: .75rem; display: none; }
+  .status { padding: .65rem .8rem; border-radius: 9px; font-size: .84rem; line-height: 1.5; display: flex; gap: .6rem; align-items: flex-start; }
+  .status.loading { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  .status.error   { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+  .status.success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .spinner { width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; margin-top: .15rem; flex-shrink: 0; }
+
+  /* 表单字段 */
+  .section-label {
+    margin: 1rem 0 .7rem;
+    font-size: .7rem;
+    color: #94a3b8;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  /* 横排对齐：标签固定宽 + 输入框占剩余空间 */
+  .field-group {
+    display: flex;
+    align-items: flex-start;
+    gap: .65rem;
+    margin-bottom: .65rem;
+  }
+  .field-label {
+    flex: 0 0 5.5rem;
+    text-align: right;
+    padding-top: .6rem;
+    color: #334155;
+    font-size: .85rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .field-group input[type='text'],
+  .field-group textarea,
+  .field-group select {
+    flex: 1;
+    min-width: 0;
+  }
+  input[type='text'], textarea, select {
+    width: 100%;
+    min-height: 42px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9px;
+    background: #fafcff;
+    padding: .6rem .75rem;
+    font-size: .92rem;
+    color: #111827;
+    outline: none;
+    font-family: inherit;
+    transition: border-color .15s, box-shadow .15s, background .15s;
+  }
+  textarea { resize: vertical; min-height: 84px; }
+  input[type='text']:focus, textarea:focus, select:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 3px rgba(14,165,233,.13);
+    background: #fff;
+  }
+
+  /* 提交按钮 */
+  .submit-btn {
+    width: 100%;
+    margin-top: .9rem;
+    min-height: 48px;
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: .96rem;
+    cursor: pointer;
+    letter-spacing: .02em;
+    box-shadow: 0 5px 18px rgba(14,165,233,.38);
+    transition: opacity .15s, transform .1s, box-shadow .15s;
+  }
+  .submit-btn:hover { opacity: .92; box-shadow: 0 7px 22px rgba(14,165,233,.48); }
+  .submit-btn:active { transform: scale(.98); }
+  .submit-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 1.5rem;
+    transform: translateX(-50%) translateY(14px);
+    border-radius: 10px;
+    font-size: .86rem;
+    color: #fff;
+    padding: .75rem 1.1rem;
+    box-shadow: 0 10px 32px rgba(15,23,42,.28);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s, transform .25s;
+    z-index: 999;
+    max-width: calc(100vw - 2rem);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { background: #16a34a; }
+  .toast.error { background: #dc2626; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (min-width: 880px) {
+    .ops-grid { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .ops-box { padding: 1.5rem; }
+  }
+</style>
+
+<script define:vars={{ appId, entryId }} is:inline>
+  const QWEN_URL = '/api/qwen';
+  const JDY_URL = '/api/ops/jiandaoyun-submit';
+  const JDY_UPLOAD_TOKEN_URL = '/api/jiandaoyun/upload-token';
+  const APP_ID = appId;
+  const ENTRY_ID = entryId;
+
+  const FIELD_MAP = {
+    _widget_1767583879189: 'f_company_name',
+    _widget_0201001000001: 'f_customer_name',
+    _widget_1772010432107: 'f_position',
+    _widget_1772010432109: 'f_work_email',
+    _widget_0201001000003: 'f_contact_info',
+  };
+
+  const MAX_SIZE = 1600;
+  const JPEG_QUALITY = 0.85;
+  const QWEN_MODEL = 'qwen-vl-max';
+
+  function generateUUID() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+    });
+  }
+
+  function base64ToBlob(base64, mime) {
+    const binary = atob(base64);
+    const arr = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  }
+
+  async function uploadCardImage(transactionId) {
+    const tokenRes = await fetch(JDY_UPLOAD_TOKEN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ app_id: APP_ID, entry_id: ENTRY_ID, transaction_id: transactionId }),
+    });
+    if (!tokenRes.ok) {
+      const err = await tokenRes.json().catch(() => ({}));
+      throw new Error(err.error || err.msg || `Token request failed: HTTP ${tokenRes.status}`);
+    }
+    const tokenData = await tokenRes.json();
+    const first = tokenData.token_and_url_list?.[0];
+    if (!first) throw new Error('No upload token received');
+
+    const ext = currentMime === 'image/png' ? 'png' : 'jpg';
+    const blob = base64ToBlob(currentBase64, currentMime);
+    const file = new File([blob], `card.${ext}`, { type: currentMime });
+
+    const formData = new FormData();
+    formData.append('token', first.token);
+    formData.append('file', file);
+
+    const uploadRes = await fetch(first.url, { method: 'POST', body: formData });
+    if (!uploadRes.ok) {
+      const err = await uploadRes.json().catch(() => ({}));
+      throw new Error(err.error || `Upload failed: HTTP ${uploadRes.status}`);
+    }
+    const uploadData = await uploadRes.json();
+    if (!uploadData.key) throw new Error('No file key in upload response');
+    return uploadData.key;
+  }
+
+  let currentBase64 = '';
+  let currentMime = 'image/jpeg';
+  let isRecognizing = false;
+
+  const uploadZone = document.getElementById('uploadZone');
+  const fileInput = document.getElementById('fileInput');
+  const cameraInput = document.getElementById('cameraInput');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const cameraBtn = document.getElementById('cameraBtn');
+  const submitBtn = document.getElementById('submitBtn');
+
+  uploadZone.addEventListener('click', () => fileInput.click());
+  uploadBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+  cameraBtn.addEventListener('click', (e) => { e.stopPropagation(); cameraInput.click(); });
+
+  uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('drag-over');
+  });
+  uploadZone.addEventListener('dragleave', (e) => {
+    if (!uploadZone.contains(e.relatedTarget)) uploadZone.classList.remove('drag-over');
+  });
+  uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+    handleFile(e.dataTransfer.files[0]);
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+    fileInput.value = '';
+  });
+
+  cameraInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+    cameraInput.value = '';
+  });
+
+  document.getElementById('reUploadBtn').addEventListener('click', resetUpload);
+  submitBtn.addEventListener('click', submitData);
+
+  function handleFile(file) {
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+    if (!allowedTypes.includes(file.type) && !file.name.match(/\.(jpe?g|png|webp|heic)$/i)) {
+      showStatus('error', '不支持的文件格式，请上传 JPG / PNG / WEBP 图片');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showStatus('error', '图片大小不能超过 10MB');
+      return;
+    }
+
+    currentMime = file.type && file.type !== 'image/heic' ? file.type : 'image/jpeg';
+    const reader = new FileReader();
+    reader.onerror = () => showStatus('error', '文件读取失败，请重试');
+    reader.onload = (ev) => {
+      document.getElementById('uploadZone').style.display = 'none';
+      document.getElementById('previewArea').style.display = 'block';
+      document.getElementById('previewImg').src = ev.target.result;
+
+      compressImage(ev.target.result, file.type)
+        .then(({ base64, mime }) => {
+          currentBase64 = base64;
+          currentMime = mime;
+          recognizeImage();
+        })
+        .catch(() => {
+          currentBase64 = ev.target.result.split(',')[1];
+          recognizeImage();
+        });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function compressImage(dataUrl, originalMime) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > MAX_SIZE || height > MAX_SIZE) {
+          if (width >= height) {
+            height = Math.round((height * MAX_SIZE) / width);
+            width = MAX_SIZE;
+          } else {
+            width = Math.round((width * MAX_SIZE) / height);
+            height = MAX_SIZE;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        const outputMime = originalMime === 'image/png' ? 'image/png' : 'image/jpeg';
+        const quality = outputMime === 'image/jpeg' ? JPEG_QUALITY : undefined;
+        const compressed = canvas.toDataURL(outputMime, quality);
+        resolve({ base64: compressed.split(',')[1], mime: outputMime });
+      };
+      img.src = dataUrl;
+    });
+  }
+
+  async function recognizeImage() {
+    if (isRecognizing) return;
+    isRecognizing = true;
+    setSubmitDisabled(true);
+    showStatus('loading', 'AI 识别中，请稍候...');
+
+    const prompt = `请仔细识别图片中名片上的所有文字信息，以纯 JSON 格式返回以下字段：
+{
+  "客户公司名称": "公司或组织全称",
+  "客户姓名": "人名或姓名",
+  "职位": "职位或头衔，没有则返回空字符串",
+  "工作邮箱": "工作邮箱地址，没有则返回空字符串",
+  "联系方式": "所有手机号、座机号、邮箱地址、LinkedIn URL等联系信息，用 / 分隔拼接为一个字符串",
+  "总结信息": "用一两句话总结这张名片的关键信息，包括此人的身份、公司、职位及主要联系方式"
+}
+只返回 JSON 对象本身，不要 markdown 代码块或任何说明文字。识别不到的字段返回空字符串。`;
+
+    try {
+      const res = await fetch(QWEN_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: QWEN_MODEL,
+          input: {
+            messages: [
+              {
+                role: 'user',
+                content: [
+                  { image: `data:${currentMime};base64,${currentBase64}` },
+                  { text: prompt },
+                ],
+              },
+            ],
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || err.msg || `HTTP ${res.status}`);
+      }
+
+      const result = await res.json();
+      const msgContent = result?.output?.choices?.[0]?.message?.content;
+      let text = '';
+      if (Array.isArray(msgContent)) {
+        text = msgContent.find((c) => c.text)?.text || '';
+      } else if (typeof msgContent === 'string') {
+        text = msgContent;
+      }
+
+      if (!text) throw new Error('AI 返回内容为空，请重试');
+      const match = text.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('AI 返回格式异常，请重试');
+
+      let parsed;
+      try {
+        parsed = JSON.parse(match[0]);
+      } catch {
+        throw new Error('AI 返回 JSON 解析失败，请重试');
+      }
+
+      fillForm(parsed);
+      showStatus('success', '识别完成，请核对信息后提交');
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      showStatus('error', '识别失败：' + message);
+    } finally {
+      isRecognizing = false;
+      setSubmitDisabled(false);
+    }
+  }
+
+  function fillForm(data) {
+    document.getElementById('f_company_name').value = data['客户公司名称'] || '';
+    document.getElementById('f_customer_name').value = data['客户姓名'] || '';
+    document.getElementById('f_position').value = data['职位'] || '';
+    document.getElementById('f_work_email').value = data['工作邮箱'] || '';
+    document.getElementById('f_contact_info').value = data['联系方式'] || '';
+    document.getElementById('f_summary').value = data['总结信息'] || '';
+  }
+
+  function clearForm() {
+    Object.values(FIELD_MAP).forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('f_lead_source').value = '';
+    document.getElementById('f_summary').value = '';
+  }
+
+  function resetUpload() {
+    document.getElementById('uploadZone').style.display = 'flex';
+    document.getElementById('previewArea').style.display = 'none';
+    document.getElementById('statusBar').style.display = 'none';
+    document.getElementById('statusBar').innerHTML = '';
+    isRecognizing = false;
+    currentBase64 = '';
+    clearForm();
+    setSubmitDisabled(false);
+  }
+
+  async function submitData() {
+    if (isRecognizing) {
+      showToast('error', 'AI 识别中，请稍候再提交');
+      return;
+    }
+
+    const companyName = document.getElementById('f_company_name').value.trim();
+    const customerName = document.getElementById('f_customer_name').value.trim();
+    if (!companyName && !customerName) {
+      showToast('error', '「客户公司名称」或「客户姓名」至少填写一项');
+      return;
+    }
+
+    setSubmitDisabled(true);
+
+    const data = {};
+    for (const [widgetId, inputId] of Object.entries(FIELD_MAP)) {
+      const val = document.getElementById(inputId).value.trim();
+      if (val) data[widgetId] = { value: val };
+    }
+
+    const summary = document.getElementById('f_summary').value.trim();
+    if (summary) data._widget_1631071302527 = { value: summary };
+
+    const leadSource = document.getElementById('f_lead_source').value;
+    if (leadSource) data._widget_1631071302443 = { value: leadSource };
+
+    data._widget_0201001000006 = { value: ['6959bf406d725c2268426cfb'] };
+
+    let transactionId = null;
+    if (currentBase64) {
+      transactionId = generateUUID();
+      try {
+        showStatus('loading', '名片图片上传中...');
+        const key = await uploadCardImage(transactionId);
+        data._widget_1772100426294 = { value: [key] };
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        showStatus('error', '图片上传失败：' + message);
+        setSubmitDisabled(false);
+        return;
+      }
+    }
+
+    showToast('success', '提交成功！数据已录入简道云');
+    resetUpload();
+
+    const body = { app_id: APP_ID, entry_id: ENTRY_ID, data };
+    if (transactionId) body.transaction_id = transactionId;
+
+    const ac = new AbortController();
+    const timer = setTimeout(() => ac.abort(), 20000);
+
+    try {
+      const res = await fetch(JDY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: ac.signal,
+      });
+      clearTimeout(timer);
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(result.msg || result.message || `HTTP ${res.status}`);
+    } catch (e) {
+      clearTimeout(timer);
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        showToast('error', '同步超时，数据可能未保存，请重新提交');
+      } else {
+        const message = e instanceof Error ? e.message : String(e);
+        showToast('error', '同步失败：' + message + '，请重新提交');
+      }
+    }
+  }
+
+  function setSubmitDisabled(disabled) {
+    submitBtn.disabled = disabled;
+  }
+
+  function showStatus(type, msg) {
+    const bar = document.getElementById('statusBar');
+    bar.style.display = 'block';
+    const spinner = type === 'loading' ? '<div class="spinner"></div>' : '';
+    bar.innerHTML = `<div class="status ${type}">${spinner}<span>${msg}</span></div>`;
+  }
+
+  function showToast(type, msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.className = `toast ${type} show`;
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.className = 'toast';
+    }, 3500);
+  }
+</script>

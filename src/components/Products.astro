@@ -1,0 +1,282 @@
+---
+import { useTranslations, getLocalePath } from '@i18n/utils';
+import type { Locale } from '@i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const products = [
+  {
+    title: t.products.hive_dsp_title,
+    desc: t.products.hive_dsp_desc,
+    href: getLocalePath('/insights/?domain=tech', locale),
+    icon: '/images/products/hive-dsp-card.png',
+    gradient: 'from-blue-500 via-cyan-400 to-purple-500',
+    gradientCSS: 'linear-gradient(135deg, #3B82F6, #22D3EE, #A855F7)',
+  },
+  {
+    title: t.products.hivex_adn_title,
+    desc: t.products.hivex_adn_desc,
+    href: getLocalePath('/insights/?domain=ai', locale),
+    icon: '/images/products/hivex-adn-card.png',
+    gradient: 'from-amber-400 via-orange-500 to-red-500',
+    gradientCSS: 'linear-gradient(135deg, #FBBF24, #F97316, #EF4444)',
+  },
+  {
+    title: t.products.h5_engine_title,
+    desc: t.products.h5_engine_desc,
+    href: getLocalePath('/insights/?domain=finance', locale),
+    icon: '/images/products/h5-engine-card.png',
+    gradient: 'from-emerald-400 via-teal-500 to-cyan-500',
+    gradientCSS: 'linear-gradient(135deg, #34D399, #14B8A6, #06B6D4)',
+  },
+];
+---
+
+<section id="products" class="section-darker py-24 relative overflow-hidden">
+  <!-- Floating decorative elements -->
+  <div class="floating-shape shape-1" aria-hidden="true"></div>
+  <div class="floating-shape shape-2" aria-hidden="true"></div>
+
+  <div class="container relative z-10">
+    <!-- Header -->
+    <div class="text-center mb-16" data-animate>
+      <h2 class="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4" data-text-reveal>{t.products.section_title}</h2>
+      <p class="text-[var(--text-secondary)] max-w-xl mx-auto">{t.products.section_subtitle}</p>
+    </div>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch" data-stagger-parent>
+      {products.map((product, i) => (
+        <a
+          href={product.href}
+          class="product-card-wrapper group h-full"
+          data-stagger-child
+          data-tilt
+        >
+          {/* Gradient border wrapper */}
+          <div class="product-card-border" style={`--card-gradient: ${product.gradientCSS}`}>
+            <div class="product-card-inner flex flex-col">
+              {/* Mouse glow effect */}
+              <div class="card-glow" aria-hidden="true"></div>
+              {/* Shine sweep */}
+              <div class="card-shine" aria-hidden="true"></div>
+
+              {/* Icon */}
+              <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 relative overflow-hidden" style={`background: ${product.gradientCSS};`}>
+                <img
+                  src={product.icon}
+                  alt={`${product.title} icon`}
+                  class="w-14 h-14 object-contain absolute inset-0 m-auto"
+                  style="transform: scale(3.2); transform-origin: center;"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                />
+              </div>
+
+              {/* Title */}
+              <h3 class="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-transparent group-hover:bg-clip-text transition-all duration-300" style={`--title-gradient: ${product.gradientCSS}`}>
+                {product.title}
+              </h3>
+
+              {/* Description */}
+              <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-6 flex-1">
+                {product.desc}
+              </p>
+
+              {/* Link */}
+              <span class="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-primary)] mt-auto">
+                {t.products.learn_more}
+                <svg class="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ========== Gradient Border Card ========== */
+  .product-card-wrapper {
+    perspective: 800px;
+    display: block;
+  }
+
+  .product-card-border {
+    position: relative;
+    padding: 2px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Animated rotating gradient border on hover */
+  .product-card-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 22px;
+    background: conic-gradient(from var(--border-angle, 0deg), transparent, var(--card-gradient), transparent, var(--card-gradient), transparent);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: -1;
+    animation: spin-border 4s linear infinite;
+  }
+
+  @keyframes spin-border {
+    to { --border-angle: 360deg; }
+  }
+
+  .product-card-wrapper:hover .product-card-border {
+    background: var(--card-gradient);
+    box-shadow:
+      0 0 20px rgba(0, 0, 0, 0.2),
+      0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  .product-card-wrapper:hover .product-card-border::before {
+    opacity: 0.6;
+  }
+
+  .product-card-inner {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-card);
+    border-radius: 18px;
+    padding: 2rem;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    flex: 1;
+  }
+
+  /* ========== Mouse Glow ========== */
+  .card-glow {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+
+  .product-card-wrapper:hover .card-glow {
+    opacity: 1;
+  }
+
+  /* ========== Shine Sweep ========== */
+  .card-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.15) 45%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 55%
+    );
+    pointer-events: none;
+    z-index: 2;
+    transition: none;
+  }
+
+  .product-card-wrapper:hover .card-shine {
+    animation: shine-sweep 0.8s ease-in-out;
+  }
+
+  @keyframes shine-sweep {
+    0% { left: -100%; }
+    100% { left: 150%; }
+  }
+
+  /* ========== Title gradient on hover ========== */
+  .group:hover h3 {
+    background-image: var(--title-gradient);
+  }
+
+  /* ========== Floating Shapes ========== */
+  .floating-shape {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.08;
+    z-index: 0;
+  }
+
+  .shape-1 {
+    width: 300px;
+    height: 300px;
+    top: -80px;
+    right: -60px;
+    background: linear-gradient(135deg, #3B82F6, #A855F7);
+    animation: float-slow 12s ease-in-out infinite;
+  }
+
+  .shape-2 {
+    width: 200px;
+    height: 200px;
+    bottom: -40px;
+    left: -40px;
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    animation: float-slow 15s ease-in-out infinite reverse;
+  }
+
+  @keyframes float-slow {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(20px, -20px) rotate(5deg); }
+    66% { transform: translate(-15px, 15px) rotate(-3deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .floating-shape { animation: none; }
+    .card-shine { display: none; }
+  }
+</style>
+
+<script>
+  // 3D Tilt + Mouse Glow effect
+  document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((card) => {
+    const inner = card.querySelector<HTMLElement>('.product-card-inner');
+    const glow = card.querySelector<HTMLElement>('.card-glow');
+    if (!inner || !glow) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      // 3D tilt
+      const rotateX = ((y - centerY) / centerY) * -8;
+      const rotateY = ((x - centerX) / centerX) * 8;
+      inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+
+      // Mouse glow position
+      glow.style.left = `${x}px`;
+      glow.style.top = `${y}px`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      inner.style.transform = 'rotateX(0) rotateY(0) scale(1)';
+    });
+  });
+</script>

@@ -1,0 +1,639 @@
+---
+interface Props {
+  locale: 'zh' | 'en';
+  appId: string;
+  entryId: string;
+}
+
+const { locale, appId, entryId } = Astro.props;
+---
+
+<section class="contact-card-page">
+  <div class="contact-card-container">
+    <header class="contact-card-header" data-animate>
+      <h1 id="cc-title"></h1>
+      <p id="cc-subtitle"></p>
+    </header>
+
+    <div class="contact-card-grid" data-animate>
+      <div class="contact-card-box">
+        <h2 class="contact-box-title" id="cc-upload-title"></h2>
+        <div id="uploadZone" class="upload-zone">
+          <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <p class="mobile-hint" id="cc-mobile-hint"></p>
+          <div class="upload-actions">
+            <span class="upload-btn" id="cameraBtn"></span>
+            <span class="upload-btn secondary" id="uploadBtn"></span>
+          </div>
+          <p class="upload-hint" id="cc-upload-hint"></p>
+        </div>
+
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" />
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" />
+
+        <div id="previewArea" class="preview-area">
+          <img id="previewImg" class="preview-img" alt="preview" />
+          <span class="re-upload-btn" id="reUploadBtn"></span>
+        </div>
+
+        <div id="statusBar"></div>
+      </div>
+
+      <div class="contact-card-box">
+        <h2 class="contact-box-title" id="cc-info-title"></h2>
+
+        <div class="section-label" id="cc-section-ai"></div>
+        <label class="field-group">
+          <span class="field-label" id="label-company"></span>
+          <input type="text" id="f_company_name" autocomplete="off" />
+        </label>
+        <label class="field-group">
+          <span class="field-label" id="label-customer"></span>
+          <input type="text" id="f_customer_name" autocomplete="off" />
+        </label>
+        <label class="field-group">
+          <span class="field-label" id="label-position"></span>
+          <input type="text" id="f_position" autocomplete="off" />
+        </label>
+        <label class="field-group">
+          <span class="field-label" id="label-email"></span>
+          <input type="text" id="f_work_email" autocomplete="off" inputmode="email" />
+        </label>
+        <label class="field-group">
+          <span class="field-label" id="label-contact"></span>
+          <input type="text" id="f_contact_info" autocomplete="off" />
+        </label>
+        <label class="field-group">
+          <span class="field-label" id="label-summary"></span>
+          <textarea id="f_summary" rows="3"></textarea>
+        </label>
+
+        <div class="section-label" id="cc-section-manual"></div>
+        <label class="field-group">
+          <span class="field-label" id="label-biz"></span>
+          <select id="f_biz_type">
+            <option value=""></option>
+            <option value="Advertiser">Advertiser</option>
+            <option value="Affiliate">Affiliate</option>
+            <option value="Ad Network">Ad Network</option>
+            <option value="Agency">Agency</option>
+            <option value="Solution Provider">Solution Provider</option>
+            <option value="Others">Others</option>
+          </select>
+        </label>
+
+        <button class="submit-btn" id="submitBtn" type="button"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</section>
+
+<style>
+  .contact-card-page { padding: 8.5rem 1rem 4rem; background: linear-gradient(180deg, #f3f7ff 0%, #fafaf9 42%, #f5f5f4 100%); min-height: 100vh; }
+  .contact-card-container { max-width: 1120px; margin: 0 auto; }
+  .contact-card-header { text-align: center; margin-bottom: 1.5rem; }
+  .contact-card-header h1 { font-size: clamp(1.6rem, 3.4vw, 2.4rem); color: #111827; margin: 0 0 .5rem; }
+  .contact-card-header p { color: #4b5563; margin: 0; }
+  .contact-card-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  .contact-card-box { background: #fff; border-radius: 14px; padding: 1rem; border: 1px solid #e5e7eb; box-shadow: 0 10px 30px rgba(17,24,39,.06); }
+  .contact-box-title { margin: 0 0 1rem; font-size: 1rem; color: #111827; }
+
+  .upload-zone { border: 2px dashed #d1d5db; border-radius: 10px; padding: 1.25rem .75rem; text-align: center; cursor: pointer; transition: .2s; display: flex; flex-direction: column; align-items: center; gap: .8rem; }
+  .upload-zone:hover, .upload-zone.drag-over { border-color: #0ea5e9; background: #f0f9ff; }
+  .upload-icon { width: 36px; height: 36px; color: #9ca3af; }
+  .mobile-hint { color: #6b7280; font-size: .9rem; margin: 0; }
+  .upload-actions { display: flex; gap: .55rem; flex-wrap: wrap; justify-content: center; }
+  .upload-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 1rem; border-radius: 8px; background: #0ea5e9; color: #fff; font-weight: 600; font-size: .88rem; }
+  .upload-btn.secondary { background: #fff; color: #0369a1; border: 1px solid #bae6fd; }
+  .upload-hint { margin: 0; color: #9ca3af; font-size: .75rem; }
+  #fileInput, #cameraInput { display: none; }
+
+  .preview-area { display: none; }
+  .preview-img { width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; background: #f9fafb; }
+  .re-upload-btn { display: inline-flex; margin-top: .6rem; color: #0369a1; cursor: pointer; font-size: .875rem; }
+
+  #statusBar { margin-top: .75rem; display: none; }
+  .status { padding: .65rem .75rem; border-radius: 8px; font-size: .85rem; line-height: 1.5; display: flex; gap: .6rem; }
+  .status.loading { background: #eff6ff; color: #1d4ed8; }
+  .status.error { background: #fef2f2; color: #b91c1c; }
+  .status.success { background: #f0fdf4; color: #15803d; }
+  .spinner { width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; margin-top: .15rem; }
+
+  .section-label { margin: 1rem 0 .75rem; font-size: .72rem; color: #94a3b8; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .field-group { display: block; margin-bottom: .75rem; }
+  .field-label { display: inline-flex; align-items: center; gap: .4rem; margin-bottom: .35rem; color: #374151; font-size: .86rem; font-weight: 600; }
+  input[type='text'], textarea, select { width: 100%; min-height: 42px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; padding: .6rem .7rem; font-size: .92rem; color: #111827; outline: none; font-family: inherit; }
+  textarea { resize: vertical; min-height: 84px; }
+  input[type='text']:focus, textarea:focus, select:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,.14); }
+
+  .submit-btn { width: 100%; margin-top: .8rem; min-height: 46px; border: 0; border-radius: 10px; background: #0369a1; color: #fff; font-weight: 700; font-size: .96rem; cursor: pointer; }
+  .submit-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+  .toast { position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%) translateY(12px); border-radius: 9px; font-size: .86rem; color: #fff; padding: .7rem 1rem; box-shadow: 0 8px 24px rgba(15,23,42,.25); opacity: 0; pointer-events: none; transition: .25s; z-index: 999; max-width: calc(100vw - 2rem); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { background: #16a34a; }
+  .toast.error { background: #dc2626; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (min-width: 880px) {
+    .contact-card-grid { grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .contact-card-box { padding: 1.2rem; }
+  }
+</style>
+
+<script define:vars={{ locale, appId, entryId }} is:inline>
+  const LANG = {
+    zh: {
+      title: '智能名片识别',
+      subtitle: '拍摄或上传名片，AI 自动提取并保存客户信息',
+      uploadTitle: '上传图片',
+      mobileHint: '拍摄名片或从相册选取',
+      cameraBtn: '拍照',
+      uploadBtn: '选择图片',
+      uploadHint: '支持 JPG / PNG / WEBP · 最大 10MB',
+      reUpload: '↩ 重新上传',
+      infoTitle: '客户信息',
+      sectionAi: 'AI 识别字段',
+      sectionManual: '手动填写字段',
+      company: '客户公司名称',
+      customer: '客户姓名',
+      position: '职位',
+      workEmail: '工作邮箱',
+      contactInfo: '联系方式',
+      summary: '总结信息',
+      bizType: '客户业务类型',
+      placeholderAuto: '识别后自动填入，可修改',
+      placeholderContact: '邮箱 / 手机号 / LinkedIn 等',
+      placeholderSummary: 'AI 自动总结名片关键信息',
+      selectDefault: '请选择',
+      submitBtn: '确认提交',
+      recognizing: 'AI 识别中，请稍候...',
+      recognized: '识别完成，请核对信息后提交',
+      errFormat: '不支持的文件格式，请上传 JPG / PNG / WEBP 图片',
+      errSize: '图片大小不能超过 10MB',
+      errRead: '文件读取失败，请重试',
+      errEmpty: 'AI 返回内容为空，请重试',
+      errFmt2: 'AI 返回格式异常，请重试',
+      errJson: 'AI 返回 JSON 解析失败，请重试',
+      errRecog: '识别失败：',
+      requireField: '「客户公司名称」或「客户姓名」至少填写一项',
+      toastWait: 'AI 识别中，请稍候再提交',
+      toastOk: '提交成功！',
+      toastTimeout: '同步超时，数据可能未保存，请重新提交',
+      toastSyncFail: '同步失败：',
+      toastRetry: '，请重新提交',
+      uploading: '名片图片上传中...',
+      errUpload: '图片上传失败：',
+    },
+    en: {
+      title: 'Smart Card Scanner',
+      subtitle: 'Take or upload a card, let AI extract and save contact details',
+      uploadTitle: 'Upload Image',
+      mobileHint: 'Take a card photo or choose from gallery',
+      cameraBtn: 'Camera',
+      uploadBtn: 'Select Image',
+      uploadHint: 'Supports JPG / PNG / WEBP · Max 10MB',
+      reUpload: '↩ Re-upload',
+      infoTitle: 'Customer Info',
+      sectionAi: 'AI-Extracted Fields',
+      sectionManual: 'Manual Fields',
+      company: 'Company Name',
+      customer: 'Contact Name',
+      position: 'Job Title',
+      workEmail: 'Work Email',
+      contactInfo: 'Contact Info',
+      summary: 'Summary',
+      bizType: 'Business Type',
+      placeholderAuto: 'Auto-filled after recognition, editable',
+      placeholderContact: 'Email / Phone / LinkedIn, etc.',
+      placeholderSummary: 'AI-generated key summary',
+      selectDefault: 'Please select',
+      submitBtn: 'Submit',
+      recognizing: 'Recognizing, please wait...',
+      recognized: 'Recognition complete. Verify and submit.',
+      errFormat: 'Unsupported format. Please upload JPG / PNG / WEBP.',
+      errSize: 'Image must be under 10MB.',
+      errRead: 'File read failed. Please retry.',
+      errEmpty: 'AI returned empty content. Please retry.',
+      errFmt2: 'AI returned invalid format. Please retry.',
+      errJson: 'AI JSON parse failed. Please retry.',
+      errRecog: 'Recognition failed: ',
+      requireField: 'Please fill at least company or contact name.',
+      toastWait: 'AI is recognizing. Please wait.',
+      toastOk: 'Submitted successfully!',
+      toastTimeout: 'Sync timed out. Please submit again.',
+      toastSyncFail: 'Sync failed: ',
+      toastRetry: '. Please resubmit.',
+      uploading: 'Uploading card image...',
+      errUpload: 'Image upload failed: ',
+    },
+  };
+
+  const currentLang = locale === 'en' ? 'en' : 'zh';
+  const t = LANG[currentLang];
+
+  const QWEN_URL = '/api/qwen';
+  const JDY_URL = '/api/jiandaoyun';
+  const JDY_UPLOAD_TOKEN_URL = '/api/jiandaoyun/upload-token';
+  const APP_ID = appId;
+  const ENTRY_ID = entryId;
+
+  function generateUUID() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+    });
+  }
+
+  function base64ToBlob(base64, mime) {
+    const binary = atob(base64);
+    const arr = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  }
+
+  async function uploadCardImage(transactionId) {
+    const tokenRes = await fetch(JDY_UPLOAD_TOKEN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ app_id: APP_ID, entry_id: ENTRY_ID, transaction_id: transactionId }),
+    });
+    if (!tokenRes.ok) {
+      const err = await tokenRes.json().catch(() => ({}));
+      throw new Error(err.error || err.msg || `Token request failed: HTTP ${tokenRes.status}`);
+    }
+    const tokenData = await tokenRes.json();
+    const first = tokenData.token_and_url_list?.[0];
+    if (!first) throw new Error('No upload token received');
+
+    const ext = currentMime === 'image/png' ? 'png' : 'jpg';
+    const blob = base64ToBlob(currentBase64, currentMime);
+    const file = new File([blob], `card.${ext}`, { type: currentMime });
+
+    const formData = new FormData();
+    formData.append('token', first.token);
+    formData.append('file', file);
+
+    const uploadRes = await fetch(first.url, { method: 'POST', body: formData });
+    if (!uploadRes.ok) {
+      const err = await uploadRes.json().catch(() => ({}));
+      throw new Error(err.error || `Upload failed: HTTP ${uploadRes.status}`);
+    }
+    const uploadData = await uploadRes.json();
+    if (!uploadData.key) throw new Error('No file key in upload response');
+    return uploadData.key;
+  }
+
+  const FIELD_MAP = {
+    _widget_1767583879189: 'f_company_name',
+    _widget_0201001000001: 'f_customer_name',
+    _widget_1772010432107: 'f_position',
+    _widget_1772010432109: 'f_work_email',
+    _widget_0201001000003: 'f_contact_info',
+  };
+
+  const MAX_SIZE = 1600;
+  const JPEG_QUALITY = 0.85;
+  const QWEN_MODEL = 'qwen-vl-max';
+
+  let currentBase64 = '';
+  let currentMime = 'image/jpeg';
+  let isRecognizing = false;
+
+  const uploadZone = document.getElementById('uploadZone');
+  const fileInput = document.getElementById('fileInput');
+  const cameraInput = document.getElementById('cameraInput');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const cameraBtn = document.getElementById('cameraBtn');
+  const submitBtn = document.getElementById('submitBtn');
+
+  function applyTexts() {
+    document.getElementById('cc-title').textContent = t.title;
+    document.getElementById('cc-subtitle').textContent = t.subtitle;
+    document.getElementById('cc-upload-title').textContent = t.uploadTitle;
+    document.getElementById('cc-mobile-hint').textContent = t.mobileHint;
+    document.getElementById('cameraBtn').textContent = t.cameraBtn;
+    document.getElementById('uploadBtn').textContent = t.uploadBtn;
+    document.getElementById('cc-upload-hint').textContent = t.uploadHint;
+    document.getElementById('reUploadBtn').textContent = t.reUpload;
+    document.getElementById('cc-info-title').textContent = t.infoTitle;
+    document.getElementById('cc-section-ai').textContent = t.sectionAi;
+    document.getElementById('cc-section-manual').textContent = t.sectionManual;
+    document.getElementById('label-company').textContent = t.company;
+    document.getElementById('label-customer').textContent = t.customer;
+    document.getElementById('label-position').textContent = t.position;
+    document.getElementById('label-email').textContent = t.workEmail;
+    document.getElementById('label-contact').textContent = t.contactInfo;
+    document.getElementById('label-summary').textContent = t.summary;
+    document.getElementById('label-biz').textContent = t.bizType;
+    document.getElementById('f_company_name').placeholder = t.placeholderAuto;
+    document.getElementById('f_customer_name').placeholder = t.placeholderAuto;
+    document.getElementById('f_position').placeholder = t.placeholderAuto;
+    document.getElementById('f_work_email').placeholder = t.placeholderAuto;
+    document.getElementById('f_contact_info').placeholder = t.placeholderContact;
+    document.getElementById('f_summary').placeholder = t.placeholderSummary;
+    document.querySelector('#f_biz_type option[value=""]').textContent = t.selectDefault;
+    setSubmitDisabled(false);
+  }
+
+  uploadZone.addEventListener('click', () => fileInput.click());
+  uploadBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+  cameraBtn.addEventListener('click', (e) => { e.stopPropagation(); cameraInput.click(); });
+
+  uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('drag-over');
+  });
+  uploadZone.addEventListener('dragleave', (e) => {
+    if (!uploadZone.contains(e.relatedTarget)) uploadZone.classList.remove('drag-over');
+  });
+  uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+    handleFile(e.dataTransfer.files[0]);
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+    fileInput.value = '';
+  });
+
+  cameraInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+    cameraInput.value = '';
+  });
+
+  document.getElementById('reUploadBtn').addEventListener('click', resetUpload);
+  submitBtn.addEventListener('click', submitData);
+
+  function handleFile(file) {
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+    if (!allowedTypes.includes(file.type) && !file.name.match(/\.(jpe?g|png|webp|heic)$/i)) {
+      showStatus('error', t.errFormat);
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showStatus('error', t.errSize);
+      return;
+    }
+
+    currentMime = file.type && file.type !== 'image/heic' ? file.type : 'image/jpeg';
+    const reader = new FileReader();
+    reader.onerror = () => showStatus('error', t.errRead);
+    reader.onload = (ev) => {
+      document.getElementById('uploadZone').style.display = 'none';
+      document.getElementById('previewArea').style.display = 'block';
+      document.getElementById('previewImg').src = ev.target.result;
+
+      compressImage(ev.target.result, file.type)
+        .then(({ base64, mime }) => {
+          currentBase64 = base64;
+          currentMime = mime;
+          recognizeImage();
+        })
+        .catch(() => {
+          currentBase64 = ev.target.result.split(',')[1];
+          recognizeImage();
+        });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function compressImage(dataUrl, originalMime) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > MAX_SIZE || height > MAX_SIZE) {
+          if (width >= height) {
+            height = Math.round((height * MAX_SIZE) / width);
+            width = MAX_SIZE;
+          } else {
+            width = Math.round((width * MAX_SIZE) / height);
+            height = MAX_SIZE;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+
+        const outputMime = originalMime === 'image/png' ? 'image/png' : 'image/jpeg';
+        const quality = outputMime === 'image/jpeg' ? JPEG_QUALITY : undefined;
+        const compressed = canvas.toDataURL(outputMime, quality);
+        resolve({ base64: compressed.split(',')[1], mime: outputMime });
+      };
+      img.src = dataUrl;
+    });
+  }
+
+  async function recognizeImage() {
+    if (isRecognizing) return;
+    isRecognizing = true;
+    setSubmitDisabled(true);
+    showStatus('loading', t.recognizing);
+
+    const prompt = `请仔细识别图片中名片上的所有文字信息，以纯 JSON 格式返回以下字段：
+{
+  "客户公司名称": "公司或组织全称",
+  "客户姓名": "人名或姓名",
+  "职位": "职位或头衔，没有则返回空字符串",
+  "工作邮箱": "工作邮箱地址，没有则返回空字符串",
+  "联系方式": "所有手机号、座机号、邮箱地址、LinkedIn URL等联系信息，用 / 分隔拼接为一个字符串",
+  "总结信息": "用一两句话总结这张名片的关键信息，包括此人的身份、公司、职位及主要联系方式"
+}
+只返回 JSON 对象本身，不要 markdown 代码块或任何说明文字。识别不到的字段返回空字符串。`;
+
+    try {
+      const res = await fetch(QWEN_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: QWEN_MODEL,
+          input: {
+            messages: [
+              {
+                role: 'user',
+                content: [
+                  { image: `data:${currentMime};base64,${currentBase64}` },
+                  { text: prompt },
+                ],
+              },
+            ],
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || err.msg || `HTTP ${res.status}`);
+      }
+
+      const result = await res.json();
+      const msgContent = result?.output?.choices?.[0]?.message?.content;
+      let text = '';
+      if (Array.isArray(msgContent)) {
+        text = msgContent.find((c) => c.text)?.text || '';
+      } else if (typeof msgContent === 'string') {
+        text = msgContent;
+      }
+
+      if (!text) throw new Error(t.errEmpty);
+      const match = text.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error(t.errFmt2);
+
+      let parsed;
+      try {
+        parsed = JSON.parse(match[0]);
+      } catch {
+        throw new Error(t.errJson);
+      }
+
+      fillForm(parsed);
+      showStatus('success', t.recognized);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      showStatus('error', t.errRecog + message);
+    } finally {
+      isRecognizing = false;
+      setSubmitDisabled(false);
+    }
+  }
+
+  function fillForm(data) {
+    document.getElementById('f_company_name').value = data['客户公司名称'] || '';
+    document.getElementById('f_customer_name').value = data['客户姓名'] || '';
+    document.getElementById('f_position').value = data['职位'] || '';
+    document.getElementById('f_work_email').value = data['工作邮箱'] || '';
+    document.getElementById('f_contact_info').value = data['联系方式'] || '';
+    document.getElementById('f_summary').value = data['总结信息'] || '';
+  }
+
+  function clearForm() {
+    Object.values(FIELD_MAP).forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('f_biz_type').value = '';
+    document.getElementById('f_summary').value = '';
+  }
+
+  function resetUpload() {
+    document.getElementById('uploadZone').style.display = 'flex';
+    document.getElementById('previewArea').style.display = 'none';
+    document.getElementById('statusBar').style.display = 'none';
+    document.getElementById('statusBar').innerHTML = '';
+    isRecognizing = false;
+    currentBase64 = '';
+    clearForm();
+    setSubmitDisabled(false);
+  }
+
+  async function submitData() {
+    if (isRecognizing) {
+      showToast('error', t.toastWait);
+      return;
+    }
+
+    const companyName = document.getElementById('f_company_name').value.trim();
+    const customerName = document.getElementById('f_customer_name').value.trim();
+    if (!companyName && !customerName) {
+      showToast('error', t.requireField);
+      return;
+    }
+
+    setSubmitDisabled(true);
+
+    const data = {};
+    for (const [widgetId, inputId] of Object.entries(FIELD_MAP)) {
+      const val = document.getElementById(inputId).value.trim();
+      if (val) data[widgetId] = { value: val };
+    }
+
+    const bizType = document.getElementById('f_biz_type').value;
+    if (bizType) data._widget_1772010432112 = { value: bizType };
+
+    const summary = document.getElementById('f_summary').value.trim();
+    if (summary) data._widget_1631071302527 = { value: summary };
+
+    data._widget_1631071302443 = { value: '官网' };
+    data._widget_0201001000006 = { value: ['6959bf406d725c2268426cfb'] };
+
+    let transactionId = null;
+    if (currentBase64) {
+      transactionId = generateUUID();
+      try {
+        showStatus('loading', t.uploading);
+        const key = await uploadCardImage(transactionId);
+        data._widget_1772100426294 = { value: [key] };
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        showStatus('error', t.errUpload + message);
+        setSubmitDisabled(false);
+        return;
+      }
+    }
+
+    showToast('success', t.toastOk);
+    resetUpload();
+
+    const body = { app_id: APP_ID, entry_id: ENTRY_ID, data };
+    if (transactionId) body.transaction_id = transactionId;
+
+    const ac = new AbortController();
+    const timer = setTimeout(() => ac.abort(), 20000);
+
+    try {
+      const res = await fetch(JDY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: ac.signal,
+      });
+      clearTimeout(timer);
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(result.msg || result.message || `HTTP ${res.status}`);
+    } catch (e) {
+      clearTimeout(timer);
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        showToast('error', t.toastTimeout);
+      } else {
+        const message = e instanceof Error ? e.message : String(e);
+        showToast('error', t.toastSyncFail + message + t.toastRetry);
+      }
+    }
+  }
+
+  function setSubmitDisabled(disabled) {
+    submitBtn.disabled = disabled;
+    submitBtn.textContent = t.submitBtn;
+  }
+
+  function showStatus(type, msg) {
+    const bar = document.getElementById('statusBar');
+    bar.style.display = 'block';
+    const spinner = type === 'loading' ? '<div class="spinner"></div>' : '';
+    bar.innerHTML = `<div class="status ${type}">${spinner}<span>${msg}</span></div>`;
+  }
+
+  function showToast(type, msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.className = `toast ${type} show`;
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.className = 'toast';
+    }, 3500);
+  }
+
+  applyTexts();
+</script>

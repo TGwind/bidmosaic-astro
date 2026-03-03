@@ -1,0 +1,64 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import BlogPost from '@components/BlogPost.astro';
+import { getCollection, render } from 'astro:content';
+
+export const prerender = false;
+
+const slug = String(Astro.params.slug || '');
+
+const posts = (await getCollection('blog', ({ id }) => id.startsWith('en/')))
+  .filter((p) => p.data.status === 'published')
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+const id = `en/${slug}`;
+const idx = posts.findIndex((p) => p.id === id || p.slug === id);
+const entry = idx >= 0 ? posts[idx] : null;
+const prevEntry = idx > 0 ? posts[idx - 1] : null;
+const nextEntry = idx >= 0 && idx < posts.length - 1 ? posts[idx + 1] : null;
+
+const mapEntry = (p: typeof entry) =>
+  p
+    ? ({
+        id: p.id,
+        slug: p.id.split('/').pop() || '',
+        data: {
+          title: p.data.title,
+          description: p.data.description,
+          date: p.data.date,
+          author: p.data.author,
+          tags: p.data.tags ?? [],
+          ...(p.data.image ? { image: p.data.image } : {}),
+        },
+      } as const)
+    : null;
+
+const post = mapEntry(entry);
+const prevPost = mapEntry(prevEntry as any);
+const nextPost = mapEntry(nextEntry as any);
+
+let SeedContent: any = null;
+if (entry) {
+  const rendered = await render(entry as any);
+  SeedContent = rendered.Content;
+}
+
+if (!post) Astro.response.status = 404;
+---
+
+{post ? (
+  <BaseLayout title={post.data.title} description={post.data.description} locale="en">
+    <BlogPost post={post} locale="en" prevPost={prevPost} nextPost={nextPost}>
+      {SeedContent ? <SeedContent /> : null}
+    </BlogPost>
+  </BaseLayout>
+) : (
+  <BaseLayout title="Not Found" description="Not Found" locale="en">
+    <section class="pt-32 pb-24" style="background: var(--bg-secondary);">
+      <div class="container max-w-3xl">
+        <h1 class="text-2xl font-bold text-[var(--text-primary)] mb-3">Post not found</h1>
+        <a class="text-sm text-[var(--text-secondary)] underline" href="/blog/">Back to blog</a>
+      </div>
+    </section>
+  </BaseLayout>
+)}

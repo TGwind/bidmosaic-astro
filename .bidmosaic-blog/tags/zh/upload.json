@@ -1,0 +1,19 @@
+[
+  {
+    "id": "d1b4754d-03cc-4d88-98e7-9862b618ce31",
+    "slug": "admin-upload-sample",
+    "locale": "zh",
+    "title": "后台上传示例：Markdown 文章（含 frontmatter / 标签 / 封面）",
+    "description": "用于测试 /zh/admin 上传文章功能的一篇示例 Markdown。",
+    "date": "2026-03-02",
+    "author": "Bidmosaic",
+    "tags": [
+      "admin",
+      "upload",
+      "markdown",
+      "sample"
+    ],
+    "image": "https://picsum.photos/seed/bidmosaic-admin/1200/630",
+    "readingTime": "4 分钟阅读"
+  }
+]

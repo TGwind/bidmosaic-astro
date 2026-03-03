@@ -1,0 +1,54 @@
+{
+  "locale": "en",
+  "updatedAt": "2026-03-03T02:55:09.369Z",
+  "tags": [
+    {
+      "tagSlug": "programmatic-advertising",
+      "count": 2
+    },
+    {
+      "tagSlug": "ad-buying",
+      "count": 1
+    },
+    {
+      "tagSlug": "adtech",
+      "count": 1
+    },
+    {
+      "tagSlug": "ai",
+      "count": 1
+    },
+    {
+      "tagSlug": "cpa",
+      "count": 1
+    },
+    {
+      "tagSlug": "cpi",
+      "count": 1
+    },
+    {
+      "tagSlug": "dsp",
+      "count": 1
+    },
+    {
+      "tagSlug": "industry-trends",
+      "count": 1
+    },
+    {
+      "tagSlug": "performance-advertising",
+      "count": 1
+    },
+    {
+      "tagSlug": "platform-selection",
+      "count": 1
+    },
+    {
+      "tagSlug": "settlement-models",
+      "count": 1
+    },
+    {
+      "tagSlug": "smart-marketing",
+      "count": 1
+    }
+  ]
+}

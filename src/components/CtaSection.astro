@@ -1,0 +1,201 @@
+---
+import { useTranslations, getLocalePath } from '@i18n/utils';
+import type { Locale } from '@i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<section id="contact" class="relative py-24 overflow-hidden">
+  <!-- Gradient background -->
+  <div class="absolute inset-0 z-0" style="background: linear-gradient(135deg, #0a0a1a 0%, #111827 40%, #0a0a1a 100%);"></div>
+
+  <!-- Animated gradient mesh -->
+  <div class="cta-mesh absolute inset-0 z-[1]" aria-hidden="true"></div>
+
+  <!-- Glow orbs (animated) -->
+  <div class="cta-orb cta-orb-1 absolute top-0 right-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none z-[1]"></div>
+  <div class="cta-orb cta-orb-2 absolute bottom-0 left-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none z-[1]"></div>
+
+  <!-- Floating stars/particles -->
+  <div class="cta-stars absolute inset-0 z-[2] pointer-events-none" aria-hidden="true">
+    <div class="cta-star" style="top: 10%; left: 15%;"></div>
+    <div class="cta-star" style="top: 25%; left: 80%;"></div>
+    <div class="cta-star" style="top: 60%; left: 10%;"></div>
+    <div class="cta-star" style="top: 75%; left: 70%;"></div>
+    <div class="cta-star" style="top: 40%; left: 50%;"></div>
+    <div class="cta-star" style="top: 85%; left: 35%;"></div>
+    <div class="cta-star" style="top: 15%; left: 55%;"></div>
+    <div class="cta-star" style="top: 50%; left: 90%;"></div>
+  </div>
+
+  <!-- Horizontal light streaks -->
+  <div class="cta-streak cta-streak-1 absolute z-[2] pointer-events-none" aria-hidden="true"></div>
+  <div class="cta-streak cta-streak-2 absolute z-[2] pointer-events-none" aria-hidden="true"></div>
+
+  <div class="container relative z-10 text-center" data-animate>
+    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] mb-4">
+      {t.cta.title}
+    </h2>
+    <p class="text-lg text-[var(--text-secondary)] max-w-lg mx-auto mb-10">
+      {t.cta.subtitle}
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <div class="cta-btn-wrapper relative inline-flex">
+        <div class="cta-pulse-ring" aria-hidden="true"></div>
+        <div class="cta-pulse-ring cta-pulse-ring-2" aria-hidden="true"></div>
+        <a href={getLocalePath('/contact/', locale)} class="btn btn-cta text-base px-8 py-3.5 cta-btn-glow cta-btn-hover relative z-10">
+          {t.cta.btn_contact}
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ========== Animated gradient mesh ========== */
+  .cta-mesh {
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+    animation: cta-mesh-shift 12s ease-in-out infinite;
+  }
+
+  @keyframes cta-mesh-shift {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+
+  /* ========== Glow orbs ========== */
+  .cta-orb-1 {
+    background: rgba(6, 182, 212, 0.06);
+    animation: cta-orb-drift 10s ease-in-out infinite;
+  }
+
+  .cta-orb-2 {
+    background: rgba(59, 130, 246, 0.04);
+    animation: cta-orb-drift 14s ease-in-out infinite reverse;
+  }
+
+  @keyframes cta-orb-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    50% { transform: translate(30px, -20px) scale(1.1); opacity: 1; }
+  }
+
+  /* ========== Floating stars ========== */
+  .cta-star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #06b6d4;
+    animation: star-twinkle 3s ease-in-out infinite;
+  }
+
+  .cta-star:nth-child(2) { animation-delay: 0.5s; width: 3px; height: 3px; }
+  .cta-star:nth-child(3) { animation-delay: 1s; }
+  .cta-star:nth-child(4) { animation-delay: 1.5s; width: 3px; height: 3px; }
+  .cta-star:nth-child(5) { animation-delay: 2s; }
+  .cta-star:nth-child(6) { animation-delay: 0.8s; width: 3px; height: 3px; }
+  .cta-star:nth-child(7) { animation-delay: 1.2s; }
+  .cta-star:nth-child(8) { animation-delay: 2.5s; width: 3px; height: 3px; }
+
+  @keyframes star-twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.5); }
+  }
+
+  /* ========== Light streaks ========== */
+  .cta-streak {
+    height: 1px;
+    width: 200px;
+    background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.3), transparent);
+  }
+
+  .cta-streak-1 {
+    top: 30%;
+    left: -200px;
+    animation: streak-move 8s linear infinite;
+  }
+
+  .cta-streak-2 {
+    top: 70%;
+    right: -200px;
+    animation: streak-move-reverse 10s linear infinite 3s;
+  }
+
+  @keyframes streak-move {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(100vw + 400px)); }
+  }
+
+  @keyframes streak-move-reverse {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-100vw - 400px)); }
+  }
+
+  /* ========== CTA button glow ========== */
+  .cta-btn-glow {
+    animation: cta-glow 3s ease-in-out infinite;
+  }
+
+  .cta-btn-hover {
+    transition: transform 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
+  }
+
+  .cta-btn-hover:hover {
+    transform: translateY(-4px) scale(1.03);
+    filter: brightness(1.08);
+  }
+
+  @keyframes cta-glow {
+    0%, 100% { box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+    50% { box-shadow: 0 8px 30px rgba(6, 182, 212, 0.5), 0 0 50px rgba(6, 182, 212, 0.15); }
+  }
+
+  /* ========== Pulse rings ========== */
+  .cta-btn-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cta-pulse-ring {
+    position: absolute;
+    inset: -4px;
+    border-radius: var(--radius-md);
+    border: 2px solid rgba(6, 182, 212, 0.4);
+    animation: cta-ring-pulse 2.5s ease-out infinite;
+    pointer-events: none;
+  }
+
+  .cta-pulse-ring-2 {
+    animation-delay: 1.25s;
+  }
+
+  @keyframes cta-ring-pulse {
+    0% { opacity: 0.6; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.25); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta-mesh,
+    .cta-orb-1,
+    .cta-orb-2,
+    .cta-star,
+    .cta-streak,
+    .cta-btn-glow,
+    .cta-pulse-ring { animation: none !important; }
+    .cta-btn-hover:hover { transform: none; }
+    .cta-pulse-ring { display: none; }
+  }
+</style>

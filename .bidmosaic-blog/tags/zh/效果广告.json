@@ -1,0 +1,36 @@
+[
+  {
+    "id": "b750ff48-9ccf-4635-bf69-345392478873",
+    "slug": "bidmosaic-h5-interactive-ads-introduction",
+    "locale": "zh",
+    "title": "Bidmosaic H5互动广告解决方案：让创意与转化真正同频",
+    "description": "在流量红利见顶的时代，单一素材已难以打动用户。本文系统介绍 Bidmosaic H5 互动广告解决方案的核心能力、应用场景与实操流程，帮助出海广告主提升点击率、参与度与转化效果。",
+    "date": "2026-03-03",
+    "author": "Bidmosaic",
+    "tags": [
+      "Bidmosaic",
+      "H5互动广告",
+      "移动广告",
+      "出海营销",
+      "效果广告"
+    ],
+    "readingTime": "6 分钟阅读"
+  },
+  {
+    "id": "9ceb92dc-b8a0-451b-8d89-2966acd1b47d",
+    "slug": "cpa-cpi-cpl-settlement-models",
+    "locale": "zh",
+    "title": "CPA vs CPI vs CPL：效果广告结算模式全解析",
+    "description": "详细对比CPA、CPI、CPS、CPL等主流效果广告结算模式的适用场景、优劣势和选择策略，助力广告主优化投放策略。",
+    "date": "2026-01-20",
+    "author": "Bidmosaic",
+    "tags": [
+      "效果广告",
+      "CPA",
+      "CPI",
+      "结算模式",
+      "广告投放"
+    ],
+    "image": "/images/blog/settlement-models.jpg"
+  }
+]

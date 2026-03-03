@@ -1,0 +1,138 @@
+---
+export const prerender = false;
+
+import { validateSession } from '../../lib/server/opsAuth';
+import OpsLeadForm from '../../components/ops/OpsLeadForm.astro';
+
+const cookieHeader = Astro.request.headers.get('cookie');
+if (!(await validateSession(cookieHeader))) {
+  return Astro.redirect('/ops/login');
+}
+
+const appId = import.meta.env.PUBLIC_JIANDAOYUN_APP_ID ?? '';
+const entryId = import.meta.env.PUBLIC_JIANDAOYUN_ENTRY_ID ?? '';
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>商务录入系统</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+      background: #f0f6ff;
+      min-height: 100vh;
+    }
+
+    /* 顶部渐变条 */
+    .top-bar {
+      height: 3px;
+      background: linear-gradient(90deg, #0369a1 0%, #0ea5e9 60%, #38bdf8 100%);
+    }
+
+    /* 工具栏 */
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e9f0f8;
+      padding: .8rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 12px rgba(3, 105, 161, 0.07);
+    }
+
+    /* 左侧品牌区 */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+    }
+    .brand-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 10px rgba(14,165,233,.35);
+      flex-shrink: 0;
+    }
+    .brand-icon svg { width: 18px; height: 18px; }
+    .brand-text {}
+    .brand-title {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.2;
+    }
+    .brand-sub {
+      font-size: .7rem;
+      color: #94a3b8;
+      letter-spacing: .04em;
+      margin-top: 1px;
+    }
+
+    /* 退出按钮 */
+    .logout-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      font-size: .83rem;
+      color: #64748b;
+      text-decoration: none;
+      padding: .45rem .9rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      transition: background .15s, color .15s, border-color .15s;
+      font-weight: 500;
+    }
+    .logout-btn svg { width: 14px; height: 14px; }
+    .logout-btn:hover {
+      background: #f8fafc;
+      color: #374151;
+      border-color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar"></div>
+
+  <div class="toolbar">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/>
+          <path d="M9 12h6M9 16h4"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">商务录入系统</div>
+        <div class="brand-sub">INTERNAL TOOL</div>
+      </div>
+    </div>
+
+    <a href="/api/ops/logout" class="logout-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      退出登录
+    </a>
+  </div>
+
+  <main>
+    <OpsLeadForm appId={appId} entryId={entryId} />
+  </main>
+</body>
+</html>

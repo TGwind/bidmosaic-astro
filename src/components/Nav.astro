@@ -1,0 +1,197 @@
+---
+import { useTranslations, getLocalePath } from '@i18n/utils';
+import type { Locale } from '@i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const altLocale = locale === 'zh' ? 'en' : 'zh';
+const altLabel = locale === 'zh' ? 'EN' : '中';
+
+const currentPath = Astro.url.pathname;
+const currentSearch = Astro.url.search;
+const basePath = currentPath.replace(/^\/(zh|en)(?=\/|$)/, '') || '/';
+const altPathBase = getLocalePath(basePath, altLocale);
+const altPath = `${altPathBase}${currentSearch}`;
+
+const navLinks = [
+  { label: t.nav.home, href: getLocalePath('/', locale) },
+  {
+    label: t.nav.products,
+    href: '#',
+    children: [
+      { label: t.nav.hiveDsp, href: getLocalePath('/insights/?domain=tech', locale) },
+      { label: t.nav.hivexAdn, href: getLocalePath('/insights/?domain=ai', locale) },
+      { label: t.nav.h5Engine, href: getLocalePath('/insights/?domain=finance', locale) },
+    ],
+  },
+  { label: t.nav.insights, href: getLocalePath('/insights/', locale) },
+  { label: t.nav.cases, href: getLocalePath('/#cases', locale) },
+  { label: t.nav.contact, href: getLocalePath('/contact/', locale) },
+];
+---
+
+<header
+  id="main-nav"
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+>
+  <div class="container-wide flex items-center justify-between h-18 py-4">
+    <!-- Logo -->
+    <a href={getLocalePath('/', locale)} class="flex-shrink-0">
+      <img
+        src="/images/logo.svg"
+        alt="Bidmosaic"
+        class="h-8 w-auto"
+      />
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="hidden lg:flex items-center gap-8" aria-label="Main navigation">
+      {navLinks.map((link) => (
+        <div class="relative group">
+          <a
+            href={link.href}
+            class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-200 py-2"
+          >
+            {link.label}
+            {link.children && (
+              <svg class="inline-block ml-1 w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            )}
+          </a>
+          {link.children && (
+            <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <div class="glass rounded-xl p-2 min-w-[180px] shadow-lg">
+                {link.children.map((child) => (
+                  <a
+                    href={child.href}
+                    class="block px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 rounded-lg transition-colors"
+                  >
+                    {child.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </nav>
+
+    <!-- Right: Language + CTA + Mobile Toggle -->
+    <div class="flex items-center gap-4">
+      <!-- Language Switch -->
+      <a
+        href={altPath}
+        class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors px-2 py-1 rounded border border-white/10 hover:border-white/30"
+      >
+        {altLabel}
+      </a>
+
+      <!-- CTA Button (desktop only) -->
+      <a
+        href={getLocalePath('/contact/', locale)}
+        class="inline-flex btn btn-primary whitespace-nowrap leading-none text-[clamp(12px,3.2vw,14px)] py-2 px-4 sm:px-5"
+      >
+        {t.hero.cta_primary}
+      </a>
+
+      <!-- Mobile Toggle -->
+      <button
+        id="mobile-toggle"
+        class="lg:hidden flex flex-col gap-1.5 p-2"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+      >
+        <span class="block w-6 h-0.5 bg-white transition-transform duration-200 origin-center" id="bar1"></span>
+        <span class="block w-6 h-0.5 bg-white transition-opacity duration-200" id="bar2"></span>
+        <span class="block w-6 h-0.5 bg-white transition-transform duration-200 origin-center" id="bar3"></span>
+      </button>
+    </div>
+  </div>
+
+</header>
+
+<!-- Mobile Menu — outside <header> to avoid backdrop-filter containing block issue -->
+<div
+  id="mobile-menu"
+  class="lg:hidden fixed inset-0 top-[72px] z-40 translate-x-full transition-transform duration-300"
+  style="background-color: var(--bg-primary);"
+>
+  <nav class="flex flex-col p-6 gap-2">
+    {navLinks.map((link) => (
+      <>
+        <a
+          href={link.href === '#' ? undefined : link.href}
+          class="text-lg font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] py-3 border-b border-white/5 transition-colors"
+        >
+          {link.label}
+        </a>
+        {link.children && link.children.map((child) => (
+          <a
+            href={child.href}
+            class="text-base text-[var(--text-muted)] hover:text-[var(--text-primary)] py-2.5 pl-4 border-b border-white/5 transition-colors"
+          >
+            {child.label}
+          </a>
+        ))}
+      </>
+    ))}
+    <a
+      href={getLocalePath('/contact/', locale)}
+      class="btn btn-primary mt-4 text-center whitespace-nowrap"
+    >
+      {t.hero.cta_primary}
+    </a>
+  </nav>
+</div>
+
+<script>
+  // Nav scroll behavior: transparent → glass
+  const nav = document.getElementById('main-nav');
+  if (nav) {
+    const onScroll = () => {
+      if (window.scrollY > 80) {
+        nav.classList.add('glass', 'shadow-lg');
+      } else {
+        nav.classList.remove('glass', 'shadow-lg');
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  // Mobile menu toggle
+  const toggle = document.getElementById('mobile-toggle');
+  const menu = document.getElementById('mobile-menu');
+  const bar1 = document.getElementById('bar1');
+  const bar2 = document.getElementById('bar2');
+  const bar3 = document.getElementById('bar3');
+
+  if (toggle && menu) {
+    let isOpen = false;
+    toggle.addEventListener('click', () => {
+      isOpen = !isOpen;
+      toggle.setAttribute('aria-expanded', String(isOpen));
+      if (isOpen) {
+        menu.classList.remove('translate-x-full');
+        menu.classList.add('translate-x-0');
+
+        bar1?.classList.add('rotate-45', 'translate-y-[4px]');
+        bar2?.classList.add('opacity-0');
+        bar3?.classList.add('-rotate-45', '-translate-y-[4px]');
+        document.body.style.overflow = 'hidden';
+      } else {
+        menu.classList.remove('translate-x-0');
+        menu.classList.add('translate-x-full');
+        bar1?.classList.remove('rotate-45', 'translate-y-[4px]');
+        bar2?.classList.remove('opacity-0');
+        bar3?.classList.remove('-rotate-45', '-translate-y-[4px]');
+        document.body.style.overflow = '';
+      }
+    });
+  }
+</script>

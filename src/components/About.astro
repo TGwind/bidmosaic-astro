@@ -1,0 +1,228 @@
+---
+import { useTranslations } from '@i18n/utils';
+import type { Locale } from '@i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const stats = [
+  { value: t.about.stat1_value, label: t.about.stat1_label },
+  { value: t.about.stat2_value, label: t.about.stat2_label },
+  { value: t.about.stat3_value, label: t.about.stat3_label },
+];
+---
+
+<section id="about" class="section-dark py-24 relative overflow-hidden">
+  <!-- Background glow -->
+  <div class="absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] pointer-events-none" style="background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%);" data-parallax="0.06"></div>
+
+  <div class="container relative">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <!-- Left: Text Content -->
+      <div data-animate>
+        <h2 class="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4 leading-tight" data-text-reveal>
+          {t.about.section_title}
+        </h2>
+        <p class="text-[var(--text-secondary)] mb-3">
+          {t.about.section_subtitle}
+        </p>
+        <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-8">
+          {t.about.desc}
+        </p>
+
+        <!-- Global offices -->
+        <div class="mb-8">
+          <h3 class="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider mb-2">
+            {t.about.offices}
+          </h3>
+          <p class="text-sm text-[var(--text-secondary)] leading-relaxed">
+            {t.about.offices_list}
+          </p>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-3 gap-4 items-stretch">
+          {stats.map((stat) => (
+            <div class="text-center glow-card p-4 about-stat-card h-full">
+              <div class="text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">{stat.value}</div>
+              <div class="text-xs text-[var(--text-muted)] mt-1">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Right: Visual / Data Visualization -->
+      <div class="relative" data-animate>
+        <div class="about-visual relative rounded-2xl overflow-hidden bg-[var(--bg-card)] p-8 min-h-[360px] flex items-center justify-center">
+          <!-- Animated data visualization -->
+          <div class="absolute inset-0 opacity-20">
+            <svg class="w-full h-full" viewBox="0 0 400 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Grid lines with animation -->
+              <line x1="0" y1="90" x2="400" y2="90" stroke="#06b6d4" stroke-width="0.5" opacity="0.3" class="grid-line" />
+              <line x1="0" y1="180" x2="400" y2="180" stroke="#06b6d4" stroke-width="0.5" opacity="0.3" class="grid-line" />
+              <line x1="0" y1="270" x2="400" y2="270" stroke="#06b6d4" stroke-width="0.5" opacity="0.3" class="grid-line" />
+              <line x1="100" y1="0" x2="100" y2="360" stroke="#06b6d4" stroke-width="0.5" opacity="0.3" class="grid-line" />
+              <line x1="200" y1="0" x2="200" y2="360" stroke="#06b6d4" stroke-width="0.5" opacity="0.3" class="grid-line" />
+              <line x1="300" y1="0" x2="300" y2="360" stroke="#06b6d4" stroke-width="0.5" opacity="0.3" class="grid-line" />
+              <!-- Growth curve (animated) -->
+              <path d="M40 300 Q120 280 160 220 T280 120 T380 60" stroke="#06b6d4" stroke-width="2" fill="none" class="growth-path" />
+              <!-- Data points (animated) -->
+              <circle cx="40" cy="300" r="4" fill="#06b6d4" class="data-point" style="animation-delay: 0.5s;" />
+              <circle cx="160" cy="220" r="4" fill="#06b6d4" class="data-point" style="animation-delay: 1s;" />
+              <circle cx="280" cy="120" r="4" fill="#06b6d4" class="data-point" style="animation-delay: 1.5s;" />
+              <circle cx="380" cy="60" r="6" fill="#06b6d4" class="data-point data-point-end" style="animation-delay: 2s;" />
+            </svg>
+          </div>
+
+          <!-- Floating decorative particles -->
+          <div class="about-particles" aria-hidden="true">
+            <div class="about-particle" style="top: 15%; left: 20%;"></div>
+            <div class="about-particle" style="top: 40%; left: 75%;"></div>
+            <div class="about-particle" style="top: 70%; left: 35%;"></div>
+            <div class="about-particle" style="top: 25%; left: 60%;"></div>
+          </div>
+
+          <!-- Center content -->
+          <div class="relative text-center z-10">
+            <div class="text-6xl font-bold text-cyan-400 mb-2 about-year">24/7</div>
+            <div class="text-[var(--text-secondary)] text-sm mb-6">{locale === 'zh' ? '全天候智能监控' : 'Always-On Intelligence'}</div>
+            <div class="flex gap-6 justify-center">
+              <div>
+                <div class="text-2xl font-bold text-[var(--text-primary)]">20+</div>
+                <div class="text-xs text-[var(--text-muted)]">{locale === 'zh' ? '数据源' : 'Data Sources'}</div>
+              </div>
+              <div class="w-px bg-white/10"></div>
+              <div>
+                <div class="text-2xl font-bold text-[var(--text-primary)]">6</div>
+                <div class="text-xs text-[var(--text-muted)]">{locale === 'zh' ? '情报领域' : 'Domains'}</div>
+              </div>
+              <div class="w-px bg-white/10"></div>
+              <div>
+                <div class="text-2xl font-bold text-[var(--text-primary)]">200+</div>
+                <div class="text-xs text-[var(--text-muted)]">{locale === 'zh' ? '日均情报' : 'Daily Insights'}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Corner glow -->
+          <div class="absolute top-0 right-0 w-32 h-32 pointer-events-none" style="background: radial-gradient(circle at top right, rgba(6,182,212,0.12) 0%, transparent 70%);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ========== Animated SVG path ========== */
+  .growth-path {
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+    animation: draw-path 3s ease-out forwards;
+  }
+
+  .data-point {
+    opacity: 0;
+    animation: point-appear 0.5s ease-out forwards;
+  }
+
+  .data-point-end {
+    animation: point-appear 0.5s ease-out forwards, point-pulse 2s ease-in-out 2.5s infinite;
+  }
+
+  @keyframes draw-path {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes point-appear {
+    to { opacity: 1; }
+  }
+
+  @keyframes point-pulse {
+    0%, 100% { r: 6; opacity: 1; }
+    50% { r: 10; opacity: 0.7; }
+  }
+
+  /* ========== About visual hover ========== */
+  .about-visual {
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .about-visual:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+
+  /* ========== Year glow ========== */
+  .about-year {
+    text-shadow: 0 0 40px rgba(6, 182, 212, 0.3);
+    animation: year-glow-pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes year-glow-pulse {
+    0%, 100% { text-shadow: 0 0 40px rgba(6, 182, 212, 0.3); }
+    50% { text-shadow: 0 0 60px rgba(6, 182, 212, 0.5), 0 0 100px rgba(6, 182, 212, 0.15); }
+  }
+
+  /* ========== Scan line effect ========== */
+  .about-visual::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.4), transparent);
+    animation: scan-line 4s linear infinite;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  @keyframes scan-line {
+    0% { top: -5%; }
+    100% { top: 105%; }
+  }
+
+  /* ========== Floating particles ========== */
+  .about-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #06b6d4;
+    opacity: 0.3;
+    animation: particle-drift 6s ease-in-out infinite;
+  }
+
+  .about-particle:nth-child(2) { animation-delay: 1.5s; animation-duration: 8s; }
+  .about-particle:nth-child(3) { animation-delay: 3s; animation-duration: 7s; }
+  .about-particle:nth-child(4) { animation-delay: 4.5s; animation-duration: 9s; }
+
+  @keyframes particle-drift {
+    0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+    50% { transform: translate(10px, -15px); opacity: 0.6; }
+  }
+
+  /* ========== Stat card hover ========== */
+  .about-stat-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .about-stat-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .growth-path { stroke-dasharray: none; stroke-dashoffset: 0; animation: none; }
+    .data-point { opacity: 1; animation: none; }
+    .about-visual:hover { transform: none; }
+    .about-visual::after { animation: none; display: none; }
+    .about-particle { animation: none; }
+    .about-stat-card:hover { transform: none; }
+    .about-year { animation: none; }
+  }
+</style>

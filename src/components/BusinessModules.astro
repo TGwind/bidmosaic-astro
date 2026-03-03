@@ -1,0 +1,99 @@
+---
+import type { Locale } from '@i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const copy = locale === 'zh'
+  ? {
+      title: '情报管线架构',
+      subtitle: '从数据采集到 AI 分析再到推送交付，三层架构实现全自动化情报生产',
+      modules: [
+        {
+          name: '数据采集层',
+          tag: 'RSS · 金融API · 社交媒体 · 爬虫',
+          desc: '多源数据自动采集，覆盖全球 20+ 信息渠道，支持 RSS、新浪财经 API、Twitter 等多种数据源。',
+          features: ['RSS 多源聚合（36kr/TechCrunch/HN）', '新浪财经实时行情 API', '去重过滤 + 质量评分'],
+          metrics: ['20+ 数据源', '日均采集 200+ 条', '6 大领域覆盖'],
+        },
+        {
+          name: 'AI 分析层',
+          tag: 'MiniMax M2.5 · 摘要生成 · 分类打标',
+          desc: '基于 MiniMax AI 引擎，对每条情报进行深度分析：生成摘要、领域分类、重要性评分、深度解读。',
+          features: ['智能摘要 + 标题生成', '6 领域自动分类打标', '1-10 重要性评分'],
+          metrics: ['MiniMax M2.5 驱动', '100% 自动化分析', '评分≥7 触发深度分析'],
+        },
+        {
+          name: '交付推送层',
+          tag: '邮件推送 · CMS发布 · 订阅管理',
+          desc: '情报自动写入 Keystatic CMS 发布到官网，同时通过邮件推送日报/周报，支持免费/Pro 分级。',
+          features: ['Keystatic CMS 自动发布', '每日/每周邮件推送', 'Free/Pro 订阅分级'],
+          metrics: ['GitHub Actions 驱动', '零人工干预', '自动定时推送'],
+        },
+      ],
+    }
+  : {
+      title: 'Intelligence Pipeline Architecture',
+      subtitle: 'Three-layer architecture for fully automated intelligence production — from collection to AI analysis to delivery.',
+      modules: [
+        {
+          name: 'Data Collection',
+          tag: 'RSS · Financial APIs · Social · Crawlers',
+          desc: 'Multi-source automated collection covering 20+ global information channels including RSS, Sina Finance API, and social media.',
+          features: ['RSS aggregation (36kr/TechCrunch/HN)', 'Sina Finance real-time API', 'Dedup filtering + quality scoring'],
+          metrics: ['20+ data sources', '200+ items/day', '6 domains covered'],
+        },
+        {
+          name: 'AI Analysis',
+          tag: 'MiniMax M2.5 · Summarization · Classification',
+          desc: 'MiniMax AI engine provides deep analysis: generates summaries, classifies domains, scores importance, and produces in-depth insights.',
+          features: ['Smart summary + title generation', '6-domain auto classification', '1-10 importance scoring'],
+          metrics: ['Powered by MiniMax M2.5', '100% automated analysis', 'Score ≥7 triggers deep analysis'],
+        },
+        {
+          name: 'Delivery & Publishing',
+          tag: 'Email · CMS Publishing · Subscriptions',
+          desc: 'Intelligence auto-published to Keystatic CMS on the website, with daily/weekly email digests and Free/Pro subscription tiers.',
+          features: ['Keystatic CMS auto-publish', 'Daily/weekly email delivery', 'Free/Pro subscription tiers'],
+          metrics: ['GitHub Actions powered', 'Zero manual intervention', 'Scheduled auto-delivery'],
+        },
+      ],
+    };
+---
+
+<section class="section-darker py-24">
+  <div class="container">
+    <div class="text-center mb-14" data-animate>
+      <h2 class="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4">{copy.title}</h2>
+      <p class="text-[var(--text-secondary)] max-w-3xl mx-auto">{copy.subtitle}</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch" data-stagger-parent>
+      {copy.modules.map((item) => (
+        <article class="glow-card p-7 flex flex-col h-full" data-stagger-child>
+          <div class="mb-4">
+            <h3 class="text-xl font-bold text-[var(--text-primary)]">{item.name}</h3>
+            <p class="text-sm text-cyan-400 mt-1">{item.tag}</p>
+          </div>
+
+          <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-5">{item.desc}</p>
+
+          <div class="space-y-2 mb-6">
+            {item.features.map((feature) => (
+              <div class="text-sm text-[var(--text-primary)]">• {feature}</div>
+            ))}
+          </div>
+
+          <div class="mt-auto space-y-2 border-t border-white/8 pt-4">
+            {item.metrics.map((metric) => (
+              <div class="text-xs text-[var(--text-muted)]">{metric}</div>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

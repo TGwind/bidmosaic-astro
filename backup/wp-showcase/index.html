@@ -1,0 +1,2082 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='7' fill='%23ffb800'/><path d='M7 20L12 10l3 6 2-4 4 8' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+  <title>Mobikok | AI 驱动的效果型程序化增长平台</title>
+  <style>
+    :root {
+      --dark:    #0f172a;
+      --dark2:   #1e293b;
+      --dark3:   #334155;
+      --accent:  #ffb800;
+      --accent2: #e5a500;
+      --green:   #10b981;
+      --bg:      #f8fafc;
+      --card:    #ffffff;
+      --border:  #e2e8f0;
+      --text:    #1e293b;
+      --muted:   #64748b;
+      --radius:  12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
+
+    /* ── Nav ─────────────────────────────────────────────── */
+    .nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(15,23,42,0.96);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; height: 60px; gap: 16px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 18px; font-weight: 700; color: #fff; text-decoration: none;
+      flex-shrink: 0; cursor: pointer; user-select: none;
+    }
+    .nav-logo svg, .nav-logo img { flex-shrink: 0; }
+    .nav-logo span { color: var(--accent2); }
+
+    /* ── Dept Switcher ───────────────────────────────────────── */
+    .dept-switcher {
+      background: rgba(10,17,36,0.98);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      position: sticky; top: 60px; z-index: 150;
+    }
+    .dept-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex;
+    }
+    .dept-tab {
+      flex: 1; padding: 18px 16px;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      cursor: pointer; text-align: center; user-select: none;
+      border-bottom: 3px solid transparent;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      transition: all 0.2s; color: rgba(255,255,255,0.4);
+    }
+    .dept-tab:last-child { border-right: none; }
+    .dept-tab:hover { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.75); }
+    .dept-tab.active { background: rgba(255,184,0,0.08); border-bottom-color: var(--accent); color: #fff; }
+    .dept-tab-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+    .dept-tab.active .dept-tab-name { color: var(--accent); }
+    .dept-tab-desc { font-size: 12px; line-height: 1.4; }
+    @media (max-width: 640px) {
+      .dept-tab { padding: 14px 8px; }
+      .dept-tab-name { font-size: 14px; }
+      .dept-tab-desc { font-size: 11px; }
+    }
+    @media (max-width: 400px) { .dept-tab-desc { display: none; } }
+
+    .nav-contact {
+      display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+    }
+    .nav-contact a {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 7px;
+      background: var(--accent); color: #111827;
+      font-size: 13px; font-weight: 500; text-decoration: none;
+      transition: background 0.15s;
+    }
+    .nav-contact a:hover { background: #e5a500; }
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, var(--dark) 0%, #1a1200 50%, var(--dark2) 100%);
+      padding: 72px 20px 80px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,184,0,0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner { max-width: 760px; margin: 0 auto; position: relative; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px; border-radius: 20px;
+      border: 1px solid rgba(255,184,0,0.35);
+      background: rgba(255,184,0,0.12);
+      font-size: 12px; color: var(--accent2);
+      margin-bottom: 24px; font-weight: 500;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 48px); font-weight: 700;
+      color: #fff; line-height: 1.2; margin-bottom: 16px;
+    }
+    .hero h1 em { color: var(--accent2); font-style: normal; }
+    .hero p { font-size: 16px; color: rgba(255,255,255,0.65); line-height: 1.7; margin-bottom: 36px; }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 13px 28px; border-radius: 9px;
+      background: var(--accent); color: #111827;
+      font-size: 15px; font-weight: 600; text-decoration: none;
+      transition: all 0.15s; border: none; cursor: pointer;
+    }
+    .btn-primary:hover { background: #e5a500; transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 13px 28px; border-radius: 9px;
+      border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.8);
+      font-size: 15px; font-weight: 500; text-decoration: none;
+      transition: all 0.15s; background: transparent; cursor: pointer;
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+    .btn-lead {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; border-radius: 9px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff; font-size: 15px; font-weight: 700; text-decoration: none;
+      transition: all 0.18s;
+      animation: lead-pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes lead-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.55); }
+      65%  { box-shadow: 0 0 0 16px rgba(16,185,129,0); }
+      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+    .btn-lead:hover { background: linear-gradient(135deg, #059669, #047857); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(16,185,129,0.4); animation: none; }
+    @media (prefers-reduced-motion: reduce) { .btn-lead { animation: none; } }
+
+    /* Hero stats */
+    .hero-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; margin-top: 56px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px; overflow: hidden;
+    }
+    .hero-stat {
+      padding: 20px 16px; text-align: center;
+      background: rgba(255,255,255,0.04);
+    }
+    .hero-stat strong { display: block; font-size: 28px; font-weight: 700; color: #fff; }
+    .hero-stat span   { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; display: block; }
+
+    /* ── Section wrapper ──────────────────────────────────── */
+    .section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
+    .section-hd {
+      text-align: center; margin-bottom: 40px;
+    }
+    .section-hd h2 { font-size: clamp(22px, 3vw, 32px); font-weight: 700; color: var(--text); }
+    .section-hd p  { font-size: 15px; color: var(--muted); margin-top: 10px; }
+
+    /* ── Module Panel ─────────────────────────────────────── */
+    .module-section { background: #fff; border-top: 1px solid var(--border); }
+    .module-panel { display: none; }
+    .module-panel.active { display: block; }
+
+    /* Module intro */
+    .module-intro {
+      padding: 52px 20px 40px;
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+    }
+    .module-intro-text h2 { font-size: clamp(22px, 3vw, 34px); font-weight: 700; margin-bottom: 14px; }
+    .module-intro-text h2 span { color: var(--accent); }
+    .module-intro-text p  { font-size: 15px; color: var(--muted); line-height: 1.75; }
+    .module-features { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
+    .feature-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 14px; border-radius: 10px; background: var(--bg);
+      border: 1px solid var(--border);
+    }
+    .feature-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: rgba(255,184,0,0.1); color: var(--accent);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .feature-item h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .feature-item p  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* Module visual (right side) */
+    .module-visual {
+      background: linear-gradient(135deg, var(--dark) 0%, #1a1200 100%);
+      border-radius: 16px; padding: 28px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .metric-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .metric-card .label { font-size: 12px; color: rgba(255,255,255,0.55); }
+    .metric-card .value { font-size: 20px; font-weight: 700; color: #fff; }
+    .metric-card .delta { font-size: 11px; color: var(--green); font-weight: 600; }
+
+    /* ── Case Studies ─────────────────────────────────────── */
+    .cases-section { background: var(--bg); }
+    .cases-controls {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      align-items: center; margin-bottom: 28px;
+    }
+    .search-box {
+      flex: 1; min-width: 200px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 9px; transition: border-color 0.15s;
+    }
+    .search-box:focus-within { border-color: var(--accent); }
+    .search-box input {
+      flex: 1; border: none; outline: none;
+      font-size: 14px; font-family: inherit; color: var(--text); background: transparent;
+    }
+    .search-box svg { color: var(--muted); flex-shrink: 0; }
+    .filter-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter-tag {
+      padding: 6px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 500; cursor: pointer;
+      border: 1px solid var(--border); background: #fff; color: var(--muted);
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .filter-tag:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-tag.active { background: var(--accent); color: #111827; border-color: var(--accent); }
+
+    .cases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .case-card {
+      background: var(--card); border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden; transition: all 0.2s; cursor: pointer;
+    }
+    .case-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); border-color: rgba(255,184,0,0.3); }
+    .case-img {
+      width: 100%; height: 180px; object-fit: cover;
+      background: linear-gradient(135deg, #fff8e1 0%, #ffe082 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+    }
+    .case-img img { width: 100%; height: 100%; object-fit: cover; }
+    .case-img.placeholder { color: #fbbf24; }
+    .case-body { padding: 18px; }
+    .case-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .case-tag {
+      padding: 3px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 500;
+      background: rgba(255,184,0,0.08); color: var(--accent);
+    }
+    .case-tag.industry { background: rgba(16,185,129,0.08); color: var(--green); }
+    .case-body h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+    .case-body p  { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+    .case-metrics { display: flex; gap: 16px; }
+    .case-metric { text-align: center; }
+    .case-metric strong { display: block; font-size: 18px; font-weight: 700; color: var(--accent); }
+    .case-metric span   { font-size: 11px; color: var(--muted); }
+    .no-results { text-align: center; padding: 60px 20px; color: var(--muted); }
+
+    /* ── Contact Section ──────────────────────────────────── */
+    .contact-section { background: var(--dark); }
+    .contact-section .section-hd h2 { color: #fff; }
+    .contact-section .section-hd p  { color: rgba(255,255,255,0.5); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .contact-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius); padding: 22px;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      text-align: center; transition: all 0.2s;
+      position: relative;
+    }
+    .contact-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,184,0,0.4); }
+    .contact-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.92);
+    }
+    .contact-icon svg { width: 22px; height: 22px; flex-shrink: 0; }
+    .admin-platform .icon svg { width: 15px; height: 15px; vertical-align: middle; }
+    .contact-card h3 { font-size: 15px; font-weight: 600; color: #fff; }
+    .contact-card p  { font-size: 12px; color: rgba(255,255,255,0.45); word-break: break-all; }
+    .contact-qr {
+      width: 110px; height: 110px; border-radius: 8px;
+      background: #fff; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .contact-qr img { width: 100%; height: 100%; object-fit: contain; }
+    .contact-qr-empty {
+      font-size: 11px; color: #aaa; text-align: center; padding: 8px;
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    }
+    .contact-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 7px 16px; border-radius: 6px;
+      background: var(--accent); color: #111827;
+      font-size: 13px; font-weight: 500; text-decoration: none;
+      transition: background 0.15s;
+    }
+    .contact-link:hover { background: #e5a500; }
+    .contact-link.empty { opacity: 0.35; pointer-events: none; }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    footer {
+      background: #070e1f;
+      text-align: center; padding: 28px 20px;
+      color: rgba(255,255,255,0.3); font-size: 13px;
+    }
+    footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
+
+    /* ── Admin Panel ──────────────────────────────────────── */
+    .admin-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    .admin-overlay.open { display: flex; }
+    .admin-panel {
+      background: #fff; border-radius: 16px;
+      width: 100%; max-width: 680px; max-height: 90vh;
+      overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    }
+    .admin-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: #fff; z-index: 1;
+    }
+    .admin-hd h2 { font-size: 16px; font-weight: 700; }
+    .admin-close {
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid var(--border); background: transparent;
+      cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center;
+      color: var(--muted); transition: all 0.15s;
+    }
+    .admin-close:hover { background: #fef2f2; color: #dc2626; border-color: #fca5a5; }
+    .admin-body { padding: 20px 24px; }
+    .admin-platform {
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px; margin-bottom: 14px;
+    }
+    .admin-platform-hd {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px; font-weight: 600; font-size: 14px;
+    }
+    .admin-platform-hd .icon { font-size: 20px; }
+    .admin-row { display: grid; grid-template-columns: 80px 1fr; gap: 8px; align-items: start; margin-bottom: 10px; }
+    .admin-row label { font-size: 12px; color: var(--muted); padding-top: 10px; font-weight: 500; }
+    .admin-input {
+      width: 100%; padding: 9px 11px; border: 1px solid var(--border);
+      border-radius: 7px; font-size: 13px; font-family: inherit;
+      outline: none; transition: border-color 0.15s; color: var(--text);
+    }
+    .admin-input:focus { border-color: var(--accent); }
+    .admin-qr-row { display: flex; gap: 10px; align-items: center; }
+    .admin-qr-preview {
+      width: 56px; height: 56px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--bg); overflow: hidden;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .admin-qr-preview img { width: 100%; height: 100%; object-fit: contain; }
+    .admin-qr-empty-icon { color: #d1d5db; font-size: 20px; }
+    .admin-qr-actions { display: flex; gap: 6px; flex-direction: column; flex: 1; }
+    .admin-file-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 7px 10px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg);
+      font-size: 12px; font-family: inherit; cursor: pointer; color: var(--text);
+      transition: all 0.15s;
+    }
+    .admin-file-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .admin-actions {
+      display: flex; gap: 10px; justify-content: flex-end;
+      padding-top: 16px; border-top: 1px solid var(--border); margin-top: 6px;
+    }
+    .admin-save {
+      padding: 10px 24px; border-radius: 8px;
+      background: var(--accent); color: #111827;
+      border: none; font-size: 14px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
+    }
+    .admin-save:hover { background: #e5a500; }
+    .admin-save:disabled { background: #ffe082; cursor: not-allowed; }
+    .admin-cancel {
+      padding: 10px 24px; border-radius: 8px;
+      background: #fff; color: var(--text);
+      border: 1px solid var(--border); font-size: 14px;
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+    }
+    .admin-cancel:hover { background: var(--bg); }
+    .admin-save-status { font-size: 13px; color: var(--green); font-weight: 500; opacity: 0; transition: opacity 0.3s; }
+    .admin-save-status.show { opacity: 1; }
+    .admin-tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+      margin: -20px -24px 20px; padding: 0 24px;
+    }
+    .admin-tab {
+      padding: 12px 16px; font-size: 13px; font-weight: 500;
+      color: var(--muted); cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .admin-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .admin-tab:hover:not(.active) { color: var(--text); }
+    .admin-case-img-row { display: flex; gap: 10px; align-items: flex-start; }
+    .admin-case-img-preview {
+      width: 120px; height: 68px; border-radius: 6px; border: 1px solid var(--border);
+      background: linear-gradient(135deg, #fff8e1 0%, #ffe082 100%);
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 22px;
+    }
+    .admin-case-img-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ── Case Detail Modal ────────────────────────────────── */
+    .case-overlay {
+      display: none; position: fixed; inset: 0; z-index: 900;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      align-items: flex-start; justify-content: center;
+      padding: 20px 16px; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .case-overlay.open { display: flex; }
+    .case-modal {
+      background: #fff; border-radius: 20px;
+      width: 100%; max-width: 740px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+      overflow: hidden; margin: auto; flex-shrink: 0;
+    }
+    .case-modal-hero {
+      background: linear-gradient(135deg, var(--dark) 0%, #1a1200 100%);
+      padding: 32px 32px 0; position: relative; overflow: hidden;
+    }
+    .case-modal-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 90% 10%, rgba(255,184,0,0.35) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .case-modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2); background: transparent;
+      cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.65); transition: all 0.15s; z-index: 1;
+    }
+    .case-modal-close:hover { background: rgba(255,255,255,0.14); color: #fff; }
+    .case-modal-platform {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      color: var(--accent2); text-transform: uppercase; margin-bottom: 10px; position: relative;
+    }
+    .case-modal-title {
+      font-size: clamp(16px, 2.5vw, 22px); font-weight: 700;
+      color: #fff; line-height: 1.4; margin-bottom: 16px; position: relative;
+    }
+    .case-modal-meta {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      padding: 14px 0; position: relative;
+    }
+    .case-modal-meta-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: rgba(255,255,255,0.55);
+    }
+    .case-modal-meta-item strong { color: rgba(255,255,255,0.85); font-weight: 600; }
+    .case-modal-badges {
+      display: flex; gap: 6px; flex-wrap: wrap; padding-bottom: 24px; position: relative;
+    }
+    .case-modal-badge {
+      padding: 3px 10px; border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.18);
+      font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 500;
+    }
+    .case-modal-metrics-bar {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      background: var(--dark2); border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .case-modal-metric-item {
+      padding: 16px 12px; text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .case-modal-metric-item:last-child { border-right: none; }
+    .case-modal-metric-item .val { font-size: 20px; font-weight: 700; color: var(--accent2); }
+    .case-modal-metric-item .lbl { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 3px; }
+    .case-modal-metric-item .dsc { font-size: 10px; color: rgba(255,255,255,0.28); margin-top: 2px; }
+    .case-modal-body { padding: 28px 32px; }
+    .case-modal-sec { margin-bottom: 24px; }
+    .case-modal-sec:last-child { margin-bottom: 0; }
+    .case-modal-sec h4 {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .case-modal-sec h4::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .case-modal-sec p { font-size: 14px; color: var(--text); line-height: 1.8; }
+    .case-modal-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .case-modal-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: var(--text); line-height: 1.65;
+    }
+    .case-modal-list li::before {
+      content: '▸'; color: var(--accent); font-size: 12px; flex-shrink: 0; margin-top: 3px;
+    }
+    /* 卡片点击提示 */
+    .case-card { cursor: pointer; }
+    .case-view-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 18px; border-top: 1px solid var(--border);
+      font-size: 12px; font-weight: 600; color: var(--accent);
+    }
+    .case-card:hover .case-view-btn { color: #e5a500; }
+    @media (max-width: 600px) {
+      .case-modal-metrics-bar { grid-template-columns: repeat(2, 1fr); }
+      .case-modal-metric-item:nth-child(2) { border-right: none; }
+      .case-modal-body { padding: 20px 18px; }
+      .case-modal-hero { padding: 24px 18px 0; }
+    }
+
+    /* ── Toast ───────────────────────────────────────────── */
+    .toast {
+      position: fixed; left: 50%;
+      bottom: 24px; z-index: 9999;
+      transform: translateX(-50%) translateY(12px);
+      padding: 11px 20px; border-radius: 9px;
+      font-size: 14px; font-weight: 500;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      opacity: 0; transition: all 0.25s;
+      pointer-events: none;
+      white-space: nowrap; max-width: calc(100vw - 32px);
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { background: #16a34a; color: #fff; }
+    .toast.error   { background: #dc2626; color: #fff; }
+
+    /* ── Top List ─────────────────────────────────────────── */
+    .top-list {
+      border-top: 1px solid var(--border);
+      padding: 24px 20px 36px;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .top-list-hd {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .top-list-hd::before {
+      content: ''; display: inline-block;
+      width: 3px; height: 12px; border-radius: 2px;
+      background: var(--accent); flex-shrink: 0;
+    }
+    .top-list-groups { display: flex; gap: 24px; flex-wrap: wrap; }
+    .top-list-group { flex: 1; min-width: 150px; }
+    .top-list-group-hd {
+      font-size: 11px; color: var(--muted); font-weight: 600;
+      margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .top-list-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .top-list-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 4px;
+      background: rgba(255,184,0,0.06);
+      border: 1px solid rgba(255,184,0,0.2);
+      font-size: 12px; font-weight: 500; color: var(--text);
+      white-space: nowrap;
+    }
+    .tag-icon {
+      width: 16px; height: 16px; border-radius: 3px;
+      object-fit: contain; flex-shrink: 0;
+    }
+    .tag-icon.loaded + .tag-initial { display: none; }
+    .tag-initial {
+      width: 16px; height: 16px; border-radius: 3px;
+      background: rgba(255,184,0,0.15); color: var(--accent2);
+      font-size: 9px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0; line-height: 1;
+    }
+    .top-list-tag.green {
+      background: rgba(16,185,129,0.07);
+      border-color: rgba(16,185,129,0.22);
+      color: #0d9669;
+    }
+    .top-list-tag.green .tag-initial {
+      background: rgba(16,185,129,0.12); color: #0d9669;
+    }
+    @media (max-width: 767px) {
+      .top-list { padding: 20px 16px 28px; }
+      .top-list-groups { gap: 16px; }
+      .top-list-group { min-width: 130px; }
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 767px) {
+      .hero { padding: 48px 16px 56px; }
+      .hero-stats { grid-template-columns: repeat(3, 1fr); }
+      .hero-stat strong { font-size: 22px; }
+      .module-intro { grid-template-columns: 1fr; gap: 28px; padding: 36px 16px 28px; }
+      /* Show metric cards as a horizontal scroll strip on mobile */
+      .module-visual {
+        display: flex; flex-direction: row;
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; gap: 10px;
+        padding: 4px 2px 12px;
+      }
+      .module-visual::-webkit-scrollbar { display: none; }
+      .metric-card { flex-shrink: 0; min-width: 148px; }
+      .module-features { grid-template-columns: 1fr; }
+      /* Shrink icon-only nav buttons */
+      .nav-contact a span { display: none; }
+      .nav-contact a { padding: 7px 10px; }
+      .section { padding: 40px 16px; }
+      .cases-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr 1fr; }
+      .contact-card { padding: 16px 12px; }
+      .contact-qr { width: 88px; height: 88px; }
+      .admin-row { grid-template-columns: 1fr; }
+      .admin-row label { padding-top: 0; }
+    }
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .module-intro { gap: 32px; }
+      .contact-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .contact-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 0; }
+      .hero-stat { padding: 14px 8px; }
+      .hero-stat strong { font-size: 20px; }
+    }
+    /* Dept tabs: allow horizontal scroll on very narrow viewports */
+    @media (max-width: 360px) {
+      .dept-inner { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .dept-tab { flex: 0 0 auto; min-width: 96px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ Nav ══════════════════════════════════════════════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" id="logoBtn" title="点击5次进入管理模式">
+      <img src="/Mobikok-logo-white.svg" alt="Mobikok" height="32" style="display:block;width:auto;">
+    </a>
+
+    <div class="nav-contact">
+      <a id="navBack" href="/" style="background:transparent;border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>返回主站</span>
+      </a>
+      <a id="navContact" href="/card-recognition/">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.37 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6A16 16 0 0 0 15.4 16.09l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span>联系我们</span>
+      </a>
+      <button id="langToggle" onclick="toggleLang()" style="padding:7px 12px;border-radius:7px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;letter-spacing:0.05em;flex-shrink:0;">EN</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ Hero ═════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+      <span id="heroBadgeText">三大事业部 · AI 驱动 · 全球覆盖</span>
+    </div>
+    <h1 id="heroTitle">Mobikok</h1>
+    <p id="heroDesc">AI 驱动的效果型程序化增长平台<br>旗下三大事业部：<strong>Buzzy H5</strong> · <strong>HiveX ADN</strong> · <strong>HiveX DSP</strong></p>
+    <div class="hero-actions">
+      <a id="heroCta3" href="/card-recognition/" class="btn-lead">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        留下您的联系方式
+      </a>
+      <a id="heroCta1" href="#contact" class="btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        立即咨询
+      </a>
+      <a id="heroCta2" href="#cases" class="btn-outline">查看客户案例 →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>3</strong><span id="heroStat1">核心事业部</span></div>
+      <div class="hero-stat"><strong id="heroStat2Val">15亿+</strong><span id="heroStat2">日均曝光</span></div>
+      <div class="hero-stat"><strong>200+</strong><span id="heroStat3">合作品牌</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Dept Switcher ════════════════════════════════════════ -->
+<div class="dept-switcher">
+  <div class="dept-inner">
+    <div class="dept-tab active" data-module="buzzy">
+      <span class="dept-tab-name">Buzzy H5</span>
+      <span class="dept-tab-desc" data-i18n="deptDesc_buzzy">H5内容分发商 · GCPP二级代理</span>
+    </div>
+    <div class="dept-tab" data-module="adn">
+      <span class="dept-tab-name">HiveX ADN</span>
+      <span class="dept-tab-desc" data-i18n="deptDesc_adn">擅长美洲市场的全球代理商</span>
+    </div>
+    <div class="dept-tab" data-module="dsp">
+      <span class="dept-tab-name">HiveX DSP</span>
+      <span class="dept-tab-desc" data-i18n="deptDesc_dsp">专注电商的程序化平台</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Module Panels ═════════════════════════════════════════ -->
+<div class="module-section">
+
+  <!-- Buzzy H5 -->
+  <div class="module-panel active" id="panel-buzzy">
+    <div class="module-intro">
+      <div class="module-intro-text">
+        <h2 data-i18n="buzzy_h2">Buzzy H5<br><span>H5内容分发商 · GCPP二级代理</span></h2>
+        <p data-i18n="buzzy_desc">作为 Google 认证合作伙伴（GCPP）二级代理，Buzzy 深耕 H5 内容分发领域，为游戏客户提供经 IVT 检测的优质流量，通过 AI 素材矩阵持续驱动 ROAS 正向增长。</p>
+        <div class="module-features">
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div><h4 data-i18n="buzzy_f1t">GCPP 二级代理</h4><p data-i18n="buzzy_f1d">Google 认证合作，优质 H5 流量优先获取</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+            <div><h4 data-i18n="buzzy_f2t">H5 内容制作</h4><p data-i18n="buzzy_f2d">高转化率落地页设计与快速迭代</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+            <div><h4 data-i18n="buzzy_f3t">IVT 流量检测</h4><p data-i18n="buzzy_f3d">实时过滤无效流量，保障真实计费</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></div>
+            <div><h4 data-i18n="buzzy_f4t">A/B 测试驱动</h4><p data-i18n="buzzy_f4d">数据驱动持续优化，最优素材矩阵</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="module-visual">
+        <div class="metric-card"><div><div class="label" data-i18n="buzzy_m1">Day7 ROAS</div><div class="value">180%+</div></div><div class="delta" data-i18n="buzzy_d1">↑ 稳定增长</div></div>
+        <div class="metric-card"><div><div class="label" data-i18n="buzzy_m2">落地页转化率</div><div class="value">13.2%</div></div><div class="delta">↑ 31.4%</div></div>
+        <div class="metric-card"><div><div class="label" data-i18n="buzzy_m3">GCPP 月 PV</div><div class="value">80M+</div></div><div class="delta" data-i18n="buzzy_d3">月曝光规模</div></div>
+        <div class="metric-card"><div><div class="label" data-i18n="buzzy_m4">GCPP DAU</div><div class="value">100M+</div></div><div class="delta" data-i18n="buzzy_d4">日活跃用户</div></div>
+      </div>
+    </div>
+    <div class="top-list">
+      <div class="top-list-hd" data-i18n="buzzy_topTitle">H5 TOP LIST</div>
+      <div class="top-list-groups">
+        <div class="top-list-group">
+          <div class="top-list-group-hd" data-i18n="buzzy_topAdv">上游广告主</div>
+          <div class="top-list-tags">
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAaVBMVEXy8vLz8/P09PT29vb19fVzc3Pl5eXs7Ozp6emWlpaHh4eAgIDFxcXf39/q6urIyMi9vb1qamqenp55eXm4uLhiYmLb29uBgYFubm7Pz8+Li4udnZ3Hx8eoqKixsbF6enpMTEw6OjpUVFSxmKMAAAABHUlEQVQ4je1RXZqDIAxMQvjHArYqatXd3v+Qi9bd7WMP0HngI8wkJBOAD94F4n4AMnO9IdEeAzHTyStVXxqtQrg3iJcYFQHqGEL/FHC7MIBLMkvZ3cyQZU6sXd6ueT4EwrYC8NZZDRCnzV0g5d55A9DnwKeAGmlrG2S80/W/RQ4Gd2YWp6ApO4HGXxUx6ppPLISW61lBFTuMhGabXGhW5aRi1Vpbtr1OFUzSahmF2Zz2SS1+WJw23ZddD74Kvi2AjDtPPsHkL6Yk0ciW8ZzC1/7kuEqNuIWQDQm31L7LDPg3ZhUsE0HIzc0DjN1IQH2ZX4zy4/q4VotEepTSLYfZfUn8YrWJ92pytXp3/Eilg/lfFj3XRPzc1i/zwXv4AThvDsH+rUr7AAAAAElFTkSuQmCC" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">H</span>HDBR</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAaVBMVEX///8sQE4MLD6wtbkdNUWepKk6TFjk5eYjOkn5+voAHTPP0tQAJTi8wMOvtLjb3d+Tmp/n6eoAFi6Kkpjt7u81R1QAKDqkqq709fUxRFISL0AADirIzM4AJjm/w8aRmZ9kcHlteIDV19kBZMnXAAAA5UlEQVQ4jc2SYQ+CIBCGT09FMOBMKyqz8v//yA5sthXRh7bWO92Q5xl3pwL8PM6ludxsZJJXdV0lDOZZljACZ+NtFbvNQk42it1O5LOQi11kFrknoYoQ1dL+pYqrDuSoDOHFoXo+o1EFgWhFCFChmucjmjWJYx5ybGn9wgGGbmmy7YboGHaZ4s0H6dUsqD7OuY+T56tI/cVYpbk30pxnifb/bUa+RoOkeY0A+oyoSzTjRXrkN7XuPMC7YHpn0G8T6CBov/kQsLRXyc+IUM4C/z9WGNQT34Mxk+WXPqKxE/QfRv6b3AAIFAr2k3UeNQAAAABJRU5ErkJggg==" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">H</span>Holuron</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAY1BMVEX///8ICAgnJyfg4ODw8PAYGBixsbFkZGRGRkZra2u1tbWDg4OAgIDAwMDk5OSqqqp0dHQ3NzcSEhLX19eKioouLi5RUVEjIyOcnJweHh719fU0NDQ6OjrNzc17e3tbW1uTk5NmTBr8AAAA5ElEQVQ4je2SyRqDIBCDR3Hf99raxfd/ygJh8FM49dxcSIH+ZqJEf2mJUCsnSuUyh1uC/QX7gqI40CoogYkjdd7ix+1BVMJmRE+4VV3o4StpGVEz4i7/VRhaoy5XFrHBtTIBXKfjOIieBMwgEPhAmBR1ijU3kx4I8+gQSyC4i2MQEx5KbVnNgJ0Xj38BEL2x87GDnAFkUze0egF2EBl79gHkIAMjdr4wnl9qbqu7+QB2kJ0YcQHIr0E3FHFt2fUcKUrlJrTqqOO3qxCLe666MMEm1alHOVcTxW4CpbFjtyfeCz/qC9ziB3u9aR1dAAAAAElFTkSuQmCC" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">W</span>Wortise</span>
+          </div>
+        </div>
+        <div class="top-list-group">
+          <div class="top-list-group-hd" data-i18n="buzzy_topCh">流量渠道</div>
+          <div class="top-list-tags">
+            <span class="top-list-tag"><span class="tag-initial">H</span>HONGBO</span>
+            <span class="top-list-tag"><span class="tag-initial">弧</span>弧光</span>
+            <span class="top-list-tag"><span class="tag-initial">点</span>点金石</span>
+          </div>
+        </div>
+        <div class="top-list-group">
+          <div class="top-list-group-hd" data-i18n="buzzy_topReg">跑量地区</div>
+          <div class="top-list-tags">
+            <span class="top-list-tag green"><span class="tag-initial">T1</span>T1 · USA</span>
+            <span class="top-list-tag"><span class="tag-initial">T2</span>T2 / T3</span>
+          </div>
+        </div>
+        <div class="top-list-group">
+          <div class="top-list-group-hd" data-i18n="buzzy_topType">内容类型</div>
+          <div class="top-list-tags">
+            <span class="top-list-tag"><span class="tag-initial">H5</span>H5 联盟</span>
+            <span class="top-list-tag"><span class="tag-initial">IA</span>IAA 小包</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HiveX ADN -->
+  <div class="module-panel" id="panel-adn">
+    <div class="module-intro">
+      <div class="module-intro-text">
+        <h2 data-i18n="adn_h2">HiveX ADN<br><span>擅长美洲市场的全球代理商</span></h2>
+        <p data-i18n="adn_desc">Mobikok 旗下全球广告联盟，整合海量优质流量资源，支持 CPA/CPS/CPI/CPL 多种效果计费模式。深耕北美·拉美 Tier 1 核心市场，自研效果营销引擎，帮助企业低成本高回报地实现用户增长。</p>
+        <div class="module-features">
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+            <div><h4 data-i18n="adn_f1t">CPA/CPS/CPI/CPL</h4><p data-i18n="adn_f1d">多种效果计费模式，精准匹配不同企业的增长需求</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></div>
+            <div><h4 data-i18n="adn_f2t">厂商流量</h4><p data-i18n="adn_f2d">互联网、APP、媒体厂商独家优质流量，资源独家、用户精准</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg></div>
+            <div><h4 data-i18n="adn_f3t">效果营销引擎</h4><p data-i18n="adn_f3d">自主研发智能系统，广告花最少的钱获取最多有效转化</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+            <div><h4 data-i18n="adn_f4t">美洲市场专注</h4><p data-i18n="adn_f4d">深耕北美·拉美 Tier 1 GEO，服务 BetMGM 等头部博彩品牌</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="module-visual">
+        <div class="metric-card"><div><div class="label" data-i18n="adn_m1">CPA 日均转化</div><div class="value">300+</div></div><div class="delta" data-i18n="adn_d1">↑ 稳定输出</div></div>
+        <div class="metric-card"><div><div class="label" data-i18n="adn_m2">月安装量</div><div class="value">30,000+</div></div><div class="delta" data-i18n="adn_d2">↑ 持续增长</div></div>
+        <div class="metric-card"><div><div class="label" data-i18n="adn_m3">CPI 最优降幅</div><div class="value">-45%</div></div><div class="delta" data-i18n="adn_d3">↓ 持续优化</div></div>
+        <div class="metric-card"><div><div class="label" data-i18n="adn_m4">核心市场</div><div class="value">Tier 1</div></div><div class="delta" data-i18n="adn_d4">美洲·英国</div></div>
+      </div>
+    </div>
+    <div class="top-list">
+      <div class="top-list-hd" data-i18n="adn_topTitle">ADN TOP LIST</div>
+      <div class="top-list-groups">
+        <div class="top-list-group">
+          <div class="top-list-group-hd" data-i18n="adn_topIaa">IAA TOP</div>
+          <div class="top-list-tags">
+            <span class="top-list-tag"><span class="tag-initial">K</span>King Rescue</span>
+            <span class="top-list-tag"><span class="tag-initial">B</span>Block Escape</span>
+            <span class="top-list-tag"><span class="tag-initial">C</span>Candy Match</span>
+            <span class="top-list-tag"><span class="tag-initial">R</span>Red &amp; Blue Stick</span>
+            <span class="top-list-tag"><span class="tag-initial">B</span>Berry Factory Tycoon</span>
+          </div>
+        </div>
+        <div class="top-list-group">
+          <div class="top-list-group-hd" data-i18n="adn_topCpl">CPL TOP</div>
+          <div class="top-list-tags">
+            <span class="top-list-tag green"><span class="tag-initial">S</span>Sweepstakes</span>
+            <span class="top-list-tag green"><span class="tag-initial">M</span>Mystery Box</span>
+            <span class="top-list-tag green"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADqUlEQVRYhe2XT0xcVRTGf+e+GRRkoYCo0HmPaIwuiHWhC1sZwNI0aUyrVevKpJJgu7dJXVjFuOjCP2vbhXVpqKE2RheVOMyQ2mgw0YaFLmr6BhiHv5q0gDDMOy5m6PDmvUF8abqxZ/Vy7ne+73v3vnvufXAnIoaO2a9ppmNG086cpp3+qDwSSfz7HU2sx3LAXeVUgbXlhPTNzvxXLhPFAOvmwU3iAHHi9W1RqKIZWPt7IZgszN8+A4uz86gWKwlVlnKzt8yAjrQ36wR1tYrkMEVgs+Ci7Ge1Fl7HiWuq495/NaApYppxzlEXm2PRyeuoPbCF+elNlqZrgXQs8TrLTh5LFzVjf65DWDUNgP0CyMsgAnIfxpzRtH1BU20tIdyTFRWdCgiPtDdr2hlGrU9Bmkqc5lXanIO1DRgaAjJiDmDFr2jG3lM18nsFw1Wf+KjTSzz2CyIvBvhUG2sb8FaGgSuBIuQhkIuadt5XLdd43meo5oFZlLMAOojRMftdDN8i0h4iPoEsn/cxBzAT1DFvH8GY48CjISQfSbd7vPRYqhdBATRtn0LMW8EX0KvgfciNybPVH2tgF0gna9KTPcN31x5H9SXQS1WIJ24+CbohXj1WFr4M3ivk3cckOflJ2E7ZVivW0cTTiDkGdOB5J6R3cjwUl2p/Eiv2ATDJevG0PDf1w3b4/9+xvSVIJZ7CmGMIHYiekK7sT+G48hIIWbR4WpJTP0Y2oIMY9jgHUd4EdpUaCYCOSNLdG1qTdr5GZH8loZfx9GN6ssMieGE1gV2gQ9Rpxh6gt+NXVIZBdlfEgU19QhXZ2IrljL+HiDyDZc4x5vymafuofuM7wksQn3jq/kZMwyWkejsBqIdyiqT7jgiephKdWOYiiIVV2Ce7p38uzZp9EpWTIFaQQiewlnbJs/PXw2fA1B+qIf4Hovuk23375lQac6TUIWmlGOsHkEE86cq+h8deVIMHlEgn2uBrz6YKsBTy4l/B6k7pyo5UjTxcwfCIj6bHTVFY34nqeapD/Rp+A0X3AugXoIrqX+C9Id3ZA5LMzwWIILHJ+I7qQembXpBu9xBS7AddLHF6Q+TdL324EGI01dbCSu76lpeMjJMrLwGoLki3G3Zkl4bHiZO3G+X57J8Bo7WKtgodwuIBZxXZ+NBUueHWb2W4VkS7Eza1tlTEAUS4p601ClU0A3V3NweT8ZpLcOsNrBVnwDfdBQorudtmQPqmF/C8AWAWdB7haJS/ojsB8A+C3mktDFwh6gAAAABJRU5ErkJggg==" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">W</span>Walmart $1000</span>
+            <span class="top-list-tag green"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACu0lEQVQ4jVWSTWicVRSGn3PvnWQymTBpIpo0tJMgShPamGwkIC5kQqwpRgi48GchqKDi2o0uRLstbgRBFykiFlcuxLiZgVIKFUoKlqSlDFi0Jck0f9MkTpr5vnuOi4kxfffP4XnPOQLA7VfKri1T0kcxOsFzEMXokkAOx5olKIARpSN4drVio79MCkszZXJSYjeJHIE90ENgTetgm+BP4BHiwRDyGc/WbkWozpg00mgOLwaG0S2BLMKq/s1sxxQjbUV+2r3MPWuwb4YJiBGtw3mRm9MpmG8Nhm4CdX0IAhNtI/ww+BnFbD+ZxVlIlugPI6yQIABIdKLmRUEUutRRT3d4KTPCracvcu3UNwxljxNw3Br8ivfzb7MStzimjhZj3qmBKqDQawG0yuf97zLcOcSPtd94r/oll1bnKeYGeDE/DvEvOs2jCmoQwDjwQVGQAoVMAYD7+zXmtr9gbjNCbRosBTfMfZqHjCMaREOjkSqQGpX1qyjwycl3WD5T41JxHhRIm+TN8R9DNESuv2wcRuhB2IiLfHzsA9548hzPF84QxHFzp8pzdz4iZ55EhBQ7MDgCm6U8FMdYtsTXa5/ywtIY7X+8yUpzg9GuZ5jNjdGwOp1HsGBqOIQByXAvvcH3Qxd5ve8sv66+RXn7BqezJ+lr66We7vD7o7tgnTRNMWsZBLRVb5sUeJb59Sucyg3yWt8kr/ZN4oAHyRYX7s6xvFflqXCCWkz+95arU6l5PAY94tlMH4AssDj+J8O5Ih/ePs+32xVI6jwRBli3pNVcQJQoLJw1GhpF8IbSKwGAmcIEQRzfbfwMrofj0s6yNXE4rPW1kax4YWGqjPgS/8ToRL0CGRxJXAOU7tDPPsaexcPVqblIPni336gIgFyfLptoib00OvAKdEvAAxuWPnYuFRelHS+xWdGJy5P/AvKtO205+a5xAAAAAElFTkSuQmCC" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">C</span>CashApp Gift Card</span>
+            <span class="top-list-tag green"><span class="tag-initial">F</span>Fast Food Mystery Box</span>
+            <span class="top-list-tag green"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACPElEQVRYhe2X32oTQRTGv5ku2xoTXZMIjRdmBW/Ei25BaIVSlAXXC1cUH6DtE7g+QckT6CsU9L6lFLqU0DxCnkC23uQ2KEIpOuPF2prdObsz+aO58Vwlh29zfnvmmzMTFkQvMM/gc63+HwCAZSKKj30XnG9rhZL3IX/0g+fdZKYAYJYHKXb1QgEwjvjk2Qd8/9kJXnWHuifMloAJz0h3xSEjXOOn8b7vzAZAspWxANLwUOHRbACYdCcAACTe6iRmHpBQl2B9E7BtWn9xAXz7Cnz57MTHvltmSi1AfOR7pOqhgS3WNxE+wm7jZtQZ7IUkhH4JFizVSI2mvviltIZtCJy2tg5JQ+oBmFRftXrDqPj95auPLgRIQxqYkABo3DYC8O5lvpKGNABgbSVV1wNsPACqS5mU09o6dPM6/S5g0oPM5Wq1QrltpcXvGtqkFCDu+Q4kFPNU72Q7YFvp2y7fStfdpn91SO2E8g6cWx6YyKTq7SZePi59qij2qWS5B4gdYFeWKKUuhuDojA8AdQTX2+YzYCTeFQ0ijQnZCnIOrDbNZsDvSCCwM/gU9ooE5QBMOvkdQHaAoQ/gz9kvkUDiYPAxJNfdHIA4hOptYgYw7Az2wr6uGBWFHoiPfMKAi7Ari4p20uJAWQeuI8G5eDqaWn2z5gF4n9Gl7Z84CgGCJ90hgN5orhVE6rkgcDYNwLjXclfJTNmB8QAY1Lsh/5cAQj0XACTTAJjdCS9jAa/zqaIJ91cApi1Gxdz/G/4CJLqA/yudlT0AAAAASUVORK5CYII=" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">P</span>PayPal $1K</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HiveX DSP -->
+  <div class="module-panel" id="panel-dsp">
+    <div class="module-intro">
+      <div class="module-intro-text">
+        <h2 data-i18n="dsp_h2">HiveX DSP<br><span>专注电商的程序化平台</span></h2>
+        <p data-i18n="dsp_desc">接入电商 RTA 实时购物数据，精准锁定高意向买家；联合 Oppo、Vivo、小米、传音四大品牌手机 OEM 独家流量资源，覆盖东南亚·非洲·南亚新兴市场 200+ 电商商家。</p>
+        <div class="module-features">
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+            <div><h4 data-i18n="dsp_f1t">电商 RTA 数据</h4><p data-i18n="dsp_f1d">对接实时购物行为，精准匹配高意向买家</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+            <div><h4 data-i18n="dsp_f2t">OEM 独家流量</h4><p data-i18n="dsp_f2d">Oppo/Vivo/小米/传音设备级精准触达</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+            <div><h4 data-i18n="dsp_f3t">RTB 实时竞价</h4><p data-i18n="dsp_f3d">毫秒级响应，全球 Tier-1 流量直连</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div><h4 data-i18n="dsp_f4t">多平台协同</h4><p data-i18n="dsp_f4d">TikTok Shop / Shopee / Lazada 统一竞价</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="module-visual">
+        <div class="metric-card"><div><div class="label" data-i18n="dsp_m1">合作电商商家</div><div class="value">200+</div></div><div class="delta" data-i18n="dsp_d1">↑ 持续扩量</div></div>
+        <div class="metric-card"><div><div class="label" data-i18n="dsp_m2">日均曝光量</div><div class="value">8.4亿</div></div><div class="delta">↑ 15.7%</div></div>
+        <div class="metric-card"><div><div class="label" data-i18n="dsp_m3">Shopee 日支出</div><div class="value">$20–50K</div></div><div class="delta" data-i18n="dsp_d3">稳定预算规模</div></div>
+        <div class="metric-card"><div><div class="label" data-i18n="dsp_m4">OEM 合作品牌</div><div class="value" data-i18n="dsp_v4">4 大厂商</div></div><div class="delta" data-i18n="dsp_d4">独家合作</div></div>
+      </div>
+    </div>
+    <div class="top-list">
+      <div class="top-list-hd" data-i18n="dsp_topTitle">DSP TOP LIST</div>
+      <div class="top-list-groups">
+        <div class="top-list-group">
+          <div class="top-list-group-hd" data-i18n="dsp_topPartner">TOP 合作方</div>
+          <div class="top-list-tags">
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAdUlEQVRYhe2WQQqAMAwEZ8W/9OhzfKPP8ehr4lVbBBFtPOzcGlIyJKFUEUEmQ2p1CwBjHZD06VJEhI7n9A5YoNkBYO0poPohknSR+g51vV+O4A4LUKrYBsy9BAowPbx7In0EFrCABSxgAQtYwALNp7Q36R3YAWoOE2S+PUNwAAAAAElFTkSuQmCC" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">传</span>传音</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAC3ElEQVRYhcWXS04bQRBAX7WRsoxzAg9cIL4B9iqziARZYNgghxOYGwA3MCcAxMZ2kGDZO5sbmAugnlwgZhUh4aksZuLv9Nhj5VPLqeqqN13V1dXy6fQz/1O2ii6wHRdgpAYazCmMDHnTYXgUuD8OYG+jMu/0FKRJSdLAMm+kQEmwvcgBF8Q6WAdGVqXA9tw5Ii2g7DEZofqAMUNifUlpAqACRGEjON8IINlq7hGpZhooDtWT8DAYANiuqyHUEPk4AzsCjcKD4NQHkJmCNM99hCB7mV6GjalT232uYswZSG3ZVrC9aI9Y61kpMYWDKyeLfxQe7gzDg6COcgKMMhgCjPRtxy35XALID64XYaNynakDwkblmnhc90KUzH0uQFJw3uDXqwoKkt1A44tsrVZtz835mAAk2yNNr+cYj9MMiMZ2GxhkKkVa9jaanKjpDhip5f59wQZDrD7gtKcsAsCZ15nGl4WCA+nxXK6FRPbmAGzHBf4jxyg83BkWBQBA9SHzu0j194lIdmDL02wSL5sFT9Y+eVUm6RkJQKw5APidrBJjnF8Zl6cAeaLePK6WseaslTUB/rKsA1D5BwDivBYivmt4tUhObRkZTgFiHeS4qW0OYHa9ujedAoRHgUNxHtOy7brNIBTPLDEd3WZqQG+8jgz7RWPbu2jf39xk0lmnAK/Sxts6pZl1l+eKSnZrV9xsyicA4XFlhKqv55cpydW6se3d9xb4ClBvZi+2uWOY3Pfia721xbs8M3j3uYpqtp3iFmeK5T4wjr94C1LkLA/C9qKvmFKfrAk62fr64uclgPAoSAwLQNiOC+y3qI9wlRc8a6ZYMZbnDqcOmMyI6Rj/FWF3zkZ4YUzbN9Cs9zBBmnnzAjBA9QnEYeQ9Gm+DVND4MR3PvLISAObegy3vQ2UiOkB55FXa4XFl5U26FsASzJZUQSrE8QcAjPkBGvGTwTpBZ6Xw6zjNpSu6zie/AL82O7fs7/EaAAAAAElFTkSuQmCC" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">O</span>Opera</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAKlBMVEVHcExCYP9CX/9BX/9BX/////83WP8oTv/Q1//x9P9of/+ns/+Kmv9sgf87OLjcAAAABHRSTlMA3nnarH+H1QAAALxJREFUOI3NU0kCwyAIJIaCZvn/d4tVQWyN13IDhhlAAYCw4cS2AGL7LJ1tl/qnPGKAKX9Vgec84t8AWIx8nHKsAfgldjgEHTnGFUCnOIl7ACcJnaQS6jYCKwEj7BlMtEzBUQJRRXq3AIhyyVVF6MoeuT24mEPDN6vXs022voaOFaCTDTMbQ02MWzNAox723r3mp7mU3EYcoCyjG3cEIN0lf88A0oaoRP/w/kfpN5kBftj6cJantzze1fm/AT3VEb0spXRyAAAAAElFTkSuQmCC" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">V</span>VIVO</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAJFBMVEVHcEwAbDIAbDIAbDIAbDIAbDIAbDIAbDIAbDIAbDIAbDIAbDJ5LwUpAAAAC3RSTlMA2zaL7HxnH1QJtIhgVWgAAACSSURBVDiNvVNJEoAgDOsCKvD//zpIHRaRnDQXmKaQlBainxF2kT28kKKcDKzyoDUN0I72I53hK8816lzd881bjL0pi7cTrj3PnS/heoeOgq2tbHXiuamLaOvstLhUNop5OWYJR2ZiKWHGF3FHaZ2QcAKUgCZhmfCh8FNbM9+bhduNBwaPHMGhvZTXY1+w/Dif4QTZSg2Agdt/mgAAAABJRU5ErkJggg==" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">O</span>OPPO</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABI1BMVEX+/v7//////f3///38//75///+//j+/f///fsAk1f2///z//////ofWKf///wAY6/0//nt/vtAo6ZEpLc8prV/wcm539c7o40AiV9jtJeZzLgomG0Ai05Yq4Df9e3d9PcAhKsAkbEAkLcAi5zD8Op5uLAAhX8Ak5YJlaEIlawAjoFGpIA6l3AAhk3f+erJ6PAAhrdGrrAAinO97N8AkmAFkXF7uKG42OUTjMYTlsoUlK8jo5col4ScyNkAhL8dh8tTocpqs8l8sdIfhc1LmcsLhbs9nLlckcQPebwgcLwAba1BfK7f8vgjYqEjebQAbrJjrLZFiLVtm8YFSZqgzNe4y9+Ywd59s8+mt9EAe6qJn8S12etnhbBKZqIlO4ILRIsXVI4wPDBkAAAB2UlEQVQ4jdWS/XqTMBTGc0hSWqBlOKdVqxTqBmwqqMXS6kD7MZONgutm56xu3v9VGLDgbmFv/snH73nPeXJehO6NJFlqEIQRlpHcFEdEMJIlQmpAg0JNgJ0dQAAEiEIBpP8OxoPdh3sUHj3udp8YAnj6rNd7/kKuCTD7lj14uX/guN7hERivXrdarV7vDdSAH9iW+3ZgWd7Efff+aDgchmHY/QByBYwWQTQeR4FlTTz344Ez8JzDMPyk1A7HcZwkyWfTsIWs8RfTdFzXcdSqBkyTWZLERoPMoyhenBgScT3PvQN8ZUmUHGMKC8b56QiQOpkIQq1LnPFoxtIOpRljPFMl2RT9ervbjyKELvWcZQrCac5y/Rxk8It2v1UVSNpuc1bec871FUjapQAme1tA0vyLts5XgDqbXABT0ErAuqx7/H4hLK4whnWec32Nm3AVWHZ/BNWkfghAX3cwTAuHDUgwTwL72hcDLAH8swA2YqSrAvBBo/NZHFybWwDBLwG0fSzDeZ7nyxQahvjYRV9FFfBbvLdTADXnYikEp4yxuC9KlQAoNze3t3+EX7oUykRe0tMsy06gciBlnmRCcLkRSSOUUoVqW4CgTrPMDv6nIoqaJkJ5J5P3XX8BLtZFVVo3/CgAAAAASUVORK5CYII=" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">M</span>Mobfox</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACS0lEQVRYhe2Wz2sTURDHP2+zzY+mbVLUtKb+LCKIEoX2IAgiHnroTbxYvQh68OI/4KGe/QO8CEXQg4dqsQqiBwURBcEfUGhTGyWtINambWKbtGmyyXoYIQ1m193SkEsGHvv2vZk33zcz+51V3CiaNE4MrYHOAWgCaAJoAtCdKLV5YU9I5j9WYHWjtp4Cutsh7K+sZQtiU7ZgG0cA+ntg5BxoCq6Nw4uvtfW8OtwagJ1BiKfgQBjavTA0CktrtW0cpcDrgUhQhs8Gsqagq00iNjYJE/MQ7RB7SxsnANxKbyec7YV0Hoyyva6jFGwWj4JjEThzEDpbYWYRXifhV1b2TeDtd0gsSeo0JWvbAkBTcOk4nNgNe0PyXijB558w/BLezMKTuOzHuiUVDyZgJW99pnLSDQcOwaMh8OtSzb/z8G0ZWjxweAcEWmBqAS6OwlSqOq9lwLT24L4bzmbg8hgM3ofBe3DzFawW4EhEoqOAklkZNs4Bl0VomnD3EzxPQHodFnJw5wO8mxPHp/ZJ2N2IKwCGCYnFalLJFSCZkfmuYJ0BKIRsqg5Q4Pv7nRtlCXvdAOganN4PgU0goh1S9QDJtH3F1zzTnTpciMFaEZ5+kXBf6YNYFxRL8GwG8kYdAZTKkv/rJ+Fqv4Tfr0vYH8fh4aQ96WwZQLYA0yl5jnyE80ehLyp9YS4D43G4/d664diJIyLyeSAckNsvr0OrDj0huf1iDuaz/+d8CzEcRWCjVOF6EOKZTm3J4T/S8D+iJoAmgIYD0AGX5LmtYvwBmYq1nSL7vH8AAAAASUVORK5CYII=" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">B</span>Bidscube</span>
+          </div>
+        </div>
+        <div class="top-list-group">
+          <div class="top-list-group-hd" data-i18n="dsp_topPool">TOP 流量池</div>
+          <div class="top-list-tags">
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAdUlEQVRYhe2WQQqAMAwEZ8W/9OhzfKPP8ehr4lVbBBFtPOzcGlIyJKFUEUEmQ2p1CwBjHZD06VJEhI7n9A5YoNkBYO0poPohknSR+g51vV+O4A4LUKrYBsy9BAowPbx7In0EFrCABSxgAQtYwALNp7Q36R3YAWoOE2S+PUNwAAAAAElFTkSuQmCC" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">传</span>传音</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAKlBMVEVHcExCYP9CX/9BX/9BX/////83WP8oTv/Q1//x9P9of/+ns/+Kmv9sgf87OLjcAAAABHRSTlMA3nnarH+H1QAAALxJREFUOI3NU0kCwyAIJIaCZvn/d4tVQWyN13IDhhlAAYCw4cS2AGL7LJ1tl/qnPGKAKX9Vgec84t8AWIx8nHKsAfgldjgEHTnGFUCnOIl7ACcJnaQS6jYCKwEj7BlMtEzBUQJRRXq3AIhyyVVF6MoeuT24mEPDN6vXs022voaOFaCTDTMbQ02MWzNAox723r3mp7mU3EYcoCyjG3cEIN0lf88A0oaoRP/w/kfpN5kBftj6cJantzze1fm/AT3VEb0spXRyAAAAAElFTkSuQmCC" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">V</span>VIVO</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAJFBMVEVHcEwAbDIAbDIAbDIAbDIAbDIAbDIAbDIAbDIAbDIAbDIAbDJ5LwUpAAAAC3RSTlMA2zaL7HxnH1QJtIhgVWgAAACSSURBVDiNvVNJEoAgDOsCKvD//zpIHRaRnDQXmKaQlBainxF2kT28kKKcDKzyoDUN0I72I53hK8816lzd881bjL0pi7cTrj3PnS/heoeOgq2tbHXiuamLaOvstLhUNop5OWYJR2ZiKWHGF3FHaZ2QcAKUgCZhmfCh8FNbM9+bhduNBwaPHMGhvZTXY1+w/Dif4QTZSg2Agdt/mgAAAABJRU5ErkJggg==" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">O</span>OPPO</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAC3ElEQVRYhcWXS04bQRBAX7WRsoxzAg9cIL4B9iqziARZYNgghxOYGwA3MCcAxMZ2kGDZO5sbmAugnlwgZhUh4aksZuLv9Nhj5VPLqeqqN13V1dXy6fQz/1O2ii6wHRdgpAYazCmMDHnTYXgUuD8OYG+jMu/0FKRJSdLAMm+kQEmwvcgBF8Q6WAdGVqXA9tw5Ii2g7DEZofqAMUNifUlpAqACRGEjON8IINlq7hGpZhooDtWT8DAYANiuqyHUEPk4AzsCjcKD4NQHkJmCNM99hCB7mV6GjalT232uYswZSG3ZVrC9aI9Y61kpMYWDKyeLfxQe7gzDg6COcgKMMhgCjPRtxy35XALID64XYaNynakDwkblmnhc90KUzH0uQFJw3uDXqwoKkt1A44tsrVZtz835mAAk2yNNr+cYj9MMiMZ2GxhkKkVa9jaanKjpDhip5f59wQZDrD7gtKcsAsCZ15nGl4WCA+nxXK6FRPbmAGzHBf4jxyg83BkWBQBA9SHzu0j194lIdmDL02wSL5sFT9Y+eVUm6RkJQKw5APidrBJjnF8Zl6cAeaLePK6WseaslTUB/rKsA1D5BwDivBYivmt4tUhObRkZTgFiHeS4qW0OYHa9ujedAoRHgUNxHtOy7brNIBTPLDEd3WZqQG+8jgz7RWPbu2jf39xk0lmnAK/Sxts6pZl1l+eKSnZrV9xsyicA4XFlhKqv55cpydW6se3d9xb4ClBvZi+2uWOY3Pfia721xbs8M3j3uYpqtp3iFmeK5T4wjr94C1LkLA/C9qKvmFKfrAk62fr64uclgPAoSAwLQNiOC+y3qI9wlRc8a6ZYMZbnDqcOmMyI6Rj/FWF3zkZ4YUzbN9Cs9zBBmnnzAjBA9QnEYeQ9Gm+DVND4MR3PvLISAObegy3vQ2UiOkB55FXa4XFl5U26FsASzJZUQSrE8QcAjPkBGvGTwTpBZ6Xw6zjNpSu6zie/AL82O7fs7/EaAAAAAElFTkSuQmCC" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">O</span>Opera</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAD4ElEQVRYhaXXXWjVZRwH8M/cikb0xnpbOYXCQKmlVvSGRGbatEIMQouuom7OWDchRBeC3XUjHM4hqMsuEqEwlTMLK0qyJJSV0CqqoVNcsJjtZqRNuniev3vO2f+c8x/73Rw4/9/L93l+39/L06GglCvVLtyIDViLvUODpZPx21psx0kcwYWhwdJ/RfwuKRi8G/3YibexLkdtXfy2E/3Rpq10FQh8O57FVqzB9RjJUb8KK3EnHsD+cqV6CBNDg6WZBQFouO6teBy96Gx9Hp24CU/gnmi3v1ypNk3LvBSUK9Wbhet8B7vxPJZG57OYwu/xN5P0v9mouzTa7o6+1kXfdXLlBuJ1r8QzeA73I83jDH7GJziM8eTbON7FT9iGVdG2GysimNU4WK5UD2M0S0tHcuoNeAWPCnnOrnsW53EIwzg2NFiabDxJ4uc+vCjwprfBzzS+w4c4MjRYmsxSsAyvYZOQw8xoBj9gVzxhrVlwiN+ORt1d0TYjYMaPTTHWMuo5cIN8kp3GmMDmtrUddSaizekclc4YC23KUMjhRtyiQFk1KduW/aAdAAqU1SLKtimAKZwTmkpGyKys1kZA+8qV6qmonxHvqajXWD1/o0fObTQDcA57hOtMSzItq4fwZdRfb6700sBn8YVQpjtwb1EA/wrt9oxQNgPC1Wan6xbqelXUv9r8sv0W+3FcSOO2vEAth1FDWb2JA/FUWbfLwKRd8uuo/xY+HRosjbWK0ZaEkWiT5Uq1hlN4Ei8LDSu78hn8ITSqvZJO106KVEEKZKxcqU5gEn0CHwi3sgcHWjWqPGmWgkstgGTkmk7+nsZIm+C5PhsBzEbnR9VPu8XKVPSZ8eeKpCn4B5/hY3ylftotVsbxHn7BC7imEcAUPsBvFkCgotLAnxGhq06lAMbl9Phkr7tUdMlssO9KAGT8OVmuVEdFTnS0MOwThsp1QjM6lZEsbsHvC7sfnMDryZacLTerhYo5pslKNg9AXCoew0vCULkWv+KgsAmNRufzAAgbUR8eFpabflzQoj/UTat48vV4Q5hs2QDpjcFWRJsuYSDdEU3P4xssj0BeFeZHD24VWvYKnBnYvOXscK12ORfAcK12eWDzlou4HA17hHV7SQRyFx6MzpYLk1Kivx1P47ZoR+iSE0IZnsBfKYBmHOjGI/J3O+ZqOR1AF80fStP4XBhKuat5LoAIIiNi1vvXCFOtiMzgR4E3H2mxRTUFkADJGL1dGMt3a75mzeJPYQfYh+/b9ZS2ABIgaXVsNH91T1fu4xgv0jsKA4ggsrTsMPcAof7BsqBOuiAACZD0IUPy0Fior/8BxJtvvt17j54AAAAASUVORK5CYII=" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">U</span>Unity</span>
+            <span class="top-list-tag"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAb1BMVEX///8nMUO2ub0OHjW7vcKCh5AaJjsAABru7/EAACMAACYMHDTh4uUAABDFx8ysrrQAABcVIjgADitWXWtQV2SFipOdoamLj5iUmKBCSlkgLUHAw8fO0dRMU2ItOEqprLJ6f4kAGDL19vcACSnb3N9nwnHCAAAA+ElEQVQ4jX2Ti3KDIBBFF0FQ8AUxLZpGsc3/f2PRJk6qu9wZHuM9c2GZFeCgy/HDQb3uk/5VfajPhF/VHnxd0cDA4jTeSb/pbutcf1HAfdyWiaqk6tptbesCB2ZVQCHieIIn9Qyq0pQVTMRbuADeMushLDjQeZgdczN4hQMqHp1PebxMh/qFet2tVd84kD13mULrbPUOaLROaXbAWCzA8B3gHImQ7A1gEgn4B5hThFx4uQMlN/wIZEKIJv9TE/cCq+PC5SpOdnaQbJUMFDDbDbBEO8SWchvwQ7f1MEY/0dUglggsNxpYI8Yh4cNDM/1IARDcNemff/9fOwUKfspGGOsAAAAASUVORK5CYII=" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">V</span>Vungle</span>
+          </div>
+        </div>
+        <div class="top-list-group">
+          <div class="top-list-group-hd" data-i18n="dsp_topValue">TOP 高价值电商</div>
+          <div class="top-list-tags">
+            <span class="top-list-tag green"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADgElEQVRYhe2Xa2hbZRjHfznn5NI2bdOmWTK0mc28xLR1dENQmeAFtlnbKbjCivOCYkUcflAEFcQvQxEG9oOCePngZYKMCY4qbo6t2K0Kc5oNS/0w6SrtXNKmjdMsl3N5/NBY283EpKnWD3vgwHnPed7n+Z33Pe/zf18bYAE2VsiUlUp8GeB/A6BV0lmtrcXX+wA1Xi82EZKfDzBzKopVZhwLkKVc6iq/3H7wiHyVSsvJnC5Dr78ntzoby4pR8RQ4RWh3ObjBrrGxaxNdkY6y+i/LP2BJ/mZNgG0vPE2bN/DfAiy00H2d7H77TdZ2rAe7vaQ+Ff0DWw4cloRhysUWnZiUnR99LOHue8WBrVic5QOw0lkRy5qHMETkpw8+lUfcwYIxSl6GNqcLe3Mzmj+AZLOkoycQkUU+5rEoZ0d+xNt7NzU+LyoQclQR1KoKxv1nAEXBfctGfD3bCa/fQMdqP6vPxTm14zH2pGKLXX/9nU927ebbD99h55Z7iLS2Uh09XVTqigLYNI3G+x/k+r4nePiaEF2eOvx2DTQnw/VB9l2YYuEY2BSFjGmy5/gQXxwfpt3lIeRwM5o7vzSAus2dtD75FC9du5Y76t1/vTDNS4Z/HiL/tQlMBjMJBjOJYikKA2hNTQR2PERfS3AuuWlhDn2HfuBrkuMTxGdnsJZhF1EQwNW+jnVtrXR66gAwPhti8vnXeGP8JAcz00yLTqrJU/FOpiCAsyXEjY0NNGgqZHWy+w7RPx6lPzU+76Py99NQjhWshIrdzhVOx1zDMJhJJjmUmb7ISQVlQQjDoFymggB6PI5lmnON6irUtquxrMVC62wJUeP1ouWzWucSZAx9eQBSIz8wFsuvcxv4+3rYvLUbXC6wO3CGI/gefZybVvmoVVXI6WS/H+WMfqEsAChUilVV7nz5VZlZUFrjs7Py4v4Bue3d92XTkWOy6+ezMpXTRUTEPBqV05GtErG7yy3phbXA1RyUtw4PLhIZS0SmTEtiuiFG/pk5EZN0z7PyiicsSnHhKV+MrrwuLAP7B0R0Qy4xyxLzxKiktz8ne30bJKA6yxY0GyUcTAL1DTzTvY3eu7oJtKxBVRTkl2myw1EmvzzK3jMj9P82RszMljf5+cQlnYwUIOKo4+Z6P1fZq5Gszlj6PN/kkowaKawl1oSSAf4tW/FzwWWAP8WoclVZov0BohAe2JhCX+YAAAAASUVORK5CYII=" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">T</span>TikTok Shop</span>
+            <span class="top-list-tag green"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADxElEQVRYhbWWTWhcZRSGn/e7kxnbQHMnEdwUtCX+22k6RdFSxE2gQTLBtFEqRcSFi6LdKP7sVCgaqhRcuCkVazfFQZtMFi0IIlK0ionNpChYFy4qWtHMTDvVJJO5x0WTydSZ5N5J0291f85534fzne9HrGLY0FC8MHuh1ym4FyAw91MycefnymbnWtVSqwmFzNbnMBs27NbrhfQX0qvJ3OSHNw2gkEm9a2YvCc0Do8CZhV87gQHDYpLeS+byL685QCmT2lU1OyVxCXgymZv66nq4LY8Cn5hxmyf1deTyp9cMwIYeWVecKZ8HNjm0o2Msf7YpZH/q4QD7GulXP9F+v7Lf/Bum7aIAlGbL+ww2Ix1fzhygYyx/FuljM9tUmi3vi6IdCcCgD8BM2fBYl63PWSMA3QWQaIuNh8UmYt5EfU7YqPXAdCZ1HtjYNMhsg4GQSlFEMesQmEmXl4m42JnLPwAQq/u4GbN1TfXqhCMBXMvR8vFqW3yqTYGMclTxGx2SXWkAQFxtWQhmJYJVMDQCWNQKiLKkN50X7/a3717vp7sSzot3I/eipHPR/FXzarEC+sc5HvPTg28pqDxYnDj5fmGicNCCys5kIvmRPzqZljQagaBWgVoTyihb8+Ale3HIH5kaLwQaMbOBxfY0oDjz92EyW48b9Ia5m1kjAKJMCIETp64MbLuvEswPNIhCEuxAmHnNa1GzTiK0B2Qu5sWD0sJpuOoh1KQJCe+BKrZ3fXbyN8n2C2ZvgKERQERYBRbsLwyknvFzU0fwvHuQDiF+b92/2SqIUAEDWWDHpvtTJ0S1qzOXfyWZ3r0RXD/St5HtCVZZgSWUp4Iq3xcyqR+K458dkKczyfTgDgevSaqEZQfNeiCQWt6KzazHsMNWDS4WJ04+649NDQMHwzObALRWgQaUdrPgaDHT0+sn7n4bmFnR3jXpAa3iLGjAIHh84Wr+54oATXvAIkyBdHrFPUCatOe3t4G6VgZoNgUhAELfdebyfV68bYvQ2P/2gRkcw/62J44VL1X2grWvpOXM1bxqW3HVcZXq8kmGPVToTx0hzuvJT/MZGxqKX6783CM5bz7mfuzMjpem4WkCfbCSOYBHrFaB2pWslEl3V61yISxZYg6UM/jC4X4xT3ME1dsxBsxsMCwfQJ6XTI6cK0JdBbyEV67OhC5hzIiD7QH2BFRhFaeC3+OXGbn2XOuBdu6YJmT5rNH4Q298WcNeasJsdk7OnbjZ7g4drX+vvxXjb7AXiiWVDHbJuGVNnWUlINuR7nyHsaXP/wFjQHmV+AN45AAAAABJRU5ErkJggg==" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">S</span>Shopee</span>
+            <span class="top-list-tag green"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABZVBMVEUPGG4PF3QGGL0GGLsGF7gGF7b///8OF4EHF7IPF3oPF3YPF3UHF7AOF34MF4kOF4MIF6vxF4wJF6f0aSALF5j3nn3rD0T/dxMHF5/vPS/2ciH3NpD4MKP+GJnxXBHwF3vtFFb5KsP4gSPyXTH2O4byGJbtQwDyGJXuVx7uSybsFE3uFWEAB7d0PXjzeQCtUFC/J7F/Hro1GpHYbiRnNHhxIZn/K8DiJNQABKT/iQr/bA3EUEAxFaTJL4r8J+C+I8z3fSKuPXBRE5yvM3z/Qnf4La//KOP1K9H4WD/9Ukj9TFb5RWP1P3z4JNLyXTX0SlrvFXP1fWz2a5P3ZZ/4YKnzWpH95eL2hrD0mon0YVTzKSr7wczrADL92uPxAHX708L82tXtKAD2qZjtFAD1g571dqjYZCrzcUXHHZFnM2OrT0CwGoU7J3HlWiDjGn4ACIWLPVGJHIK/G3FwGXiYPEv/PyauIFB6uIGcAAACBElEQVQ4jaWOa3PSQBSGFyWbBMOSLiEJKYRAaZpCpVptRaqItfVSqKZWQVvEgnipVvH++z27WWZw/MAHn83snMsz7wZdmAO6OAcUnwOS5oAURVM4mqJJ4kQziS8QzNkXX4tLrIiO+BhI13RdUdYu19brEpTQwtGuFK9qVIFCR1SnenzjWs2xrOtxjXW6tJnLFbduMJ1SRKleX79ZajmO09i2FUq1W7cXQSg2m3dAZkK9ViqVWmCkl9y7Ozv3dsuLub2t4kHz/gMKCTYlVgsMhwmPHz7ab3fKUcLBXp5SG1GbWE7amQr7T3Y7UcJyYTlvg2DQFAhpN4MbXGhHCSvhwgIIBggGEYKfXvIPD9tPO0dHz54XClywDRCmCX7gdzEQsqs3iBL+EvwX+OXxCTbN/qvuABJW/hFenw6zFdw3T3BVPAECMWQhDP0RHr4Z434Ph55IIJBAVCFg7HbxKcYmxl38lv+DQQgiZPLOAuF9JpPx/dHIG3vjca9XhoT8B8IFYp+lwXDdYHU1e2z2KxWvGrInNokQIORjww0CJmRNk+3DwuAT3xCUYpDJ+Wd3RqhWv2ykIpggy3IqNfnaEILnedVvbCZzQZ5C1G0fDEiofGdbAUoK1GSSnAU84UfURiB1Bjn581f/d2x2pKKEQE1wBZ3DzVsBuiSIRSSg4s10jmJzQP/NH5GjXv5ROD/tAAAAAElFTkSuQmCC" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">L</span>Lazada</span>
+            <span class="top-list-tag green"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACqklEQVRYhe2Xz0vTYRzHX8/z3S8T1hyKJSEhBh5kSRjYyDSkg2JQ0MU/IIToFNnu3iajUwQjBQ9Wl26NDCIcIXYIlMybMDqkBIpjY1+duj1Ph21mtE239uPS+/jl+3xer+fh+3yf5yPIRgcZBHwavAKcVCEa4gKWAL8YJwwgsvDHgB+Q1QDniQJ8YpyAyM78Yw3hxyWGpAZfHeBkmT6LAC+ASoL5VZCMSNJx0LqyNCHAcIKjQ9F4WSMdAHiFDqIPt2EnZKBMUVlqgchGjXs0jbUZpErWFg6gTJFhJkEmVmRN4cclEisSmYzUHp5LMiKQ6Vjd+KRjINFFVkBUYHcWq6FF4f3vmnpF68IGVk9f2Wyrp4/W8AauqZcF38kvICWOoTvIpmbs/cNlC9j7h5GuZhxDd0EWQOV9qhQqFgXAaDlftkBurIpFQakSBIDU+jcAbFeuly2QG5urVZLA/uJ7AIz2Tmy9A6XDewcw2jv/qFWSwF5oDrVrIoTAOREAq+30dKsN50QAIQRq12QvNFe6gIpuY84GMvW6enBNToNhORluWHBNTmPt6gHAnA2gotulCwAkZvwcLC8C0DAyhjs4f7SsedntnbiD8zSMjAFwsLxIYsZf1FdseixFD15x1o37eQhb91UAdOqQ/U/v2P/8gdSPCACWCx3Yr93CfmMEYbFm4Gtf2Hkwio7t/JsAAI4GnI+mOHPvPsIwir6q02l237wg/vQJJPdOLH06gWwsl7ppHHuI/eZtZFMLQmR+41prVHSL/YW3mK+fkVpfO23J0gR+jxIYbReRLecAUFs/SW9+L+saVZ5ABVOPy+h/gb8E4nXkxyWZXq1eWZJkesL8h3V1owC/bFtNhcm0Z7WUUICvbTUVPrqRbnosg1kRL1Vqz8l8b0uAPztxfgEVaeU3I5lENgAAAABJRU5ErkJggg==" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">A</span>AliExpress</span>
+            <span class="top-list-tag green"><img class="tag-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAY1BMVEUAAAD////ExMSYmJiSkpJpaWnk5OT19fW6urpTU1OMjIyHh4cODg5fX1/q6upAQEDe3t7Nzc1ISEiqqqq0tLQdHR2enp55eXmAgICkpKQ6OjrW1tYlJSVNTU0vLy/5+fkXFxd+jcshAAAAoElEQVQ4jd2SyxKDIAxFibylqKil7+L/f2UDdbqCdN3eDczcM+EmgbH/k3VcOHlo2X6At7qx6gu0kpo0HqHmz2gs5dKZaoEFS5MBA4AggbXx9EcWM5gjRUQk9GoJ4lSGMEQCOU+FuRDINeZx3si07ksNxjiAIoERu6lt9P6gKzwVGJ8veau8ApjcYNI6tdbNfNj/S+pb6TbpOO8l2cFv6gXpoQSAUgp/jQAAAABJRU5ErkJggg==" alt="" width="16" height="16" onload="this.classList.add('loaded')" onerror="this.style.display='none'"><span class="tag-initial">S</span>Shein</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /module-section -->
+
+<!-- ══ Case Studies ══════════════════════════════════════════ -->
+<section class="cases-section" id="cases">
+  <div class="section">
+    <div class="section-hd">
+      <h2 data-i18n="casesTitle">客户成功案例</h2>
+      <p data-i18n="casesSub">真实数据，真实成效，助力品牌实现高速增长</p>
+    </div>
+    <div class="cases-controls">
+      <div class="search-box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="搜索案例、行业、标签…" autocomplete="off">
+      </div>
+      <div class="filter-tags" id="filterTags">
+        <span class="filter-tag active" data-filter="all" data-i18n="filterAll">全部</span>
+        <span class="filter-tag" data-filter="buzzy" data-i18n="filterBuzzy">Buzzy H5</span>
+        <span class="filter-tag" data-filter="adn" data-i18n="filterAdn">HiveX ADN</span>
+        <span class="filter-tag" data-filter="dsp" data-i18n="filterDsp">HiveX DSP</span>
+      </div>
+    </div>
+    <div class="cases-grid" id="casesGrid"></div>
+  </div>
+</section>
+
+<!-- ══ Contact ═══════════════════════════════════════════════ -->
+<section class="contact-section" id="contact">
+  <div class="section">
+    <div class="section-hd">
+      <h2 data-i18n="contactTitle">联系我们</h2>
+      <p data-i18n="contactSub">通过以下任意渠道与我们取得联系，我们将在 24 小时内回复</p>
+    </div>
+    <div class="contact-grid" id="contactGrid"></div>
+  </div>
+</section>
+
+<footer>
+  <p data-i18n="footer">© 2025 Mobikok · AI 驱动的效果型程序化增长平台 · <a href="/card-recognition/">名片识别工具</a></p>
+</footer>
+
+<!-- ══ Case Detail Overlay ══════════════════════════════════ -->
+<div class="case-overlay" id="caseOverlay" onclick="if(event.target===this)closeCaseDetail()"></div>
+
+<!-- ══ Admin Panel ═══════════════════════════════════════════ -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-panel">
+    <div class="admin-hd">
+      <h2>🔐 管理员配置</h2>
+      <button class="admin-close" onclick="closeAdmin()">✕</button>
+    </div>
+    <div class="admin-body" id="adminBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── 国际化 / i18n ──────────────────────────────────────────
+let currentLang = (function () {
+  // 1. 手动切换优先（localStorage）
+  const saved = localStorage.getItem('mk-lang');
+  if (saved) return saved;
+  // 2. 读取 TranslatePress cookie（主站切换语言后自动同步）
+  const trp = document.cookie.split(';').map(c => c.trim())
+    .find(c => c.startsWith('trp_language='));
+  if (trp) {
+    const val = trp.split('=')[1];
+    if (val === 'en_US' || val === 'en') return 'en';
+  }
+  // 3. URL 前缀兜底
+  if (location.pathname.startsWith('/en')) return 'en';
+  return 'zh';
+})();
+
+const LANG_DATA = {
+  zh: {
+    // Nav
+    navBack: '返回主站', navContact: '联系我们', langBtn: 'EN',
+    tab_wanmeng: 'Buzzy H5', tab_h5: 'HiveX ADN', tab_dsp: 'HiveX DSP',
+    // Hero
+    heroBadge: '三大事业部 · AI 驱动 · 全球覆盖',
+    heroTitle: 'Mobikok',
+    heroDesc: 'AI 驱动的效果型程序化增长平台<br>旗下三大事业部：<strong>Buzzy H5</strong> · <strong>HiveX ADN</strong> · <strong>HiveX DSP</strong>',
+    heroCta3: '留下您的联系方式',
+    heroCta1: '立即咨询', heroCta2: '查看成功案例 →',
+    heroStat1: '核心事业部', heroStat2: '日均曝光', heroStat3: '合作品牌',
+    heroStat2Val: '15亿+',
+    // Buzzy H5
+    buzzy_h2: 'Buzzy H5<br><span>H5内容分发商 · GCPP二级代理</span>',
+    buzzy_desc: '作为 Google 认证合作伙伴（GCPP）二级代理，Buzzy 深耕 H5 内容分发领域，为游戏客户提供经 IVT 检测的优质流量，通过 AI 素材矩阵持续驱动 ROAS 正向增长。',
+    buzzy_f1t: 'GCPP 二级代理', buzzy_f1d: 'Google 认证合作，优质 H5 流量优先获取',
+    buzzy_f2t: 'H5 内容制作', buzzy_f2d: '高转化率落地页设计与快速迭代',
+    buzzy_f3t: 'IVT 流量检测', buzzy_f3d: '实时过滤无效流量，保障真实计费',
+    buzzy_f4t: 'A/B 测试驱动', buzzy_f4d: '数据驱动持续优化，最优素材矩阵',
+    buzzy_m1: 'Day7 ROAS', buzzy_m2: '落地页转化率', buzzy_m3: 'GCPP 月 PV', buzzy_m4: 'GCPP DAU',
+    buzzy_d1: '↑ 稳定增长', buzzy_d3: '月曝光规模', buzzy_d4: '日活跃用户',
+    // Buzzy TOP LIST
+    buzzy_topTitle: 'H5 TOP LIST',
+    buzzy_topAdv: '上游广告主', buzzy_topCh: '流量渠道', buzzy_topReg: '跑量地区', buzzy_topType: '内容类型',
+    // HiveX ADN
+    adn_h2: 'HiveX ADN<br><span>全球广告联盟 · 擅长美洲市场</span>',
+    adn_desc: 'Mobikok 旗下全球广告联盟，整合海量优质流量资源，支持 CPA/CPS/CPI/CPL 多种效果计费模式。深耕北美·拉美 Tier 1 核心市场，自研效果营销引擎，帮助企业低成本高回报地实现用户增长。',
+    adn_f1t: 'CPA/CPS/CPI/CPL', adn_f1d: '多种效果计费模式，精准匹配不同企业的增长需求',
+    adn_f2t: '厂商流量', adn_f2d: '互联网、APP、媒体厂商独家优质流量，资源独家、用户精准',
+    adn_f3t: '效果营销引擎', adn_f3d: '自主研发智能系统，广告花最少的钱获取最多有效转化',
+    adn_f4t: '美洲市场专注', adn_f4d: '深耕北美·拉美 Tier 1 GEO，服务 BetMGM 等头部博彩品牌',
+    adn_m1: 'CPA 日均转化', adn_m2: '月安装量', adn_m3: 'CPI 最优降幅', adn_m4: '核心市场',
+    adn_d1: '↑ 稳定输出', adn_d2: '↑ 持续增长', adn_d3: '↓ 持续优化', adn_d4: '美洲·英国',
+    // ADN TOP LIST
+    adn_topTitle: 'ADN TOP LIST',
+    adn_topIaa: 'IAA TOP', adn_topCpl: 'CPL TOP',
+    // HiveX DSP
+    dsp_h2: 'HiveX DSP<br><span>专注电商的程序化平台</span>',
+    dsp_desc: '接入电商 RTA 实时购物数据，精准锁定高意向买家；联合 Oppo、Vivo、小米、传音四大品牌手机 OEM 独家流量资源，覆盖东南亚·非洲·南亚新兴市场 200+ 电商商家。',
+    dsp_f1t: '电商 RTA 数据', dsp_f1d: '对接实时购物行为，精准匹配高意向买家',
+    dsp_f2t: 'OEM 独家流量', dsp_f2d: 'Oppo/Vivo/小米/传音设备级精准触达',
+    dsp_f3t: 'RTB 实时竞价', dsp_f3d: '毫秒级响应，全球 Tier-1 流量直连',
+    dsp_f4t: '多平台协同', dsp_f4d: 'TikTok Shop / Shopee / Lazada 统一竞价',
+    dsp_m1: '合作电商商家', dsp_m2: '日均曝光量', dsp_m3: 'Shopee 日支出', dsp_m4: 'OEM 合作品牌',
+    dsp_v4: '4 大厂商',
+    dsp_d1: '↑ 持续扩量', dsp_d3: '稳定预算规模', dsp_d4: '独家合作',
+    // DSP TOP LIST
+    dsp_topTitle: 'DSP TOP LIST',
+    dsp_topPartner: 'TOP 合作方', dsp_topPool: 'TOP 流量池', dsp_topValue: 'TOP 高价值电商',
+    logoTitle: '点击5次进入管理模式',
+    // Cases
+    casesTitle: '客户成功案例', casesSub: '真实数据，真实成效，助力品牌实现高速增长',
+    searchPlaceholder: '搜索案例、行业、标签…',
+    deptDesc_buzzy: 'H5内容分发商 · GCPP二级代理',
+    deptDesc_adn: '擅长美洲市场的全球代理商',
+    deptDesc_dsp: '专注电商的程序化平台',
+    filterAll: '全部', filterBuzzy: 'Buzzy H5', filterAdn: 'HiveX ADN', filterDsp: 'HiveX DSP',
+    viewDetails: '查看详情', noResults: '暂无匹配案例',
+    caseDetailBg: '背景', caseDetailChallenge: '挑战', caseDetailSolution: '解决方案',
+    contactNoQr: '暂无二维码', contactOpen: '打开', contactPending: '待配置', contactImgFail: '图片加载失败',
+    // Contact
+    contactTitle: '联系我们',
+    contactSub: '通过以下任意渠道与我们取得联系，我们将在 24 小时内回复',
+    // Footer
+    footer: '© 2025 Mobikok · AI 驱动的效果型程序化增长平台 · <a href="/card-recognition/">名片识别工具</a>',
+  },
+  en: {
+    // Nav
+    navBack: 'Back to Site', navContact: 'Contact Us', langBtn: '中文',
+    tab_wanmeng: 'Buzzy H5', tab_h5: 'HiveX ADN', tab_dsp: 'HiveX DSP',
+    // Hero
+    heroBadge: '3 Divisions · AI-Powered · Global Reach',
+    heroTitle: 'Mobikok',
+    heroDesc: 'AI-Powered Global Performance Marketing Platform<br>Three divisions: <strong>Buzzy H5</strong> · <strong>HiveX ADN</strong> · <strong>HiveX DSP</strong>',
+    heroCta3: 'Leave Your Contact Info',
+    heroCta1: 'Get Started', heroCta2: 'View Case Studies →',
+    heroStat1: 'Core Divisions', heroStat2: 'Daily Impressions', heroStat3: 'Partner Brands',
+    heroStat2Val: '1.5B+',
+    // Buzzy H5
+    buzzy_h2: 'Buzzy H5<br><span>H5 Content Distributor · GCPP Sub-Agent</span>',
+    buzzy_desc: 'As a Google Certified Publishing Partner (GCPP) sub-agent, Buzzy specializes in H5 content distribution — delivering IVT-verified premium traffic for gaming clients and driving ROAS growth through AI creative matrices.',
+    buzzy_f1t: 'GCPP Sub-Agent', buzzy_f1d: 'Google-certified, priority access to H5 premium traffic',
+    buzzy_f2t: 'H5 Content Production', buzzy_f2d: 'High-conversion landing pages with rapid iteration',
+    buzzy_f3t: 'IVT Detection', buzzy_f3d: 'Real-time invalid traffic filtering for genuine billing',
+    buzzy_f4t: 'A/B Testing', buzzy_f4d: 'Data-driven optimization for best-performing creative matrix',
+    buzzy_m1: 'Day-7 ROAS', buzzy_m2: 'Landing Page CVR', buzzy_m3: 'GCPP Monthly PV', buzzy_m4: 'GCPP DAU',
+    buzzy_d1: '↑ Steady Growth', buzzy_d3: 'Monthly Impressions', buzzy_d4: 'Daily Active Users',
+    // Buzzy TOP LIST
+    buzzy_topTitle: 'H5 TOP LIST',
+    buzzy_topAdv: 'Top Advertisers', buzzy_topCh: 'Traffic Channels', buzzy_topReg: 'Regions', buzzy_topType: 'Content Types',
+    // HiveX ADN
+    adn_h2: 'HiveX ADN<br><span>Global Ad Network · Americas Specialist</span>',
+    adn_desc: 'Mobikok\'s global ad network integrates massive quality traffic sources with CPA/CPS/CPI/CPL multi-model billing. Deep expertise in Tier 1 Americas markets, powered by a proprietary performance engine for cost-effective user growth.',
+    adn_f1t: 'CPA/CPS/CPI/CPL', adn_f1d: 'Multi-model performance billing to match any growth objective',
+    adn_f2t: 'OEM & Publisher Traffic', adn_f2d: 'Exclusive inventory from internet, app & media publishers',
+    adn_f3t: 'Performance Engine', adn_f3d: 'In-house AI system maximizing conversions at minimum ad spend',
+    adn_f4t: 'Americas Focus', adn_f4d: 'Tier 1 North & Latin America expertise, serving BetMGM & more',
+    adn_m1: 'Daily CPA Conversions', adn_m2: 'Monthly Installs', adn_m3: 'CPI Reduction', adn_m4: 'Core Markets',
+    adn_d1: '↑ Consistent Output', adn_d2: '↑ Growing', adn_d3: '↓ Optimizing', adn_d4: 'Americas · UK',
+    // ADN TOP LIST
+    adn_topTitle: 'ADN TOP LIST',
+    adn_topIaa: 'IAA TOP', adn_topCpl: 'CPL TOP',
+    // HiveX DSP
+    dsp_h2: 'HiveX DSP<br><span>DSP Platform for E-commerce</span>',
+    dsp_desc: 'Real-time e-commerce RTA data integration precisely targets high-intent buyers. Exclusive OEM traffic from Oppo, Vivo, Xiaomi and Transsion covers SEA, Africa, South Asia — serving 200+ merchants.',
+    dsp_f1t: 'E-Commerce RTA Data', dsp_f1d: 'Real-time shopping behavior targeting for high-intent buyers',
+    dsp_f2t: 'OEM Exclusive Traffic', dsp_f2d: 'Device-level precision via Oppo/Vivo/Xiaomi/Transsion',
+    dsp_f3t: 'RTB Real-Time Bidding', dsp_f3d: 'Millisecond response with direct Tier-1 global traffic access',
+    dsp_f4t: 'Multi-Platform Sync', dsp_f4d: 'Unified bidding across TikTok Shop / Shopee / Lazada',
+    dsp_m1: 'Partner Merchants', dsp_m2: 'Daily Impressions', dsp_m3: 'Shopee Daily Spend', dsp_m4: 'OEM Partners',
+    dsp_v4: '4 Brands',
+    dsp_d1: '↑ Scaling', dsp_d3: 'Stable Budget Scale', dsp_d4: 'Exclusive Partner',
+    // DSP TOP LIST
+    dsp_topTitle: 'DSP TOP LIST',
+    dsp_topPartner: 'Top Partners', dsp_topPool: 'Top Traffic Pools', dsp_topValue: 'Top E-Commerce',
+    logoTitle: 'Click 5× to Enter Admin Mode',
+    // Cases
+    casesTitle: 'Client Success Stories', casesSub: 'Real data, real results — accelerating brand growth',
+    searchPlaceholder: 'Search cases, industry, tags…',
+    deptDesc_buzzy: 'H5 Content Distributor · GCPP Sub-Agent',
+    deptDesc_adn: 'Global Agency Specializing in the Americas',
+    deptDesc_dsp: 'DSP Platform for E-commerce',
+    filterAll: 'All', filterBuzzy: 'Buzzy H5', filterAdn: 'HiveX ADN', filterDsp: 'HiveX DSP',
+    viewDetails: 'View Details', noResults: 'No matching cases found',
+    caseDetailBg: 'Background', caseDetailChallenge: 'Challenges', caseDetailSolution: 'Solution',
+    contactNoQr: 'No QR Code', contactOpen: 'Open', contactPending: 'Not Configured', contactImgFail: 'Image failed to load',
+    // Contact
+    contactTitle: 'Contact Us',
+    contactSub: 'Reach us through any of the following channels. We\'ll respond within 24 hours.',
+    // Footer
+    footer: '© 2025 Mobikok · AI-Powered Global Performance Marketing Platform · <a href="/card-recognition/">Card Scanner</a>',
+  },
+};
+
+function applyLang(lang) {
+  const t = LANG_DATA[lang];
+  if (!t) return;
+  // Logo title (admin hint tooltip)
+  const logo = document.getElementById('logoBtn');
+  if (logo) logo.title = t.logoTitle;
+  // Nav links
+  const navBackSpan = document.querySelector('#navBack span');
+  if (navBackSpan) navBackSpan.textContent = t.navBack;
+  const navContactSpan = document.querySelector('#navContact span');
+  if (navContactSpan) navContactSpan.textContent = t.navContact;
+  const langBtn = document.getElementById('langToggle');
+  if (langBtn) langBtn.textContent = t.langBtn;
+  // Back link href (点回主站跟随语言)
+  const navBack = document.getElementById('navBack');
+  if (navBack) navBack.href = lang === 'en' ? '/en/' : '/';
+  // Hero
+  const badge = document.getElementById('heroBadgeText');
+  if (badge) badge.textContent = t.heroBadge;
+  const heroTitle = document.getElementById('heroTitle');
+  if (heroTitle) heroTitle.innerHTML = t.heroTitle;
+  const heroDesc = document.getElementById('heroDesc');
+  if (heroDesc) heroDesc.innerHTML = t.heroDesc;
+  const cta3 = document.getElementById('heroCta3');
+  if (cta3) { const svg = cta3.querySelector('svg'); cta3.innerHTML = ''; if (svg) cta3.appendChild(svg); cta3.append(' ' + t.heroCta3); }
+  const cta1 = document.getElementById('heroCta1');
+  if (cta1) { const svg = cta1.querySelector('svg'); cta1.innerHTML = ''; if (svg) cta1.appendChild(svg); cta1.append(' ' + t.heroCta1); }
+  const cta2 = document.getElementById('heroCta2');
+  if (cta2) cta2.textContent = t.heroCta2;
+  ['heroStat1','heroStat2','heroStat3'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = [t.heroStat1, t.heroStat2, t.heroStat3][i];
+  });
+  const stat2Val = document.getElementById('heroStat2Val');
+  if (stat2Val) stat2Val.textContent = t.heroStat2Val;
+  // data-i18n elements (module panels, sections, footer)
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+  // Search placeholder
+  const search = document.getElementById('searchInput');
+  if (search) search.placeholder = t.searchPlaceholder;
+  // html lang attr
+  document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
+  // Re-render dynamic content with new language
+  renderCases();
+  renderContacts();
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  localStorage.setItem('mk-lang', currentLang);
+  // 同步写 TranslatePress cookie，让主站也跟随
+  const trpVal = currentLang === 'en' ? 'en_US' : 'zh_CN';
+  document.cookie = `trp_language=${trpVal};path=/;max-age=31536000`;
+  applyLang(currentLang);
+}
+
+// ── 案例数据 ───────────────────────────────────────────────
+const CASES = [
+  {
+    id: 1, module: 'buzzy', industry: '游戏', img: '',
+    en_industry: 'Gaming',
+    tags: ['Google H5', '休闲游戏', 'GCPP 合作'],
+    en_tags: ['Google H5', 'Casual Games', 'GCPP Partner'],
+    title: 'H5 休闲/模拟游戏 7 日 ROAS 实现 180%+ 正向回收',
+    en_title: 'H5 Casual/Sim Games Achieve 180%+ Day-7 ROAS',
+    summary: '依托 Google H5 程序化平台，融合 IVT 检测、GCPP 深度合作与 AI 素材创意，全面提升流量质量与投放效率，7 日 ROAS 稳定超出预期。',
+    en_summary: 'With Google H5 programmatic, IVT detection, GCPP collaboration and AI creatives, traffic quality improved significantly and Day-7 ROAS consistently exceeded targets.',
+    metrics: [{ label: 'Day1 ROAS', value: '40%+' }, { label: 'Day3 ROAS', value: '80%+' }, { label: 'Day7 ROAS', value: '180%+' }],
+    emoji: '🎮',
+    detail: {
+      platform: 'Google H5 · Mobikok',
+      client: 'casualplay.top',
+      region: '全球',
+      background: '客户旗下 H5 休闲/模拟游戏通过 casualplay.top 进行全球流量分发，面临无效流量占比高、ROAS 提升瓶颈及素材快速消耗等挑战。',
+      challenge: [
+        '无效流量（IVT）占比高，机器人点击侵蚀大量广告预算',
+        '广告素材质量参差不齐，CTR 表现差异大，缺乏快速迭代机制',
+        'Day7 ROAS 长期低于盈亏平衡线，无法实现正向回收',
+      ],
+      solution: [
+        '接入 IVT 检测系统，实时识别并过滤无效流量，确保每次计费均来自真实用户行为',
+        '启用 GCPP（Google Certified Publishing Partner）合作，获取优质 H5 流量池及专属优化工具',
+        '内部 AI 内容团队批量生成高 CTR 创意素材，A/B 测试驱动持续迭代最优组合',
+      ],
+      results: [
+        { val: 'eCPM +25%', lbl: '较行业基准', dsc: '流量质量显著提升' },
+        { val: '40%+', lbl: 'Day1 ROAS', dsc: '超目标 15%' },
+        { val: '80%+', lbl: 'Day3 ROAS', dsc: '持续高位保持' },
+        { val: '180%+', lbl: 'Day7 ROAS', dsc: '全面正向回收' },
+      ],
+    },
+    en_detail: {
+      platform: 'Google H5 · Mobikok',
+      client: 'casualplay.top',
+      region: 'Global',
+      background: 'The client distributes H5 casual/simulation games globally via casualplay.top, facing challenges of high IVT ratios, ROAS growth bottlenecks, and rapid creative burnout.',
+      challenge: [
+        'High IVT (invalid traffic) ratio eroding significant ad budget via bot clicks',
+        'Inconsistent creative quality with wide CTR variance and no rapid iteration mechanism',
+        'Day-7 ROAS persistently below break-even, unable to achieve positive returns',
+      ],
+      solution: [
+        'Integrated IVT detection to identify and filter invalid traffic in real time, ensuring every billing event comes from genuine user behavior',
+        'Enabled GCPP (Google Certified Publishing Partner) collaboration for premium H5 traffic pools and exclusive optimization tools',
+        'In-house AI content team batch-generated high-CTR creatives; A/B testing drives continuous iteration toward the optimal creative matrix',
+      ],
+      results: [
+        { val: 'eCPM +25%', lbl: 'vs. Industry Benchmark', dsc: 'Significant traffic quality uplift' },
+        { val: '40%+', lbl: 'Day-1 ROAS', dsc: 'Exceeded target by 15%' },
+        { val: '80%+', lbl: 'Day-3 ROAS', dsc: 'Sustained high performance' },
+        { val: '180%+', lbl: 'Day-7 ROAS', dsc: 'Full positive return achieved' },
+      ],
+    }
+  },
+  {
+    id: 2, module: 'buzzy', industry: '游戏', en_industry: 'Gaming', img: '',
+    tags: ['Google H5', 'Puzzle 益智', '北美市场'],
+    en_tags: ['Google H5', 'Puzzle/Merge', 'North America'],
+    title: 'H5 Puzzle/Merge 益智游戏北美市场 Day1 ROAS 60%+',
+    en_title: 'H5 Puzzle/Merge Games Hit Day-1 ROAS 60%+ in North America',
+    summary: '面向 USA/CA 高价值市场，通过 GCPP 合作与 AI 创意矩阵精准触达高付费意愿用户，H5 益智类游戏实现超预期留存与 ROAS 表现。',
+    en_summary: 'Via GCPP and AI creative matrix targeting high-value USA/CA markets, H5 puzzle games exceeded expectations in both retention and ROAS performance.',
+    metrics: [{ label: 'Day1 ROAS', value: '60%+' }, { label: 'Day3 ROAS', value: '80%+' }, { label: 'Day7 ROAS', value: '180%+' }],
+    emoji: '🧩',
+    detail: {
+      platform: 'Google H5 · Mobikok',
+      client: 'casualplay.top',
+      region: '北美 USA / CA',
+      background: '北美是全球 CPM 最高、用户付费能力最强的核心市场，客户希望通过 H5 Puzzle / Merge / 消除品类切入并实现稳定正向回收。',
+      challenge: [
+        '北美市场 CPM 高，获量成本压力显著大于其他 GEO',
+        'H5 游戏用户留存率普遍低于 Native App，盈亏平衡点更难达到',
+        '需针对北美高质量受众定制差异化素材与用户体验策略',
+      ],
+      solution: [
+        '借助 GCPP 合作优先获取 Google 北美优质 H5 流量资源，精准圈定高付费意愿玩家群体',
+        'AI 内容团队定制符合北美用户审美的视觉风格与游戏玩法展示素材',
+        'IVT 检测过滤全量流量，确保每次展示均触达高价值真实用户',
+      ],
+      results: [
+        { val: 'USA/CA', lbl: '核心目标市场', dsc: 'Tier 1 高价值 GEO' },
+        { val: '60%+', lbl: 'Day1 ROAS', dsc: '超行业均值 30%' },
+        { val: '80%+', lbl: 'Day3 ROAS', dsc: '持续高位稳定' },
+        { val: '180%+', lbl: 'Day7 ROAS', dsc: '全面实现正向回收' },
+      ],
+    },
+    en_detail: {
+      platform: 'Google H5 · Mobikok',
+      client: 'casualplay.top',
+      region: 'North America — USA / CA',
+      background: 'North America commands the highest CPM and strongest user payment capacity globally. The client sought to enter the H5 Puzzle / Merge / Match category and achieve steady positive returns.',
+      challenge: [
+        'North America CPM is significantly higher than other GEOs, creating substantial user acquisition cost pressure',
+        'H5 game user retention is generally lower than native apps, making break-even harder to achieve',
+        'Differentiated creatives and UX strategy tailored for high-quality North American audiences were required',
+      ],
+      solution: [
+        'Leveraged GCPP partnership for priority access to premium Google North America H5 traffic, precisely targeting high-payment-intent player segments',
+        'AI content team produced visuals and gameplay demos aligned with North American aesthetics and preferences',
+        'IVT detection filtered all traffic to ensure every impression reached genuine high-value users',
+      ],
+      results: [
+        { val: 'USA/CA', lbl: 'Core Target Markets', dsc: 'Tier 1 High-Value GEO' },
+        { val: '60%+', lbl: 'Day-1 ROAS', dsc: '30% above industry average' },
+        { val: '80%+', lbl: 'Day-3 ROAS', dsc: 'Sustained at high levels' },
+        { val: '180%+', lbl: 'Day-7 ROAS', dsc: 'Full positive returns achieved' },
+      ],
+    }
+  },
+  {
+    id: 3, module: 'dsp', industry: '电商', en_industry: 'E-Commerce', img: '',
+    tags: ['程序化', 'TikTok Shop', 'Shopee', 'RTA 实时数据'],
+    en_tags: ['Programmatic', 'TikTok Shop', 'Shopee', 'RTA Data'],
+    title: '电商 RTA 程序化广告助力 200+ 店铺高效精准获客',
+    en_title: 'E-Commerce RTA Programmatic Helps 200+ Stores Cut Acquisition Costs',
+    summary: 'HiveX AI 程序化平台结合电商 RTA 实时购物数据，精准匹配正在浏览/加购的高意向买家，为 TikTok Shop、Shopee 等平台 200+ 合作商家大幅降低获客成本。',
+    en_summary: 'HiveX AI programmatic combined with real-time shopping data (RTA) precisely matches high-intent buyers, significantly reducing CAC for 200+ merchants on TikTok Shop, Shopee and more.',
+    metrics: [{ label: '合作店铺', value: '200+' }, { label: '月预算规模', value: '$5–8 万' }, { label: '覆盖平台', value: '3 大电商' }],
+    en_metrics: [{ label: 'Partner Stores', value: '200+' }, { label: 'Monthly Budget', value: '$50–80K' }, { label: 'Platforms', value: '3 Major' }],
+    emoji: '🛍️',
+    detail: {
+      platform: 'HiveX · Mobikok',
+      client: 'TikTok Shop · Shopee · Lazada',
+      region: '东南亚 · 全球',
+      background: 'HiveX 专注电商程序化广告，通过聚合平台实时购物行为数据（RTA）及 Oppo、Vivo、Xiaomi、Transsion 等品牌手机独家流量，帮助电商卖家精准触达高转化买家。',
+      challenge: [
+        '泛流量转化率低，大量广告预算消耗在无购买意愿的用户上',
+        '电商平台用户行为数据与广告投放割裂，定向精准度严重不足',
+        'TikTok Shop、Shopee、Lazada 多平台并行运营，协同管理复杂度高',
+      ],
+      solution: [
+        '接入电商 RTA（Real-Time Audience）数据，实时匹配正在浏览或已加购商品的高意向买家，大幅提升点击-购买转化率',
+        '采购 Oppo / Vivo / Xiaomi / Transsion 品牌手机厂商独家广告资源，精准触达目标消费人群',
+        'HiveX 程序化引擎跨三大电商平台统一竞价分发，综合获客成本持续优化',
+      ],
+      results: [
+        { val: '200+', lbl: '合作商家店铺', dsc: '持续稳定扩量' },
+        { val: '$5–8万', lbl: '月均预算规模', dsc: '单客户投放体量' },
+        { val: 'RTA 实时', lbl: '高意向用户匹配', dsc: '转化率显著提升' },
+        { val: '4 大 OEM', lbl: '品牌手机流量', dsc: 'Oppo/Vivo/小米/传音' },
+      ],
+    },
+    en_detail: {
+      platform: 'HiveX · Mobikok',
+      client: 'TikTok Shop · Shopee · Lazada',
+      region: 'Southeast Asia · Global',
+      background: 'HiveX specializes in e-commerce programmatic advertising, helping merchants precisely target high-converting buyers by aggregating real-time shopping behavior data (RTA) and exclusive OEM traffic from Oppo, Vivo, Xiaomi, and Transsion.',
+      challenge: [
+        'Broad traffic yields low conversion rates, with large ad budgets wasted on users with no purchase intent',
+        'Disconnection between e-commerce platform user behavior data and ad targeting severely limits precision',
+        'Parallel operation across TikTok Shop, Shopee, and Lazada creates complex coordination challenges',
+      ],
+      solution: [
+        'Integrated e-commerce RTA (Real-Time Audience) data to instantly match high-intent buyers browsing or carting products, dramatically improving click-to-purchase conversion',
+        'Sourced exclusive ad inventory from Oppo, Vivo, Xiaomi, and Transsion OEM brands for device-level precision targeting',
+        'HiveX programmatic engine runs unified bidding across three major e-commerce platforms, continuously optimizing blended CAC',
+      ],
+      results: [
+        { val: '200+', lbl: 'Partner Merchant Stores', dsc: 'Steady and growing scale' },
+        { val: '$50–80K', lbl: 'Avg. Monthly Budget', dsc: 'Per-client spend volume' },
+        { val: 'RTA Real-Time', lbl: 'High-Intent User Matching', dsc: 'Conversion rate significantly improved' },
+        { val: '4 OEM Brands', lbl: 'Device Traffic', dsc: 'Oppo / Vivo / Xiaomi / Transsion' },
+      ],
+    }
+  },
+  {
+    id: 4, module: 'dsp', industry: '电商', en_industry: 'E-Commerce', img: '',
+    tags: ['OEM 流量', '品牌手机', 'Oppo', 'Transsion'],
+    en_tags: ['OEM Traffic', 'Brand Devices', 'Oppo', 'Transsion'],
+    title: 'Oppo / Vivo / 小米 / 传音品牌手机 OEM 流量精准定向',
+    en_title: 'Oppo / Vivo / Xiaomi / Transsion OEM Traffic Precision Targeting',
+    summary: '依托与 Oppo、Vivo、Xiaomi、Transsion 等头部手机厂商的独家合作，获取设备级用户画像数据，实现东南亚、南亚、非洲新兴市场的高精准低成本程序化投放。',
+    en_summary: 'Through exclusive OEM brand partnerships, device-level user profiles enable precise, cost-effective programmatic campaigns across Southeast Asia, South Asia and Africa.',
+    metrics: [{ label: '合作 OEM 品牌', value: '4 大厂商' }, { label: '核心市场', value: '东南亚·非洲' }, { label: '用户精准度', value: '设备级定向' }],
+    en_metrics: [{ label: 'OEM Partners', value: '4 Brands' }, { label: 'Core Markets', value: 'SEA · Africa' }, { label: 'Targeting', value: 'Device-Level' }],
+    emoji: '📱',
+    detail: {
+      platform: 'HiveX · Mobikok',
+      client: '多品类电商广告主',
+      region: '东南亚 · 南亚 · 非洲',
+      background: 'OEM 手机厂商拥有用户设备标签与 App 使用行为数据，能够在广告投放前精准锁定目标消费人群。Mobikok 与四大主流品牌深度合作，覆盖新兴市场最广泛的活跃用户群体。',
+      challenge: [
+        '传统程序化买量在东南亚/非洲新兴市场精准度不足，CPM 浪费严重',
+        '缺乏高质量的设备级用户画像数据，受众定向粒度粗',
+        '新兴市场电商渗透率快速增长，需快速规模化覆盖目标人群',
+      ],
+      solution: [
+        '与 Oppo、Vivo、Xiaomi、Transsion 建立独家合作协议，获取设备级用户兴趣与消费能力画像',
+        '针对不同价位段手机用户制定分层投放策略，匹配不同客单价商品',
+        'HiveX AI 引擎实时优化出价，将高价值曝光优先分配给转化概率最高的用户',
+      ],
+      results: [
+        { val: 'Oppo', lbl: '东南亚 #1', dsc: '独家优质广告资源' },
+        { val: 'Vivo', lbl: '印度 & SEA', dsc: '精准用户行为标签' },
+        { val: 'Xiaomi', lbl: '全球覆盖', dsc: '高性价比精准流量' },
+        { val: 'Transsion', lbl: '非洲首选', dsc: '新兴市场领导者' },
+      ],
+    },
+    en_detail: {
+      platform: 'HiveX · Mobikok',
+      client: 'Multi-category E-Commerce Advertisers',
+      region: 'Southeast Asia · South Asia · Africa',
+      background: 'OEM smartphone manufacturers possess device-level user tags and app behavior data, enabling precise pre-targeting of consumer audiences. Mobikok has built deep partnerships with four leading brands, covering the widest active user base in emerging markets.',
+      challenge: [
+        'Traditional programmatic buying lacks precision in Southeast Asia/Africa emerging markets, leading to severe CPM waste',
+        'Absence of high-quality device-level user profile data results in coarse audience targeting granularity',
+        'Rapid e-commerce penetration growth in emerging markets demands fast, scalable coverage of target audiences',
+      ],
+      solution: [
+        'Established exclusive partnership agreements with Oppo, Vivo, Xiaomi and Transsion, gaining device-level user interest and purchasing power profiles',
+        'Developed tiered targeting strategies matched to different device price segments, aligning with varying product price points',
+        'HiveX AI engine optimizes bids in real time, prioritizing high-value impressions for users with the highest conversion probability',
+      ],
+      results: [
+        { val: 'Oppo', lbl: 'SEA #1', dsc: 'Exclusive premium ad inventory' },
+        { val: 'Vivo', lbl: 'India & SEA', dsc: 'Precise behavioral user labels' },
+        { val: 'Xiaomi', lbl: 'Global Reach', dsc: 'Cost-effective precision traffic' },
+        { val: 'Transsion', lbl: 'Africa #1', dsc: 'Emerging market leader' },
+      ],
+    }
+  },
+  {
+    id: 5, module: 'adn', industry: '游戏', en_industry: 'Gaming', img: '',
+    tags: ['CPI', '移动游戏', 'OEM 流量', '效果营销'],
+    en_tags: ['CPI', 'Mobile Games', 'OEM Traffic', 'Performance Marketing'],
+    title: '移动游戏 CPI 优化降幅 45%，月安装量突破 30,000+',
+    en_title: 'Mobile Game CPI Reduced 45%, Monthly Installs Exceed 30,000+',
+    summary: '通过 HiveAds 效果型平台 CPI 结算模式，结合 OEM 专属流量与 AI 智能出价引擎，为 Google Play 休闲游戏实现规模化高质量用户获取，同步提升次日留存率。',
+    en_summary: 'Via HiveAds CPI performance model, OEM exclusive traffic and AI bidding engine, achieving scalable high-quality user acquisition for casual games while improving Day-1 retention.',
+    metrics: [{ label: '月安装量', value: '30,000+' }, { label: 'CPI 最优降幅', value: '-45%' }, { label: '次留提升', value: '+7%' }],
+    en_metrics: [{ label: 'Monthly Installs', value: '30,000+' }, { label: 'CPI Reduction', value: '-45%' }, { label: 'Day-1 Retention', value: '+7%' }],
+    emoji: '🎯',
+    detail: {
+      platform: 'HiveAds · Mobikok',
+      client: 'Google Play 休闲游戏',
+      region: '全球 Tier 1 / 2 市场',
+      background: '客户为 Google Play 平台休闲游戏产品，希望在严格控制 CPI 成本的前提下大规模提升安装量，同时保持用户次日留存率不下滑。',
+      challenge: [
+        'Google Play 市场竞价激烈，CPI 居高不下，难以规模化获量',
+        '大量低质量安装导致次日留存差，ROAS 无法达到盈亏平衡',
+        '需在安装量与用户质量之间找到可持续的最优平衡点',
+      ],
+      solution: [
+        'HiveAds AI 出价引擎基于历史转化数据智能预测用户价值，动态调节竞价避免无效消耗',
+        '接入 OEM 品牌手机独家流量，优先触达有明确游戏偏好的用户群，提升安装后留存',
+        'CPI 纯效果结算，按真实安装计费，设置留存质量门槛确保流量健康度',
+      ],
+      results: [
+        { val: '30,000+', lbl: '月安装量', dsc: '规模持续稳定增长' },
+        { val: '-15%~-45%', lbl: 'CPI 降幅区间', dsc: '视 GEO 及竞争度而定' },
+        { val: '+1%~+7%', lbl: '次日留存率提升', dsc: '质量与量级同步改善' },
+        { val: 'CPI 模式', lbl: '纯效果结算', dsc: '零风险按安装付费' },
+      ],
+    },
+    en_detail: {
+      platform: 'HiveAds · Mobikok',
+      client: 'Google Play Casual Games',
+      region: 'Global Tier 1 / 2 Markets',
+      background: 'The client publishes casual mobile games on Google Play, seeking to scale installs significantly while strictly controlling CPI costs and maintaining Day-1 retention rates.',
+      challenge: [
+        'Intense bidding competition on Google Play keeps CPI elevated, making large-scale user acquisition difficult',
+        'High volumes of low-quality installs drive poor Day-1 retention, preventing ROAS from reaching break-even',
+        'Finding a sustainable optimal balance between install volume and user quality is essential',
+      ],
+      solution: [
+        'HiveAds AI bidding engine leverages historical conversion data to intelligently predict user value and dynamically adjust bids, avoiding wasteful spend',
+        'OEM brand device exclusive traffic prioritizes users with clear gaming preferences, improving post-install retention',
+        'Pure CPI performance settlement — billed only on genuine installs — with retention quality thresholds ensuring healthy traffic',
+      ],
+      results: [
+        { val: '30,000+', lbl: 'Monthly Installs', dsc: 'Steady, scalable growth' },
+        { val: '-15%~-45%', lbl: 'CPI Reduction Range', dsc: 'Varies by GEO and competition' },
+        { val: '+1%~+7%', lbl: 'Day-1 Retention Uplift', dsc: 'Quality and volume improved together' },
+        { val: 'CPI Model', lbl: 'Pure Performance Settlement', dsc: 'Zero risk, pay per install' },
+      ],
+    }
+  },
+  {
+    id: 6, module: 'adn', industry: '娱乐', en_industry: 'Entertainment', img: '',
+    tags: ['CPA', 'Tier 1 GEO', 'BetMGM', '博彩'],
+    en_tags: ['CPA', 'Tier 1 GEO', 'BetMGM', 'iGaming'],
+    title: 'BetMGM 等顶级博彩品牌 CPA 日均 300+ 稳定高质转化',
+    en_title: 'BetMGM & Top iGaming Brands Achieve 300+ Daily CPA Conversions',
+    summary: '专注 Tier 1 GEO 核心市场，通过 CPA 效果模式为 BetMGM、Caesars Social Casino、Fanatics 等头部博彩品牌持续提供高质量激活用户，零风险按效果付费。',
+    en_summary: 'Focused on Tier 1 GEO core markets, delivering steady high-quality activated users for BetMGM, Caesars Social Casino and Fanatics via CPA performance model with zero risk.',
+    metrics: [{ label: '日均 CPA 转化', value: '300+' }, { label: '目标市场', value: 'Tier 1 GEO' }, { label: '结算模式', value: 'CPA 效果' }],
+    en_metrics: [{ label: 'Daily CPA', value: '300+' }, { label: 'Target Market', value: 'Tier 1 GEO' }, { label: 'Model', value: 'CPA' }],
+    emoji: '🎰',
+    detail: {
+      platform: 'HiveAds · Mobikok',
+      client: 'BetMGM · Caesars Social Casino · Fanatics',
+      region: '北美 · 英国 · Tier 1 GEO',
+      background: '博彩/社交赌场行业对用户质量要求极高，Tier 1 市场（美国、英国、加拿大等）合规要求严格，用户获取成本高但 LTV 显著更优，需要稳定且高质量的流量合作伙伴。',
+      challenge: [
+        'Tier 1 市场合规审查严格，流量来源必须经过白名单筛选，准入门槛高',
+        '博彩用户 LTV 差异极大，低质量激活浪费 CPA 预算，ROI 波动剧烈',
+        '客户要求日均 300+ 稳定量级，需要持续可靠的流量供给能力',
+      ],
+      solution: [
+        '建立博彩行业专属合规流量白名单，严格审查每一个流量来源的地区合规性',
+        'CPA 结算模式完全对齐客户目标，仅在真实注册/激活完成后计费，零风险合作',
+        'HiveAds AI 引擎实时预测用户博彩意向分，优先竞价高 LTV 潜力用户群体',
+      ],
+      results: [
+        { val: '300+/天', lbl: 'CPA 稳定转化量', dsc: '持续可靠输出' },
+        { val: 'Tier 1', lbl: '覆盖核心 GEO', dsc: '美国/英国/加拿大等' },
+        { val: 'BetMGM', lbl: '+ Caesars + Fanatics', dsc: '头部博彩品牌认证' },
+        { val: 'CPA 模式', lbl: '纯效果零风险', dsc: '按真实激活付费' },
+      ],
+    },
+    en_detail: {
+      platform: 'HiveAds · Mobikok',
+      client: 'BetMGM · Caesars Social Casino · Fanatics',
+      region: 'North America · UK · Tier 1 GEO',
+      background: 'The iGaming/social casino industry demands exceptionally high user quality. Tier 1 markets (USA, UK, Canada) enforce strict compliance requirements, but users carry significantly higher LTV — making reliable, high-quality traffic partnerships essential.',
+      challenge: [
+        'Strict Tier 1 market compliance scrutiny requires all traffic sources to pass whitelist vetting with a high entry bar',
+        'Wide LTV variance among iGaming users means low-quality activations drain CPA budgets and cause volatile ROI',
+        'Client requires 300+ stable daily volume — demanding consistently reliable traffic supply capability',
+      ],
+      solution: [
+        'Built an iGaming-specific compliance traffic whitelist, strictly vetting every traffic source for regional regulatory compliance',
+        'CPA settlement model fully aligns with client goals — billing only upon genuine registration/activation, zero-risk partnership',
+        'HiveAds AI engine predicts iGaming intent scores in real time, bidding preferentially on user segments with high LTV potential',
+      ],
+      results: [
+        { val: '300+/day', lbl: 'Stable CPA Conversions', dsc: 'Consistent, reliable output' },
+        { val: 'Tier 1', lbl: 'Core GEO Coverage', dsc: 'USA / UK / Canada & more' },
+        { val: 'BetMGM', lbl: '+ Caesars + Fanatics', dsc: 'Top iGaming brand certified' },
+        { val: 'CPA Model', lbl: 'Pure Performance, Zero Risk', dsc: 'Pay per real activation' },
+      ],
+    }
+  },
+  ,{
+    id: 7, module: 'adn', industry: '美妆·电商', en_industry: 'Beauty · E-Commerce', img: '',
+    tags: ['CPS', 'TikTok Shop', '达人矩阵', '美妆'],
+    en_tags: ['CPS', 'TikTok Shop', 'KOL Matrix', 'Beauty'],
+    title: 'TikTok Shop 美妆品类 CPS campaign 销量快速爬升',
+    en_title: 'TikTok Shop Beauty CPS Campaign Drives Rapid Sales Growth',
+    summary: '聚焦全球增长最快的兴趣电商平台 TikTok Shop，通过垂类达人矩阵 + 爆款视频模板 + 限时促销组合，全链路托管美妆品类 CPS campaign，帮助品牌在短期内实现销量明显爬升。',
+    en_summary: 'Full-funnel CPS campaign management on TikTok Shop for beauty brands — combining niche KOL matrix, viral video templates, and flash promotions to drive rapid sales growth.',
+    metrics: [{ label: '结算模式', value: 'CPS' }, { label: '平台', value: 'TikTok Shop' }, { label: '销量增长', value: '快速爬升' }],
+    en_metrics: [{ label: 'Model', value: 'CPS' }, { label: 'Platform', value: 'TikTok Shop' }, { label: 'Sales Growth', value: 'Rapid' }],
+    emoji: '💄',
+    detail: {
+      platform: 'HiveX ADN · Mobikok',
+      client: '美妆品牌广告主',
+      region: 'TikTok Shop 全球站点',
+      background: 'Mobikok 聚焦全球增长最快的兴趣电商平台 TikTok Shop，从达人匹配、内容策划、销售闭环到佣金结算提供全链路托管服务。品牌希望借助 CPS 模式以最低风险快速打开销量。',
+      challenge: [
+        '美妆品类竞争激烈，普通信息流广告 ROI 持续下降，需差异化投放策略',
+        '缺乏与平台调性匹配的垂类达人资源，内容转化率偏低',
+        '客户希望按实际销售成果付费，规避前置广告预算风险',
+      ],
+      solution: [
+        '构建细分垂类达人矩阵，精准匹配美妆、护肤、彩妆等不同品类受众',
+        '内容团队打造爆款视频模板，结合限时促销活动提升紧迫感与转化欲',
+        'CPS 全链路托管：达人匹配 → 内容策划 → 直播带货 → 佣金结算，按销量付费零风险',
+      ],
+      results: [
+        { val: 'CPS 模式', lbl: '按销量付费', dsc: '零前置预算风险' },
+        { val: '达人矩阵', lbl: '垂类精准匹配', dsc: '内容转化率显著提升' },
+        { val: '爆款视频', lbl: '+ 限时促销', dsc: '销量短期快速爬升' },
+        { val: '全链路', lbl: '托管服务', dsc: '从选品到结算一站式' },
+      ],
+    },
+    en_detail: {
+      platform: 'HiveX ADN · Mobikok',
+      client: 'Beauty Brand Advertisers',
+      region: 'TikTok Shop Global',
+      background: 'Mobikok provides full-funnel management on TikTok Shop — the world\'s fastest-growing social commerce platform — covering KOL matching, content planning, sales conversion, and commission settlement. The brand sought rapid sales growth with minimal upfront risk via CPS.',
+      challenge: [
+        'Intense beauty category competition drives declining ROI on standard in-feed ads, requiring a differentiated strategy',
+        'Lack of niche KOL resources aligned with platform style leads to low content conversion rates',
+        'Client wants performance-based payment tied to actual sales to eliminate upfront ad budget risk',
+      ],
+      solution: [
+        'Built a segmented niche KOL matrix precisely matched to beauty, skincare, and color cosmetics audiences',
+        'Content team developed viral video templates combined with flash promotions to drive urgency and purchase intent',
+        'Full CPS funnel: KOL matching → content planning → livestream sales → commission settlement, pay-per-sale with zero risk',
+      ],
+      results: [
+        { val: 'CPS Model', lbl: 'Pay Per Sale', dsc: 'Zero upfront budget risk' },
+        { val: 'KOL Matrix', lbl: 'Niche Precision', dsc: 'Content CVR significantly improved' },
+        { val: 'Viral Videos', lbl: '+ Flash Sales', dsc: 'Rapid sales growth achieved' },
+        { val: 'Full Funnel', lbl: 'Managed Service', dsc: 'End-to-end from selection to settlement' },
+      ],
+    }
+  },
+];
+
+// ── 联系方式平台图标 & 颜色 ────────────────────────────────
+const PLATFORM_META = {
+  linkedin: { bg:'#0077b5', label:'LinkedIn',
+    svg:`<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>` },
+  whatsapp: { bg:'#25d366', label:'WhatsApp',
+    svg:`<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>` },
+  teams: { bg:'#5059c9', label:'Teams',
+    svg:`<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.625 6.563a3.376 3.376 0 1 0 0-6.75 3.376 3.376 0 0 0 0 6.75Zm.938 1.125h-4.406a3.187 3.187 0 0 0-3.188 3.188v5.25a9.375 9.375 0 0 0 3.938 7.594v.03a.75.75 0 0 0 .75.75h5.25a.75.75 0 0 0 .75-.75V10.875a3.187 3.187 0 0 0-3.094-3.188Zm-8.344 2.25H4.781a2.906 2.906 0 0 0-2.906 2.906v4.969a8.344 8.344 0 0 0 8.25 8.25h.75a.75.75 0 0 0 .75-.75V12.75a2.812 2.812 0 0 0-2.406-2.813ZM9.844 6.75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>` },
+  wechat: { bg:'#07c160', label:'微信',
+    svg:`<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.295.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.601-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-7.064-6.122zm-3.42 3.19c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.969-.982z"/></svg>` },
+  telegram: { bg:'#2ca5e0', label:'Telegram',
+    svg:`<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>` },
+  email: { bg:'#ea4335', label:'Email',
+    svg:`<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z"/><path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z"/></svg>` },
+};
+
+// ── 配置（默认值，会被服务器配置覆盖）────────────────────
+let config = { contacts: [] };
+const DEFAULT_CONTACTS = [
+  { platform:'linkedin',  label:'LinkedIn',  url:'', qr:'' },
+  { platform:'whatsapp',  label:'WhatsApp',  url:'', qr:'' },
+  { platform:'teams',     label:'Teams',     url:'', qr:'' },
+  { platform:'wechat',    label:'微信',      url:'', qr:'' },
+  { platform:'telegram',  label:'Telegram',  url:'', qr:'' },
+  { platform:'email',     label:'Email',     url:'', qr:'' },
+];
+
+// ── 图片缓存破坏：本地上传图片追加时间戳，防止浏览器缓存旧图 ──
+let _imgVer = Date.now();
+function bustCache(url) {
+  if (!url || url.startsWith('data:')) return url;
+  return url.split('?')[0] + '?v=' + _imgVer;
+}
+
+// ── 加载服务器配置 ────────────────────────────────────────
+async function loadConfig() {
+  try {
+    const res = await fetch('/api/showcase-config/', { cache: 'no-store' });
+    if (res.ok) { config = await res.json(); }
+    else { config = { contacts: DEFAULT_CONTACTS }; }
+  } catch {
+    config = { contacts: DEFAULT_CONTACTS };
+  }
+  // 将已保存的案例图片合并到 CASES
+  if (config.caseImages) {
+    CASES.forEach(c => { if (config.caseImages[c.id]) c.img = config.caseImages[c.id]; });
+    renderCases();
+  }
+  renderContacts();
+}
+
+// ── Module Tabs ───────────────────────────────────────────
+document.querySelectorAll('.dept-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.dept-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.module-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.module)?.classList.add('active');
+    currentFilter = tab.dataset.module;
+    document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+    const ft = document.querySelector(`.filter-tag[data-filter="${currentFilter}"]`);
+    if (ft) ft.classList.add('active');
+    else document.querySelector('.filter-tag[data-filter="all"]').classList.add('active');
+    renderCases();
+    const ms = document.querySelector('.module-section');
+    if (ms) window.scrollTo({ top: ms.getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' });
+  });
+});
+
+// ── Case Studies ──────────────────────────────────────────
+let currentFilter = 'all';
+let searchQuery   = '';
+
+function renderCases() {
+  const grid = document.getElementById('casesGrid');
+  const q    = searchQuery.toLowerCase();
+  const data = CASES.filter(c => {
+    if (currentFilter !== 'all' && c.module !== currentFilter) return false;
+    if (!q) return true;
+    const _title    = (currentLang === 'en' && c.en_title)    ? c.en_title    : c.title;
+    const _summary  = (currentLang === 'en' && c.en_summary)  ? c.en_summary  : c.summary;
+    const _industry = (currentLang === 'en' && c.en_industry) ? c.en_industry : c.industry;
+    const _tags     = (currentLang === 'en' && c.en_tags)     ? c.en_tags     : c.tags;
+    return _title.toLowerCase().includes(q) || _industry.toLowerCase().includes(q) || _tags.some(t => t.toLowerCase().includes(q)) || _summary.toLowerCase().includes(q);
+  });
+
+  if (!data.length) {
+    grid.innerHTML = `<div class="no-results"><p style="font-size:32px">🔍</p><p style="margin-top:12px">${LANG_DATA[currentLang].noResults}</p></div>`;
+    return;
+  }
+
+  const t = LANG_DATA[currentLang];
+  grid.innerHTML = data.map(c => {
+    const industry = (currentLang === 'en' && c.en_industry) ? c.en_industry : c.industry;
+    const tags     = (currentLang === 'en' && c.en_tags)     ? c.en_tags     : c.tags;
+    const title    = (currentLang === 'en' && c.en_title)    ? c.en_title    : c.title;
+    const summary  = (currentLang === 'en' && c.en_summary)  ? c.en_summary  : c.summary;
+    const metrics  = (currentLang === 'en' && c.en_metrics)  ? c.en_metrics  : c.metrics;
+    return `
+    <div class="case-card" onclick="openCaseDetail(${c.id})">
+      ${c.img
+        ? `<div class="case-img"><img src="${bustCache(c.img)}" alt="${title}" loading="lazy" onerror="this.parentElement.className='case-img placeholder';this.parentElement.textContent='${c.emoji}'"></div>`
+        : `<div class="case-img placeholder">${c.emoji}</div>`
+      }
+      <div class="case-body">
+        <div class="case-tags">
+          <span class="case-tag industry">${industry}</span>
+          ${tags.map(tag => `<span class="case-tag">${tag}</span>`).join('')}
+        </div>
+        <h3>${title}</h3>
+        <p>${summary}</p>
+        <div class="case-metrics">
+          ${metrics.map(m => `<div class="case-metric"><strong>${m.value}</strong><span>${m.label}</span></div>`).join('')}
+        </div>
+      </div>
+      <div class="case-view-btn">
+        <span>${t.viewDetails}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  `;}).join('');
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  renderCases();
+});
+
+document.querySelectorAll('.filter-tag').forEach(tag => {
+  tag.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+    tag.classList.add('active');
+    currentFilter = tag.dataset.filter;
+    renderCases();
+  });
+});
+
+// ── Contacts Render ───────────────────────────────────────
+function renderContacts() {
+  const contacts = config.contacts?.length ? config.contacts : DEFAULT_CONTACTS;
+  const grid = document.getElementById('contactGrid');
+  const t = LANG_DATA[currentLang];
+  grid.innerHTML = contacts.map(c => {
+    const meta = PLATFORM_META[c.platform] || { svg:`<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M19.902 4.098a3.75 3.75 0 0 0-5.304 0l-4.5 4.5a3.75 3.75 0 0 0 1.035 6.037.75.75 0 0 1-.646 1.353 5.25 5.25 0 0 1-1.449-8.45l4.5-4.5a5.25 5.25 0 1 1 7.424 7.424l-1.757 1.757a.75.75 0 1 1-1.06-1.06l1.757-1.757a3.75 3.75 0 0 0 0-5.304Zm-7.893 7.893a.75.75 0 0 1 1.06 0 3.75 3.75 0 0 0 5.304 0l4.5-4.5a3.75 3.75 0 1 0-5.304-5.304l-1.757 1.757a.75.75 0 0 1-1.06-1.06l1.757-1.757a5.25 5.25 0 0 1 7.424 7.424l-4.5 4.5a5.25 5.25 0 0 1-7.424 0 .75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>`, bg:'#e5a500' };
+    const hasUrl = c.url && c.url.length > 0;
+    const hasQr  = c.qr  && c.qr.length  > 0;
+    return `
+      <div class="contact-card">
+        <div class="contact-icon" style="background:${meta.bg}20;">${meta.svg || ''}</div>
+        <h3>${c.label || meta.label}</h3>
+        ${hasQr ? `
+          <div class="contact-qr">
+            <img src="${bustCache(c.qr)}" alt="${c.label} QR" onerror="this.parentElement.innerHTML='<div class=\\'contact-qr-empty\\'>${t.contactImgFail}</div>'">
+          </div>` : (c.platform === 'wechat' || !hasUrl ? `
+          <div class="contact-qr">
+            <div class="contact-qr-empty">${t.contactNoQr}</div>
+          </div>` : '')
+        }
+        ${hasUrl ? `<a href="${c.url}" target="_blank" rel="noopener" class="contact-link">${t.contactOpen} ${c.label} →</a>`
+                 : `<a class="contact-link empty">${t.contactPending}</a>`}
+        ${hasUrl ? `<p style="font-size:11px;color:rgba(255,255,255,0.3);word-break:break-all">${c.url.replace('mailto:','')}</p>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+// ── Case Detail ───────────────────────────────────────────
+function openCaseDetail(id) {
+  const c = CASES.find(x => x.id === id);
+  if (!c || !c.detail) return;
+  const d        = (currentLang === 'en' && c.en_detail)  ? c.en_detail  : c.detail;
+  const title    = (currentLang === 'en' && c.en_title)   ? c.en_title   : c.title;
+  const industry = (currentLang === 'en' && c.en_industry)? c.en_industry: c.industry;
+  const tags     = (currentLang === 'en' && c.en_tags)    ? c.en_tags    : c.tags;
+  const lt       = LANG_DATA[currentLang];
+
+  const overlay = document.getElementById('caseOverlay');
+  overlay.innerHTML = `
+    <div class="case-modal">
+      <div class="case-modal-hero">
+        <button class="case-modal-close" onclick="closeCaseDetail()">✕</button>
+        <div class="case-modal-platform">${d.platform}</div>
+        <div class="case-modal-title">${title}</div>
+        <div class="case-modal-meta">
+          <div class="case-modal-meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <strong>${d.client}</strong>
+          </div>
+          <div class="case-modal-meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <strong>${d.region}</strong>
+          </div>
+        </div>
+        <div class="case-modal-badges">
+          <span class="case-modal-badge">${industry}</span>
+          ${tags.map(t => `<span class="case-modal-badge">${t}</span>`).join('')}
+        </div>
+      </div>
+      <div class="case-modal-metrics-bar">
+        ${d.results.map(r => `
+          <div class="case-modal-metric-item">
+            <div class="val">${r.val}</div>
+            <div class="lbl">${r.lbl}</div>
+            <div class="dsc">${r.dsc}</div>
+          </div>`).join('')}
+      </div>
+      <div class="case-modal-body">
+        <div class="case-modal-sec">
+          <h4>${lt.caseDetailBg}</h4>
+          <p>${d.background}</p>
+        </div>
+        <div class="case-modal-sec">
+          <h4>${lt.caseDetailChallenge}</h4>
+          <ul class="case-modal-list">
+            ${d.challenge.map(s => `<li>${s}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="case-modal-sec">
+          <h4>${lt.caseDetailSolution}</h4>
+          <ul class="case-modal-list">
+            ${d.solution.map(s => `<li>${s}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+    </div>
+  `;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCaseDetail() {
+  document.getElementById('caseOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── Admin Panel ───────────────────────────────────────────
+let logoClickCount = 0, logoTimer = null;
+document.getElementById('logoBtn').addEventListener('click', () => {
+  logoClickCount++;
+  clearTimeout(logoTimer);
+  logoTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
+  if (logoClickCount >= 5) {
+    logoClickCount = 0;
+    const pwd = prompt('请输入管理员密码：');
+    if (pwd === '123456') openAdmin();
+    else if (pwd !== null) showToast('error', '密码错误');
+  }
+});
+
+function switchAdminTab(tab, el) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('adminTabContacts').style.display = tab === 'contacts' ? '' : 'none';
+  document.getElementById('adminTabCases').style.display    = tab === 'cases'    ? '' : 'none';
+}
+
+function openAdmin() {
+  const contacts = config.contacts?.length ? config.contacts : DEFAULT_CONTACTS;
+  const body = document.getElementById('adminBody');
+
+  const contactsHtml = contacts.map((c, i) => {
+    const meta = PLATFORM_META[c.platform] || { svg:`<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M19.902 4.098a3.75 3.75 0 0 0-5.304 0l-4.5 4.5a3.75 3.75 0 0 0 1.035 6.037.75.75 0 0 1-.646 1.353 5.25 5.25 0 0 1-1.449-8.45l4.5-4.5a5.25 5.25 0 1 1 7.424 7.424l-1.757 1.757a.75.75 0 1 1-1.06-1.06l1.757-1.757a3.75 3.75 0 0 0 0-5.304Zm-7.893 7.893a.75.75 0 0 1 1.06 0 3.75 3.75 0 0 0 5.304 0l4.5-4.5a3.75 3.75 0 1 0-5.304-5.304l-1.757 1.757a.75.75 0 0 1-1.06-1.06l1.757-1.757a5.25 5.25 0 0 1 7.424 7.424l-4.5 4.5a5.25 5.25 0 0 1-7.424 0 .75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>` };
+    return `
+      <div class="admin-platform">
+        <div class="admin-platform-hd">
+          <span class="icon">${meta.svg || ''}</span>
+          ${c.label || c.platform}
+        </div>
+        <div class="admin-row">
+          <label>链接 URL</label>
+          <input class="admin-input" id="admin-url-${i}" value="${c.url || ''}" placeholder="https://...">
+        </div>
+        <div class="admin-row">
+          <label>二维码</label>
+          <div class="admin-qr-row">
+            <div class="admin-qr-preview" id="admin-qr-preview-${i}">
+              ${c.qr ? `<img src="${bustCache(c.qr)}" alt="qr">` : '<span class="admin-qr-empty-icon">□</span>'}
+            </div>
+            <div class="admin-qr-actions">
+              <input class="admin-input" id="admin-qr-url-${i}" value="${c.qr && !c.qr.startsWith('data:') ? c.qr : ''}" placeholder="粘贴图片链接">
+              <label class="admin-file-btn">
+                📎 上传图片
+                <input type="file" accept="image/*" style="display:none" onchange="handleQrUpload(event,${i})">
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  const casesHtml = CASES.map(c => `
+    <div class="admin-platform">
+      <div class="admin-platform-hd">
+        <span class="icon">${c.emoji}</span>
+        <span style="font-size:13px;font-weight:500">#${c.id} ${c.title}</span>
+      </div>
+      <div class="admin-row">
+        <label>展示图</label>
+        <div class="admin-case-img-row">
+          <div class="admin-case-img-preview" id="admin-case-img-preview-${c.id}">
+            ${c.img ? `<img src="${bustCache(c.img)}" alt="case">` : c.emoji}
+          </div>
+          <div class="admin-qr-actions" style="flex:1">
+            <input class="admin-input" id="admin-case-img-url-${c.id}"
+                   value="${c.img && !c.img.startsWith('data:') ? c.img : ''}"
+                   placeholder="粘贴图片链接（JPG / PNG）">
+            <label class="admin-file-btn">
+              📎 上传图片
+              <input type="file" accept="image/*" style="display:none" onchange="handleCaseImgUpload(event,${c.id})">
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  body.innerHTML = `
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="switchAdminTab('contacts',this)">联系方式</div>
+      <div class="admin-tab" onclick="switchAdminTab('cases',this)">案例图片</div>
+    </div>
+    <div id="adminTabContacts">${contactsHtml}</div>
+    <div id="adminTabCases" style="display:none">${casesHtml}</div>
+    <div class="admin-actions">
+      <span class="admin-save-status" id="adminSaveStatus">✅ 已保存</span>
+      <button class="admin-cancel" onclick="closeAdmin()">取消</button>
+      <button class="admin-save" id="adminSaveBtn" onclick="saveAdmin()">保存配置</button>
+    </div>`;
+
+  // 联系方式二维码 URL 实时预览
+  contacts.forEach((_, i) => {
+    document.getElementById(`admin-qr-url-${i}`)?.addEventListener('input', e => {
+      const preview = document.getElementById(`admin-qr-preview-${i}`);
+      const val = e.target.value.trim();
+      preview.innerHTML = val ? `<img src="${val}" alt="qr" onerror="this.src=''">` : '<span class="admin-qr-empty-icon">□</span>';
+    });
+  });
+
+  // 案例图片 URL 实时预览
+  CASES.forEach(c => {
+    document.getElementById(`admin-case-img-url-${c.id}`)?.addEventListener('input', e => {
+      const preview = document.getElementById(`admin-case-img-preview-${c.id}`);
+      const val = e.target.value.trim();
+      preview.innerHTML = val ? `<img src="${val}" alt="case" onerror="this.parentElement.textContent='${c.emoji}'">` : c.emoji;
+    });
+  });
+
+  document.getElementById('adminOverlay').classList.add('open');
+}
+
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
+}
+
+function handleCaseImgUpload(e, caseId) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      // 案例图片压缩到最大 1200px 宽
+      const MAX = 1200;
+      const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale) || 1;
+      const h = Math.round(img.height * scale) || 1;
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const base64 = canvas.toDataURL('image/jpeg', 0.85);
+      const preview = document.getElementById(`admin-case-img-preview-${caseId}`);
+      preview.innerHTML = `<img src="${base64}" alt="case">`;
+      const urlInput = document.getElementById(`admin-case-img-url-${caseId}`);
+      urlInput.value = '';
+      urlInput.dataset.base64 = base64;
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleQrUpload(e, idx) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      // 压缩到最大 400×400，避免原图过大导致 POST 请求体积超限保存失败
+      const MAX = 400;
+      const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale) || 1;
+      const h = Math.round(img.height * scale) || 1;
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const base64 = canvas.toDataURL('image/png');
+      const preview = document.getElementById(`admin-qr-preview-${idx}`);
+      preview.innerHTML = `<img src="${base64}" alt="qr">`;
+      const urlInput = document.getElementById(`admin-qr-url-${idx}`);
+      urlInput.value = '';
+      urlInput.dataset.base64 = base64;
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveAdmin() {
+  const contacts = config.contacts?.length ? config.contacts : DEFAULT_CONTACTS;
+  const btn = document.getElementById('adminSaveBtn');
+  btn.disabled = true; btn.textContent = '保存中…';
+
+  const newContacts = contacts.map((c, i) => {
+    const url    = document.getElementById(`admin-url-${i}`)?.value.trim() || '';
+    const urlInput = document.getElementById(`admin-qr-url-${i}`);
+    const qrUrl  = urlInput?.value.trim() || '';
+    const qrB64  = urlInput?.dataset.base64 || '';
+    const qr     = qrB64 || qrUrl || (c.qr?.startsWith('data:') ? c.qr : '');
+    return { ...c, url, qr };
+  });
+
+  // 收集案例图片
+  const caseImages = { ...(config.caseImages || {}) };
+  CASES.forEach(c => {
+    const urlInput = document.getElementById(`admin-case-img-url-${c.id}`);
+    if (!urlInput) return;
+    const b64 = urlInput.dataset.base64 || '';
+    const url = urlInput.value.trim();
+    const img = b64 || url || (c.img?.startsWith('data:') ? c.img : c.img || '');
+    if (img) caseImages[c.id] = img; else delete caseImages[c.id];
+  });
+
+  const newConfig = { ...config, contacts: newContacts, caseImages };
+
+  try {
+    const res = await fetch('/api/showcase-config/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newConfig, null, 2),
+    });
+    const text = await res.text();
+    let result;
+    try { result = JSON.parse(text); } catch { throw new Error(`响应解析失败 (${res.status}): ${text.slice(0,120)}`); }
+    if (!res.ok || !result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+    // 用 PHP 返回的配置（含真实文件 URL）更新内存，避免 base64 残留
+    config = result.config ? { ...result.config } : newConfig;
+    // 刷新图片版本号，使重新渲染时浏览器获取最新图片
+    _imgVer = Date.now();
+    // 同步案例图片到 CASES 并重新渲染
+    const savedImages = config.caseImages || {};
+    CASES.forEach(c => { c.img = savedImages[c.id] || ''; });
+    renderCases();
+    renderContacts();
+    // 重新渲染管理面板，使表单字段与最新配置同步（防止二次保存时数据过期）
+    openAdmin();
+    const status = document.getElementById('adminSaveStatus');
+    status.classList.add('show');
+    setTimeout(() => status.classList.remove('show'), 2500);
+    showToast('success', '配置已保存并同步');
+  } catch (e) {
+    showToast('error', `保存失败：${e.message}`);
+  } finally {
+    btn.disabled = false; btn.textContent = '保存配置';
+  }
+}
+
+// 点击遮罩关闭
+document.getElementById('adminOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeAdmin();
+});
+
+// ── Toast ─────────────────────────────────────────────────
+function showToast(type, msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+// ── Init ──────────────────────────────────────────────────
+renderCases();
+loadConfig();
+applyLang(currentLang);
+</script>
+</body>
+</html>

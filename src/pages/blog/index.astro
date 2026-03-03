@@ -1,0 +1,134 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export const prerender = false;
+
+const locale = 'en';
+const perPage = 12;
+const page = Math.max(1, Number(Astro.url.searchParams.get('page') || '1') || 1);
+
+const all = (await getCollection('blog', ({ id }) => id.startsWith('en/')))
+  .filter((p) => p.data.status === 'published')
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+const pages = Math.max(1, Math.ceil(all.length / perPage));
+const safePage = Math.min(pages, page);
+const uiPosts = all.slice((safePage - 1) * perPage, safePage * perPage);
+
+const toUrlSlug = (post: (typeof uiPosts)[number]) =>
+  post.slug?.startsWith('en/') ? post.slug.slice(3) : (post.id.split('/').pop() || post.slug);
+---
+
+<BaseLayout
+  title="Blog - Industry Insights & Marketing Strategies"
+  description="Bidmosaic Blog — Sharing cutting-edge insights and practical experience in AI programmatic advertising, global marketing, H5 interactive ads, and performance advertising."
+  locale={locale}
+>
+  <section class="pt-32 pb-24" style="background: var(--bg-primary);">
+    <div class="container">
+      <!-- Header -->
+      <div class="text-center mb-16" data-animate>
+        <h1 class="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] mb-4">Blog</h1>
+        <p class="text-lg text-[var(--text-secondary)] max-w-xl mx-auto">Industry insights and marketing strategies to fuel your global growth</p>
+      </div>
+
+      <!-- Posts Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch" data-stagger-parent>
+        {uiPosts.map((post) => (
+          <a
+            href={`/blog/${toUrlSlug(post)}/`}
+            class="glow-card blog-card group overflow-hidden flex flex-col h-full"
+            data-stagger-child
+          >
+            <!-- Image Placeholder -->
+            <div class="h-48 shrink-0 bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-elevated)] flex items-center justify-center">
+              <svg class="w-12 h-12 text-[var(--text-muted)]/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+              </svg>
+            </div>
+
+            <div class="p-6 flex flex-col flex-1">
+              <!-- Tags -->
+              <div class="flex flex-wrap gap-2 mb-3 h-7 overflow-hidden content-start">
+                {post.data.tags.slice(0, 2).map((tag: string) => (
+                  <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-[var(--bg-primary)] text-[var(--text-secondary)]">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <!-- Title -->
+              <h2 class="text-lg font-bold text-[var(--text-primary)] mb-2 h-[3.5rem] overflow-hidden group-hover:text-[#e6b800] transition-colors blog-title-clamp">
+                {post.data.title}
+              </h2>
+
+              <!-- Description -->
+              <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-4 h-[4.5rem] overflow-hidden blog-desc-clamp">
+                {post.data.description}
+              </p>
+
+              <!-- Meta -->
+              <div class="flex items-center justify-between text-xs text-[var(--text-muted)] mt-auto h-5 overflow-hidden">
+                <time class="truncate whitespace-nowrap pr-2" datetime={post.data.date}>
+                  {new Date(post.data.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </time>
+                <span class="inline-flex items-center gap-1 whitespace-nowrap shrink-0 font-medium text-[var(--text-primary)] group-hover:text-[#e6b800] transition-colors">
+                  Read More
+                  <svg class="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {pages > 1 && (
+        <div class="flex items-center justify-center gap-3 mt-12 text-sm text-[var(--text-secondary)]">
+          <a
+            class="px-3 py-2 rounded-md border border-white/10 hover:border-white/20 transition-colors"
+            href={`/blog/?page=${Math.max(1, safePage - 1)}`}
+            aria-disabled={safePage <= 1}
+          >
+            Previous
+          </a>
+          <span class="text-[var(--text-muted)]">{safePage} / {pages}</span>
+          <a
+            class="px-3 py-2 rounded-md border border-white/10 hover:border-white/20 transition-colors"
+            href={`/blog/?page=${Math.min(pages, safePage + 1)}`}
+            aria-disabled={safePage >= pages}
+          >
+            Next
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .blog-card {
+    transform: none;
+  }
+
+  .blog-title-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .blog-desc-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  /* Keep blog cards perfectly aligned; avoid hover translate creating visual offsets */
+  .blog-card:hover {
+    transform: none;
+  }
+</style>

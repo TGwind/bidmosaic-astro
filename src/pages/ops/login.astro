@@ -1,0 +1,306 @@
+---
+export const prerender = false;
+
+import { validateSession } from '../../lib/server/opsAuth';
+
+const cookieHeader = Astro.request.headers.get('cookie');
+if (await validateSession(cookieHeader)) {
+  return Astro.redirect('/ops');
+}
+
+const error = Astro.url.searchParams.get('error');
+const errorMessage = error === '1'
+  ? '密码错误，请重试'
+  : error === 'feishu_config'
+    ? '飞书登录未配置，请联系管理员'
+    : error === 'feishu_state'
+      ? '飞书登录校验失败，请重试'
+      : error === 'feishu_token'
+        ? '飞书登录失败，请稍后再试'
+        : '';
+const feishuEnabled = Boolean(import.meta.env.OPS_FEISHU_APP_ID);
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>商务录入系统 · 登录</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #0c4a6e 0%, #0369a1 45%, #0ea5e9 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+      padding: 1rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 背景装饰光晕 */
+    body::before {
+      content: '';
+      position: fixed;
+      width: 520px; height: 520px;
+      background: rgba(125, 211, 252, 0.22);
+      border-radius: 50%;
+      filter: blur(90px);
+      top: -160px; left: -160px;
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      width: 420px; height: 420px;
+      background: rgba(56, 189, 248, 0.18);
+      border-radius: 50%;
+      filter: blur(80px);
+      bottom: -130px; right: -110px;
+      pointer-events: none;
+    }
+
+    /* 卡片 */
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 2.75rem 2.25rem 2.25rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 32px 80px rgba(12, 74, 110, 0.35), 0 0 0 1px rgba(255,255,255,0.12);
+      position: relative;
+      z-index: 1;
+      animation: rise .4s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(20px) scale(.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* 图标 */
+    .icon-wrap {
+      width: 62px; height: 62px;
+      background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 10px 28px rgba(14, 165, 233, 0.42);
+    }
+    .icon-wrap svg { width: 30px; height: 30px; }
+
+    /* 标题区 */
+    .header { text-align: center; margin-bottom: 2rem; }
+    .header h1 { font-size: 1.4rem; color: #111827; font-weight: 700; margin-bottom: .4rem; }
+    .header p { color: #9ca3af; font-size: .82rem; letter-spacing: .03em; }
+
+    /* 错误提示 */
+    .error-msg {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: .72rem 1rem;
+      font-size: .85rem;
+      margin-bottom: 1.25rem;
+    }
+    .error-msg svg { flex-shrink: 0; }
+
+    /* 表单字段 */
+    .field { margin-bottom: 1.25rem; }
+    .field-label {
+      display: block;
+      font-size: .84rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: .5rem;
+    }
+    .input-wrap { position: relative; }
+    .input-wrap input {
+      width: 100%;
+      min-height: 48px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 11px;
+      padding: .7rem 2.8rem .7rem 1rem;
+      font-size: .95rem;
+      color: #111827;
+      outline: none;
+      font-family: inherit;
+      letter-spacing: .05em;
+      transition: border-color .15s, box-shadow .15s;
+      background: #fafafa;
+    }
+    .input-wrap input:focus {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+      background: #fff;
+    }
+    .eye-btn {
+      position: absolute;
+      right: .8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      cursor: pointer;
+      padding: .25rem;
+      display: flex;
+      align-items: center;
+      transition: color .15s;
+    }
+    .eye-btn:hover { color: #64748b; }
+
+    /* 登录按钮 */
+    .submit-btn {
+      width: 100%;
+      min-height: 50px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      letter-spacing: .04em;
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+      transition: opacity .15s, transform .1s, box-shadow .15s;
+    }
+    .submit-btn:hover { opacity: .92; box-shadow: 0 8px 24px rgba(14,165,233,.5); }
+    .submit-btn:active { transform: scale(.98); opacity: .88; }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: .85rem;
+      margin: 1rem 0;
+      color: #9ca3af;
+      font-size: .78rem;
+    }
+    .divider::before,
+    .divider::after {
+      content: '';
+      height: 1px;
+      flex: 1;
+      background: #e5e7eb;
+    }
+
+    .feishu-btn {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #1f2937;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: .95rem;
+      transition: background .15s, border-color .15s;
+    }
+    .feishu-btn:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    /* 底部说明 */
+    .footer-note {
+      text-align: center;
+      margin-top: 1.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #f3f4f6;
+      color: #d1d5db;
+      font-size: .74rem;
+      letter-spacing: .04em;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+        <rect x="9" y="3" width="6" height="4" rx="1"/>
+        <path d="M9 12h6M9 16h4"/>
+      </svg>
+    </div>
+
+    <div class="header">
+      <h1>商务录入系统</h1>
+      <p>INTERNAL TOOL · AUTHORIZED ONLY</p>
+    </div>
+
+    {errorMessage && (
+      <div class="error-msg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {errorMessage}
+      </div>
+    )}
+
+    <form method="POST" action="/api/ops/login">
+      <div class="field">
+        <label class="field-label" for="password">访问密码</label>
+        <div class="input-wrap">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            autocomplete="current-password"
+            required
+            autofocus
+            placeholder="请输入访问密码"
+          />
+          <button type="button" class="eye-btn" id="eyeBtn" aria-label="显示/隐藏密码">
+            <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <button class="submit-btn" type="submit">进入系统</button>
+    </form>
+
+    {feishuEnabled && (
+      <>
+        <div class="divider">或</div>
+        <a class="feishu-btn" href="/api/ops/feishu/login">
+          <svg width="18" height="18" viewBox="0 0 1024 1024" fill="none" aria-hidden="true">
+            <path d="M662.1 128c-94.8 0-168.7 36.9-221.7 110.7L288 201.1l84.4 139.8h-95.8L128 597.5h166.8l-68.4 109.7h133.3l47.4-76.1c57.5 88.4 141.8 132.6 252.8 132.6 86.2 0 155.8-23.8 208.9-71.4 53.1-47.6 79.7-110.1 79.7-187.4 0-77.5-24.5-138.9-73.5-184.2-49-45.3-120.3-67.9-213.8-67.9zm10.5 468.8c-37.5 0-68.3-11.4-92.3-34.2-24-22.8-36-51.4-36-85.9 0-34.5 12.2-63.3 36.6-86.5 24.4-23.2 55.4-34.8 93-34.8 37.2 0 67.6 11.6 91.4 34.8 23.8 23.2 35.7 52.1 35.7 86.5 0 34.5-11.8 63.1-35.4 85.9-23.6 22.8-54.3 34.2-93 34.2z" fill="#00C9A7"/>
+          </svg>
+          使用飞书登录
+        </a>
+      </>
+    )}
+
+    <p class="footer-note">Bidmosaic · 商务运营团队专用</p>
+  </div>
+
+  <script is:inline>
+    const eyeBtn = document.getElementById('eyeBtn');
+    const pwdInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('eyeIcon');
+    const EYE_OPEN = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    const EYE_OFF  = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+    eyeBtn.addEventListener('click', () => {
+      const hidden = pwdInput.type === 'password';
+      pwdInput.type = hidden ? 'text' : 'password';
+      eyeIcon.innerHTML = hidden ? EYE_OFF : EYE_OPEN;
+    });
+  </script>
+</body>
+</html>
