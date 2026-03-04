@@ -3,10 +3,11 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
 import keystatic from '@keystatic/astro';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   site: 'https://www.bidmosaic.com',
-  output: 'static',
+  adapter: vercel(),
   vite: {
     plugins: [tailwindcss()],
     server: { watch: { ignored: ['**/backup/**'] } },
