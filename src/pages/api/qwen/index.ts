@@ -1,11 +1,15 @@
 import type { APIRoute } from 'astro';
+import { checkRateLimit, getClientIP } from '@/lib/server/rateLimit';
 
 export const prerender = false;
 
 const TARGET = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation';
 const jsonHeaders = { 'Content-Type': 'application/json; charset=utf-8' };
 
+// 5 requests per minute per IP (OCR is expensive)
 export const POST: APIRoute = async ({ request }) => {
+  const limited = checkRateLimit('qwen', getClientIP(request), 5, 60_000);
+  if (limited) return limited;
   const apiKey = import.meta.env.QWEN_API_KEY;
   if (!apiKey) {
     return new Response(JSON.stringify({ error: 'Missing QWEN_API_KEY on server' }), {

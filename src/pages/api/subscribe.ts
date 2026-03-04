@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { checkRateLimit, getClientIP } from '@/lib/server/rateLimit';
 
 export const prerender = false;
 
@@ -44,7 +45,11 @@ function saveSubscribers(subscribers: Subscriber[]) {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// 5 requests per minute per IP
 export const POST: APIRoute = async ({ request }) => {
+  const limited = checkRateLimit('subscribe', getClientIP(request), 5, 60_000);
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const email = String(body.email || '').trim().toLowerCase();

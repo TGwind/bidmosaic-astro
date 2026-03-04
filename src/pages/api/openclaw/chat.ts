@@ -1,9 +1,7 @@
 import type { APIRoute } from 'astro';
+import { checkRateLimit, getClientIP } from '@/lib/server/rateLimit';
 
 export const prerender = false;
-
-const OPENCLAW_ENDPOINT = 'http://47.85.84.92/agents/website/chat/completions';
-const OPENCLAW_MODEL = 'deepseek-chat';
 
 const jsonHeaders = { 'Content-Type': 'application/json; charset=utf-8' };
 
@@ -21,7 +19,10 @@ async function readUpstreamError(response: Response): Promise<string> {
   return raw;
 }
 
+// 10 requests per minute per IP
 export const POST: APIRoute = async ({ request }) => {
+  const limited = checkRateLimit('chat', getClientIP(request), 10, 60_000);
+  if (limited) return limited;
   const apiKey = import.meta.env.OPENCLAW_API_KEY;
   if (!apiKey) {
     return new Response(JSON.stringify({ error: 'Missing OPENCLAW_API_KEY on server' }), {
@@ -69,14 +70,23 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     // Strictly follow the proven request shape.
-    const upstream = await fetch(OPENCLAW_ENDPOINT, {
+    const endpoint = import.meta.env.OPENCLAW_API_URL;
+    const model = import.meta.env.OPENCLAW_MODEL || 'deepseek-chat';
+    if (!endpoint) {
+      return new Response(JSON.stringify({ error: 'Missing OPENCLAW_API_URL on server' }), {
+        status: 500,
+        headers: jsonHeaders,
+      });
+    }
+
+    const upstream = await fetch(endpoint, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: OPENCLAW_MODEL,
+        model,
         messages: [{ role: 'user', content: userMessage }],
         stream: true,
       }),

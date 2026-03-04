@@ -1,11 +1,15 @@
 import type { APIRoute } from 'astro';
+import { checkRateLimit, getClientIP } from '@/lib/server/rateLimit';
 
 export const prerender = false;
 
 const TARGET = 'https://api.jiandaoyun.com/api/v5/app/entry/data/create';
 const jsonHeaders = { 'Content-Type': 'application/json; charset=utf-8' };
 
+// 10 requests per minute per IP
 export const POST: APIRoute = async ({ request }) => {
+  const limited = checkRateLimit('jiandaoyun', getClientIP(request), 10, 60_000);
+  if (limited) return limited;
   const apiKey = import.meta.env.JIANDAOYUN_API_KEY;
   if (!apiKey) {
     return new Response(JSON.stringify({ error: 'Missing JIANDAOYUN_API_KEY on server' }), {
