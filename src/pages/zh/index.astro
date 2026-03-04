@@ -7,7 +7,6 @@ import WhyUs from '@components/WhyUs.astro';
 import Cases from '@components/Cases.astro';
 import About from '@components/About.astro';
 import CtaSection from '@components/CtaSection.astro';
-import SubscribeSection from '@components/SubscribeSection.astro';
 import SectionDivider from '@components/SectionDivider.astro';
 
 const locale = 'zh';
@@ -23,6 +22,5 @@ const locale = 'zh';
   <Cases locale={locale} />
   <SectionDivider from="secondary" to="primary" variant="curve" />
   <About locale={locale} />
-  <SubscribeSection locale={locale} />
   <CtaSection locale={locale} />
 </BaseLayout>
