@@ -3,10 +3,8 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import SmartCardContactForm from '@components/contact/SmartCardContactForm.astro';
 
 const locale = 'zh';
-const appId = import.meta.env.PUBLIC_JIANDAOYUN_APP_ID ?? '6951f21cd7037962860e7097';
-const entryId = import.meta.env.PUBLIC_JIANDAOYUN_ENTRY_ID ?? '020100100000000000000001';
 ---
 
 <BaseLayout title="联系我们" locale={locale}>
-  <SmartCardContactForm locale={locale} appId={appId} entryId={entryId} />
+  <SmartCardContactForm locale={locale} />
 </BaseLayout>

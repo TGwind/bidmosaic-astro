@@ -1,17 +1,11 @@
 ---
-interface Props {
-  appId: string;
-  entryId: string;
-}
-
-const { appId, entryId } = Astro.props;
 ---
 
 <section class="ops-page">
   <div class="ops-container">
     <header class="ops-header" data-animate>
       <h1>线索录入</h1>
-      <p>拍摄或上传名片，AI 自动提取后提交到简道云</p>
+      <p>拍摄或上传名片，AI 自动提取后发送邮件通知</p>
     </header>
 
     <div class="ops-grid" data-animate>
@@ -84,7 +78,7 @@ const { appId, entryId } = Astro.props;
           </select>
         </label>
 
-        <button class="submit-btn" id="submitBtn" type="button">确认提交到简道云</button>
+        <button class="submit-btn" id="submitBtn" type="button">确认提交</button>
       </div>
     </div>
   </div>
@@ -291,71 +285,13 @@ const { appId, entryId } = Astro.props;
   }
 </style>
 
-<script define:vars={{ appId, entryId }} is:inline>
+<script is:inline>
   const QWEN_URL = '/api/qwen';
-  const JDY_URL = '/api/ops/jiandaoyun-submit';
-  const JDY_UPLOAD_TOKEN_URL = '/api/jiandaoyun/upload-token';
-  const APP_ID = appId;
-  const ENTRY_ID = entryId;
-
-  const FIELD_MAP = {
-    _widget_1767583879189: 'f_company_name',
-    _widget_0201001000001: 'f_customer_name',
-    _widget_1772010432107: 'f_position',
-    _widget_1772010432109: 'f_work_email',
-    _widget_0201001000003: 'f_contact_info',
-  };
+  const CONTACT_URL = '/api/contact';
 
   const MAX_SIZE = 1600;
   const JPEG_QUALITY = 0.85;
   const QWEN_MODEL = 'qwen-vl-max';
-
-  function generateUUID() {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0;
-      return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
-    });
-  }
-
-  function base64ToBlob(base64, mime) {
-    const binary = atob(base64);
-    const arr = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
-    return new Blob([arr], { type: mime });
-  }
-
-  async function uploadCardImage(transactionId) {
-    const tokenRes = await fetch(JDY_UPLOAD_TOKEN_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ app_id: APP_ID, entry_id: ENTRY_ID, transaction_id: transactionId }),
-    });
-    if (!tokenRes.ok) {
-      const err = await tokenRes.json().catch(() => ({}));
-      throw new Error(err.error || err.msg || `Token request failed: HTTP ${tokenRes.status}`);
-    }
-    const tokenData = await tokenRes.json();
-    const first = tokenData.token_and_url_list?.[0];
-    if (!first) throw new Error('No upload token received');
-
-    const ext = currentMime === 'image/png' ? 'png' : 'jpg';
-    const blob = base64ToBlob(currentBase64, currentMime);
-    const file = new File([blob], `card.${ext}`, { type: currentMime });
-
-    const formData = new FormData();
-    formData.append('token', first.token);
-    formData.append('file', file);
-
-    const uploadRes = await fetch(first.url, { method: 'POST', body: formData });
-    if (!uploadRes.ok) {
-      const err = await uploadRes.json().catch(() => ({}));
-      throw new Error(err.error || `Upload failed: HTTP ${uploadRes.status}`);
-    }
-    const uploadData = await uploadRes.json();
-    if (!uploadData.key) throw new Error('No file key in upload response');
-    return uploadData.key;
-  }
 
   let currentBase64 = '';
   let currentMime = 'image/jpeg';
@@ -544,12 +480,11 @@ const { appId, entryId } = Astro.props;
   }
 
   function clearForm() {
-    Object.values(FIELD_MAP).forEach((id) => {
+    ['f_company_name', 'f_customer_name', 'f_position', 'f_work_email', 'f_contact_info', 'f_summary'].forEach((id) => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
     document.getElementById('f_lead_source').value = '';
-    document.getElementById('f_summary').value = '';
   }
 
   function resetUpload() {
@@ -578,62 +513,45 @@ const { appId, entryId } = Astro.props;
 
     setSubmitDisabled(true);
 
-    const data = {};
-    for (const [widgetId, inputId] of Object.entries(FIELD_MAP)) {
-      const val = document.getElementById(inputId).value.trim();
-      if (val) data[widgetId] = { value: val };
-    }
+    const payload = {
+      companyName,
+      customerName,
+      position: document.getElementById('f_position').value.trim(),
+      workEmail: document.getElementById('f_work_email').value.trim(),
+      contactInfo: document.getElementById('f_contact_info').value.trim(),
+      summary: document.getElementById('f_summary').value.trim(),
+      bizType: document.getElementById('f_lead_source').value,
+      source: 'OPS Internal',
+    };
 
-    const summary = document.getElementById('f_summary').value.trim();
-    if (summary) data._widget_1631071302527 = { value: summary };
-
-    const leadSource = document.getElementById('f_lead_source').value;
-    if (leadSource) data._widget_1631071302443 = { value: leadSource };
-
-    data._widget_0201001000006 = { value: ['6959bf406d725c2268426cfb'] };
-
-    let transactionId = null;
     if (currentBase64) {
-      transactionId = generateUUID();
-      try {
-        showStatus('loading', '名片图片上传中...');
-        const key = await uploadCardImage(transactionId);
-        data._widget_1772100426294 = { value: [key] };
-      } catch (e) {
-        const message = e instanceof Error ? e.message : String(e);
-        showStatus('error', '图片上传失败：' + message);
-        setSubmitDisabled(false);
-        return;
-      }
+      payload.cardImage = `data:${currentMime};base64,${currentBase64}`;
     }
-
-    showToast('success', '提交成功！数据已录入简道云');
-    resetUpload();
-
-    const body = { app_id: APP_ID, entry_id: ENTRY_ID, data };
-    if (transactionId) body.transaction_id = transactionId;
 
     const ac = new AbortController();
     const timer = setTimeout(() => ac.abort(), 20000);
 
     try {
-      const res = await fetch(JDY_URL, {
+      const res = await fetch(CONTACT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        body: JSON.stringify(payload),
         signal: ac.signal,
       });
       clearTimeout(timer);
       const result = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(result.msg || result.message || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error(result.error || `HTTP ${res.status}`);
+      showToast('success', '提交成功！邮件已发送');
+      resetUpload();
     } catch (e) {
       clearTimeout(timer);
       if (e instanceof DOMException && e.name === 'AbortError') {
-        showToast('error', '同步超时，数据可能未保存，请重新提交');
+        showToast('error', '发送超时，请重新提交');
       } else {
         const message = e instanceof Error ? e.message : String(e);
-        showToast('error', '同步失败：' + message + '，请重新提交');
+        showToast('error', '发送失败：' + message + '，请重新提交');
       }
+      setSubmitDisabled(false);
     }
   }
 

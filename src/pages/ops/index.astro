@@ -9,8 +9,6 @@ if (!(await validateSession(cookieHeader))) {
   return Astro.redirect('/ops/login');
 }
 
-const appId = import.meta.env.PUBLIC_JIANDAOYUN_APP_ID ?? '';
-const entryId = import.meta.env.PUBLIC_JIANDAOYUN_ENTRY_ID ?? '';
 ---
 
 <!DOCTYPE html>
@@ -132,7 +130,7 @@ const entryId = import.meta.env.PUBLIC_JIANDAOYUN_ENTRY_ID ?? '';
   </div>
 
   <main>
-    <OpsLeadForm appId={appId} entryId={entryId} />
+    <OpsLeadForm />
   </main>
 </body>
 </html>
