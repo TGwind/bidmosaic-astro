@@ -1,0 +1,258 @@
+---
+import { getCollection } from 'astro:content';
+import { getLocalePath } from '@i18n/utils';
+import type { Locale } from '@i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const latestInsights = (await getCollection('insights'))
+  .filter((item) => item.data.status === 'published' && item.data.domain === 'finance')
+  .sort((a, b) => new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime())
+  .slice(0, 3);
+
+const toSlug = (item: (typeof latestInsights)[number]) =>
+  item.id.replace(/^.*\//, '').replace(/\/index$/, '');
+
+const isZh = locale === 'zh';
+
+const copy = isZh
+  ? {
+      badge: '单人公司，先把复盘、周报和观察清单做好',
+      title: '专注股市的AI情报分析系统',
+      subtitle:
+        '不做喊单，不做全网新闻搬运。只把每天最值得看的变化、每周最该记住的重点、下周最该跟踪的线索整理给你。',
+      placeholder: '输入邮箱地址，订阅股市情报',
+      submit: '订阅股市情报',
+      note: '先从免费内容开始。当前阶段不做登录、不做付费墙。',
+      browse: '先看最新内容',
+      columnsLead: '固定栏目：收盘复盘 / 周报 / 下周观察清单',
+      sampleTitle: '今日重点样例',
+      sampleDesc: '首页不展示一堆链接，只展示你最可能想点开的 3 条内容。',
+      sampleTag: '股市情报',
+      readMore: '查看全文',
+      columnsTitle: '固定栏目',
+      columnsDesc: '先做能持续的 3 个栏目，不做晨报，不做复杂会员内容。',
+      columns: [
+        { title: '收盘复盘', desc: '每天盘后只保留最值得看的 3 个变化，帮助用户快速完成当天复盘。' },
+        { title: '周报', desc: '把一周最重要的市场线索压缩成一封能读完、能记住、能转发的邮件。' },
+        { title: '下周观察清单', desc: '提前整理下周最值得跟踪的线索，避免只在盘中被动追消息。' },
+      ],
+      whyTitle: '为什么值得订阅',
+      whyDesc: '当前首页不再讲“公司有多大”，只讲这份内容为什么能替用户省时间。',
+      reasons: ['先筛选重点，不做新闻搬运', '解释为什么重要，而不是只给标题', '固定栏目交付，建立阅读习惯'],
+      discardTitle: '当前阶段明确舍弃',
+      discards: ['不做晨报', '不做账号系统', '不做支付和付费墙', '不做 Enterprise'],
+      ctaTitle: '先从免费内容开始',
+      ctaDesc: '如果这份内容真的能帮你节省时间，你会自然留下来。现在先验证这件事。',
+      backTop: '返回顶部订阅',
+      success: '订阅成功！',
+      error: '订阅失败，请重试',
+      network: '网络错误，请重试',
+    }
+  : {
+      badge: 'Solo company. Keep the closing recap, weekly brief, and watchlist stable first.',
+      title: 'A stock intelligence product for investors who do not have time to watch the market and filter noise all day.',
+      subtitle:
+        'No hype calls. No full-web news dumping. Just the changes worth noticing today, the points worth remembering this week, and the signals worth tracking next week.',
+      placeholder: 'Enter your email to subscribe',
+      submit: 'Subscribe',
+      note: 'Start with free content. No login or paywall at this stage.',
+      browse: 'Browse latest insights',
+      columnsLead: 'Core formats: closing recap / weekly brief / next-week watchlist',
+      sampleTitle: 'What You Will Read',
+      sampleDesc: 'The homepage should not dump links. It should show the three pieces you are most likely to open.',
+      sampleTag: 'Stock intelligence',
+      readMore: 'Read more',
+      columnsTitle: 'Fixed Formats',
+      columnsDesc: 'Keep three repeatable formats first. No morning brief, no heavy membership system.',
+      columns: [
+        { title: 'Closing Recap', desc: 'After the close, keep only the three changes worth reviewing so users can finish the day quickly.' },
+        { title: 'Weekly Brief', desc: 'Compress the most important weekly market signals into one email worth reading and sharing.' },
+        { title: 'Next-Week Watchlist', desc: 'Prepare the signals worth tracking next week instead of reacting only in market hours.' },
+      ],
+      whyTitle: 'Why Subscribe',
+      whyDesc: 'This homepage should not prove how big the company is. It should prove why this content saves time.',
+      reasons: ['Filter the important signals first', 'Explain why each item matters', 'Deliver on a fixed cadence'],
+      discardTitle: 'What We Are Not Doing Now',
+      discards: ['No morning brief', 'No account system', 'No payment and paywall', 'No Enterprise plan'],
+      ctaTitle: 'Start With Free Content',
+      ctaDesc: 'If this content really saves time, readers will stay. Validate that first.',
+      backTop: 'Back to top',
+      success: 'Subscribed!',
+      error: 'Subscription failed, please retry',
+      network: 'Network error, please retry',
+    };
+---
+
+<section class="relative overflow-hidden pt-28 pb-20" id="hero" style="background: var(--gradient-hero);">
+  <div class="absolute inset-0 opacity-70" style="background:
+    radial-gradient(circle at 20% 20%, rgba(6, 182, 212, 0.14), transparent 28%),
+    radial-gradient(circle at 80% 30%, rgba(59, 130, 246, 0.14), transparent 32%),
+    radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.06), transparent 24%);
+  "></div>
+  <div class="container relative z-10 max-w-5xl">
+    <div class="max-w-3xl mx-auto text-center" data-animate>
+      <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-[var(--text-secondary)]">
+        <span class="h-2 w-2 rounded-full bg-cyan-400"></span>
+        {copy.badge}
+      </div>
+      <h1 class="mt-6 text-4xl font-extrabold leading-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
+        {copy.title}
+      </h1>
+      <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--text-secondary)]">
+        {copy.subtitle}
+      </p>
+
+      <form id="landing-subscribe-form" class="mx-auto mt-10 flex max-w-xl flex-col gap-3 sm:flex-row">
+        <input
+          type="email"
+          name="email"
+          required
+          placeholder={copy.placeholder}
+          class="flex-1 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-cyan-500/50 focus:outline-none"
+        />
+        <button type="submit" class="btn btn-primary whitespace-nowrap px-7 py-3">
+          {copy.submit}
+        </button>
+      </form>
+      <p class="mt-3 text-xs text-[var(--text-muted)]">{copy.note}</p>
+      <p
+        id="landing-subscribe-msg"
+        class="mt-3 hidden text-sm"
+        data-success={copy.success}
+        data-error={copy.error}
+        data-network={copy.network}
+      ></p>
+
+      <div class="mt-8 flex flex-col items-center justify-center gap-4 text-sm text-[var(--text-secondary)] sm:flex-row">
+        <a href={getLocalePath('/insights/', locale)} class="inline-flex items-center gap-1.5 hover:text-cyan-400 transition-colors">
+          {copy.browse}
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+        <span class="hidden sm:inline text-[var(--text-muted)]">|</span>
+        <span>{copy.columnsLead}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-20" style="background: var(--bg-secondary);">
+  <div class="container max-w-6xl">
+    <div class="mb-12 text-center" data-animate>
+      <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.sampleTitle}</h2>
+      <p class="mx-auto mt-4 max-w-2xl text-[var(--text-secondary)]">{copy.sampleDesc}</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3" data-stagger-parent>
+      {latestInsights.map((item) => (
+        <a
+          href={`${getLocalePath('/insights/', locale)}${toSlug(item)}/`}
+          class="glow-card flex h-full flex-col p-6 transition-transform duration-300 hover:-translate-y-1"
+          data-stagger-child
+        >
+          <div class="mb-4 flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <span class="rounded-full bg-cyan-500/15 px-2.5 py-1 text-cyan-400">{copy.sampleTag}</span>
+            <span>{new Date(item.data.publishedAt).toLocaleDateString(isZh ? 'zh-CN' : 'en-US')}</span>
+          </div>
+          <h3 class="text-xl font-bold leading-snug text-[var(--text-primary)]">{item.data.title}</h3>
+          <p class="mt-3 flex-1 text-sm leading-relaxed text-[var(--text-secondary)]">{item.data.summary}</p>
+          <div class="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-primary)]">
+            {copy.readMore}
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="py-20" style="background: var(--bg-primary);">
+  <div class="container max-w-6xl">
+    <div class="mb-12 text-center" data-animate>
+      <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.columnsTitle}</h2>
+      <p class="mx-auto mt-4 max-w-2xl text-[var(--text-secondary)]">{copy.columnsDesc}</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3" data-stagger-parent>
+      {copy.columns.map((column) => (
+        <div class="glow-card h-full p-6" data-stagger-child>
+          <h3 class="text-xl font-bold text-[var(--text-primary)]">{column.title}</h3>
+          <p class="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">{column.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="py-20" style="background: var(--bg-secondary);">
+  <div class="container max-w-5xl">
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
+      <div data-animate>
+        <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.whyTitle}</h2>
+        <p class="mt-4 max-w-2xl text-[var(--text-secondary)]">{copy.whyDesc}</p>
+
+        <div class="mt-8 space-y-4">
+          {copy.reasons.map((reason) => (
+            <div class="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/4 p-4">
+              <div class="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-400">✓</div>
+              <p class="text-sm leading-relaxed text-[var(--text-secondary)]">{reason}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="glow-card p-6" data-animate>
+        <h3 class="text-xl font-bold text-[var(--text-primary)]">{copy.discardTitle}</h3>
+        <ul class="mt-4 space-y-3 text-sm text-[var(--text-secondary)]">
+          {copy.discards.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="subscribe" class="py-20" style="background: var(--bg-primary);">
+  <div class="container max-w-3xl text-center" data-animate>
+    <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.ctaTitle}</h2>
+    <p class="mx-auto mt-4 max-w-xl text-[var(--text-secondary)]">{copy.ctaDesc}</p>
+    <a href="#hero" class="btn btn-primary mt-8 px-8 py-3">{copy.backTop}</a>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('landing-subscribe-form');
+  const msg = document.getElementById('landing-subscribe-msg');
+  if (form && msg) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = new FormData(form).get('email');
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        if (res.ok) {
+          msg.textContent = msg.dataset.success || 'Subscribed!';
+          msg.className = 'mt-3 text-sm text-green-400';
+          form.reset();
+        } else {
+          const data = await res.json().catch(() => ({}));
+          msg.textContent = data.error || msg.dataset.error || 'Subscription failed';
+          msg.className = 'mt-3 text-sm text-red-400';
+        }
+      } catch {
+        msg.textContent = msg.dataset.network || 'Network error';
+        msg.className = 'mt-3 text-sm text-red-400';
+      }
+    });
+  }
+</script>

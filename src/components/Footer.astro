@@ -1,5 +1,5 @@
 ---
-import { useTranslations, getLocalePath } from '@i18n/utils';
+import { getLocalePath } from '@i18n/utils';
 import type { Locale } from '@i18n/utils';
 
 interface Props {
@@ -7,33 +7,55 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = useTranslations(locale);
 ---
 
 <footer class="bg-[var(--bg-dark)] border-t border-white/5">
   <div class="container py-12">
-    <div class="flex flex-col items-center text-center gap-6">
-      <!-- WeChat QR Code -->
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-3">
       <div>
         <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-3 uppercase tracking-wider">
-          {locale === 'zh' ? '微信联系' : 'WeChat Contact'}
+          {locale === 'zh' ? 'BidMosaic Intelligence' : 'BidMosaic Intelligence'}
         </h4>
-        <div class="bg-white rounded-xl p-3 inline-block">
+        <p class="text-sm leading-relaxed text-[var(--text-secondary)]">
+          {locale === 'zh'
+            ? '当前阶段只做股市情报。先把复盘、周报和下周观察清单稳定下来，再决定是否值得继续扩展。'
+            : 'At this stage we focus only on stock intelligence. Keep the recap, weekly brief, and watchlist stable before expanding further.'}
+        </p>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-3 uppercase tracking-wider">
+          {locale === 'zh' ? '快速入口' : 'Quick Links'}
+        </h4>
+        <div class="flex flex-col gap-2 text-sm text-[var(--text-secondary)]">
+          <a href={getLocalePath('/', locale)} class="hover:text-[var(--text-primary)] transition-colors">{locale === 'zh' ? '首页' : 'Home'}</a>
+          <a href={getLocalePath('/insights/', locale)} class="hover:text-[var(--text-primary)] transition-colors">{locale === 'zh' ? '最新情报' : 'Latest Insights'}</a>
+          <a href={`${getLocalePath('/', locale)}#subscribe`} class="hover:text-[var(--text-primary)] transition-colors">
+            {locale === 'zh' ? '免费订阅' : 'Subscribe Free'}
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-3 uppercase tracking-wider">
+          {locale === 'zh' ? '反馈与合作' : 'Feedback & Contact'}
+        </h4>
+        <p class="text-sm text-[var(--text-secondary)]">
+          {locale === 'zh' ? '想反馈内容方向，或沟通轻量合作，可以直接通过微信联系。' : 'Use WeChat if you want to share feedback on the content or discuss lightweight collaboration.'}
+        </p>
+        <div class="bg-white rounded-xl p-3 inline-block mt-4">
           <img
             src="/images/个人微信.jpg"
             alt="WeChat QR Code"
-            class="w-36 h-36 object-contain"
+            class="w-28 h-28 object-contain"
           />
         </div>
-        <p class="text-sm text-[var(--text-secondary)] mt-2">
-          {locale === 'zh' ? '扫码添加微信' : 'Scan to add on WeChat'}
-        </p>
       </div>
     </div>
 
     <!-- Bottom -->
     <div class="mt-8 pt-6 border-t border-white/5 flex justify-center">
-      <p class="text-xs text-[var(--text-muted)]">{t.footer.copyright}</p>
+      <p class="text-xs text-[var(--text-muted)]">Copyright © 2026 Bidmosaic</p>
     </div>
   </div>
 </footer>

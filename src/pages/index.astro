@@ -1,26 +1,13 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Hero from '@components/Hero.astro';
-import Products from '@components/Products.astro';
-import BusinessModules from '@components/BusinessModules.astro';
-import WhyUs from '@components/WhyUs.astro';
-import Cases from '@components/Cases.astro';
-import About from '@components/About.astro';
-import CtaSection from '@components/CtaSection.astro';
-import SectionDivider from '@components/SectionDivider.astro';
-
-const locale = 'en';
+import StockHomePage from '@components/StockHomePage.astro';
+const locale = 'zh';
 ---
 
-<BaseLayout title="AI-Powered Programmatic Growth Platform" locale={locale}>
-  <Hero locale={locale} />
-  <Products locale={locale} />
-  <BusinessModules locale={locale} />
-  <SectionDivider from="secondary" to="primary" variant="wave" />
-  <WhyUs locale={locale} />
-  <SectionDivider from="primary" to="secondary" variant="tilt" />
-  <Cases locale={locale} />
-  <SectionDivider from="secondary" to="primary" variant="curve" />
-  <About locale={locale} />
-  <CtaSection locale={locale} />
+<BaseLayout
+  title="股市AI情报分析系统 | 收盘复盘、周报与观察清单"
+  description="专注股市的AI情报分析系统，帮你更高效地跟踪重要变化、筛选关键信号并完成复盘。"
+  locale={locale}
+>
+  <StockHomePage locale={locale} />
 </BaseLayout>

@@ -7,7 +7,6 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = useTranslations(locale);
 const altLocale = locale === 'zh' ? 'en' : 'zh';
 const altLabel = locale === 'zh' ? 'EN' : '中';
 
@@ -18,7 +17,9 @@ const altPathBase = getLocalePath(basePath, altLocale);
 const altPath = `${altPathBase}${currentSearch}`;
 
 const navLinks = [
-  { label: t.nav.home, href: getLocalePath('/', locale) },
+  { label: locale === 'zh' ? '首页' : 'Home', href: getLocalePath('/', locale) },
+  { label: locale === 'zh' ? '最新情报' : 'Latest Insights', href: getLocalePath('/insights/', locale) },
+  { label: locale === 'zh' ? '免费订阅' : 'Subscribe Free', href: `${getLocalePath('/', locale)}#subscribe` },
 ];
 ---
 
