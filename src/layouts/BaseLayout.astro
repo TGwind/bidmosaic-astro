@@ -1,7 +1,6 @@
 ---
 import Nav from '@components/Nav.astro';
 import Footer from '@components/Footer.astro';
-import OpenclawWidget from '@components/chat/OpenclawWidget.astro';
 import { getLocalePath } from '@i18n/utils';
 import '@styles/global.css';
 
@@ -19,6 +18,7 @@ const {
 
 const alternateLocale = locale === 'zh' ? 'en' : 'zh';
 const currentPath = Astro.url.pathname;
+const siteOrigin = 'https://www.bidmosaic.cn';
 const basePath = currentPath.replace(/^\/(zh|en)(?=\/|$)/, '') || '/';
 const alternatePath = getLocalePath(basePath, alternateLocale);
 ---
@@ -35,7 +35,7 @@ const alternatePath = getLocalePath(basePath, alternateLocale);
     <meta property="og:title" content={`${title} | Bidmosaic`} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={new URL(currentPath, 'https://www.bidmosaic.com').href} />
+    <meta property="og:url" content={new URL(currentPath, siteOrigin).href} />
     <meta property="og:site_name" content="Bidmosaic" />
     <meta property="og:locale" content={locale === 'zh' ? 'zh_CN' : 'en_US'} />
 
@@ -45,11 +45,11 @@ const alternatePath = getLocalePath(basePath, alternateLocale);
     <meta name="twitter:description" content={description} />
 
     <!-- Canonical -->
-    <link rel="canonical" href={new URL(currentPath, 'https://www.bidmosaic.com').href} />
+    <link rel="canonical" href={new URL(currentPath, siteOrigin).href} />
 
     <!-- Alternate language -->
-    <link rel="alternate" hreflang={locale === 'zh' ? 'zh-Hans' : 'en'} href={new URL(currentPath, 'https://www.bidmosaic.com').href} />
-    <link rel="alternate" hreflang={alternateLocale === 'zh' ? 'zh-Hans' : 'en'} href={new URL(alternatePath, 'https://www.bidmosaic.com').href} />
+    <link rel="alternate" hreflang={locale === 'zh' ? 'zh-Hans' : 'en'} href={new URL(currentPath, siteOrigin).href} />
+    <link rel="alternate" hreflang={alternateLocale === 'zh' ? 'zh-Hans' : 'en'} href={new URL(alternatePath, siteOrigin).href} />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -76,7 +76,6 @@ const alternatePath = getLocalePath(basePath, alternateLocale);
       <slot />
     </main>
     <Footer locale={locale} />
-    <OpenclawWidget locale={locale} />
 
     <!-- Back to Top Button -->
     <button id="back-to-top" class="back-to-top" aria-label="Back to top">

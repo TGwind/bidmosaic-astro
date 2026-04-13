@@ -1,5 +1,5 @@
 ---
-import { useTranslations, getLocalePath } from '@i18n/utils';
+import { getLocalePath } from '@i18n/utils';
 import type { Locale } from '@i18n/utils';
 
 interface Props {
@@ -18,8 +18,8 @@ const altPath = `${altPathBase}${currentSearch}`;
 
 const navLinks = [
   { label: locale === 'zh' ? '首页' : 'Home', href: getLocalePath('/', locale) },
-  { label: locale === 'zh' ? '最新情报' : 'Latest Insights', href: getLocalePath('/insights/', locale) },
-  { label: locale === 'zh' ? '免费订阅' : 'Subscribe Free', href: `${getLocalePath('/', locale)}#subscribe` },
+  { label: locale === 'zh' ? '最新观察' : 'Insights', href: getLocalePath('/insights/', locale) },
+  { label: locale === 'zh' ? '提交需求' : 'Submit Request', href: getLocalePath('/contact/', locale) },
 ];
 ---
 
@@ -28,7 +28,6 @@ const navLinks = [
   class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
 >
   <div class="container-wide flex items-center justify-between h-18 py-4">
-    <!-- Logo -->
     <a href={getLocalePath('/', locale)} class="flex-shrink-0">
       <img
         src="/images/logo.svg"
@@ -37,42 +36,18 @@ const navLinks = [
       />
     </a>
 
-    <!-- Desktop Nav -->
     <nav class="hidden lg:flex items-center gap-8" aria-label="Main navigation">
       {navLinks.map((link) => (
-        <div class="relative group">
-          <a
-            href={link.href}
-            class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-200 py-2"
-          >
-            {link.label}
-            {link.children && (
-              <svg class="inline-block ml-1 w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            )}
-          </a>
-          {link.children && (
-            <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              <div class="glass rounded-xl p-2 min-w-[180px] shadow-lg">
-                {link.children.map((child) => (
-                  <a
-                    href={child.href}
-                    class="block px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 rounded-lg transition-colors"
-                  >
-                    {child.label}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        <a
+          href={link.href}
+          class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-200 py-2"
+        >
+          {link.label}
+        </a>
       ))}
     </nav>
 
-    <!-- Right: Language + CTA + Mobile Toggle -->
     <div class="flex items-center gap-4">
-      <!-- Language Switch -->
       <a
         href={altPath}
         class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors px-2 py-1 rounded border border-white/10 hover:border-white/30"
@@ -80,7 +55,6 @@ const navLinks = [
         {altLabel}
       </a>
 
-      <!-- Mobile Toggle -->
       <button
         id="mobile-toggle"
         class="lg:hidden flex flex-col gap-1.5 p-2"
@@ -96,7 +70,6 @@ const navLinks = [
 
 </header>
 
-<!-- Mobile Menu — outside <header> to avoid backdrop-filter containing block issue -->
 <div
   id="mobile-menu"
   class="lg:hidden fixed inset-0 top-[72px] z-40 translate-x-full transition-transform duration-300"
@@ -104,28 +77,17 @@ const navLinks = [
 >
   <nav class="flex flex-col p-6 gap-2">
     {navLinks.map((link) => (
-      <>
-        <a
-          href={link.href === '#' ? undefined : link.href}
-          class="text-lg font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] py-3 border-b border-white/5 transition-colors"
-        >
-          {link.label}
-        </a>
-        {link.children && link.children.map((child) => (
-          <a
-            href={child.href}
-            class="text-base text-[var(--text-muted)] hover:text-[var(--text-primary)] py-2.5 pl-4 border-b border-white/5 transition-colors"
-          >
-            {child.label}
-          </a>
-        ))}
-      </>
+      <a
+        href={link.href}
+        class="text-lg font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] py-3 border-b border-white/5 transition-colors"
+      >
+        {link.label}
+      </a>
     ))}
   </nav>
 </div>
 
 <script>
-  // Nav scroll behavior: transparent → glass
   const nav = document.getElementById('main-nav');
   if (nav) {
     const onScroll = () => {
@@ -139,7 +101,6 @@ const navLinks = [
     onScroll();
   }
 
-  // Mobile menu toggle
   const toggle = document.getElementById('mobile-toggle');
   const menu = document.getElementById('mobile-menu');
   const bar1 = document.getElementById('bar1');

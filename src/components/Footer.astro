@@ -7,6 +7,7 @@ interface Props {
 }
 
 const { locale } = Astro.props;
+const isZh = locale === 'zh';
 ---
 
 <footer class="bg-[var(--bg-dark)] border-t border-white/5">
@@ -14,34 +15,32 @@ const { locale } = Astro.props;
     <div class="grid grid-cols-1 gap-10 md:grid-cols-3">
       <div>
         <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-3 uppercase tracking-wider">
-          {locale === 'zh' ? 'BidMosaic Intelligence' : 'BidMosaic Intelligence'}
+          {isZh ? 'BidMosaic' : 'BidMosaic'}
         </h4>
         <p class="text-sm leading-relaxed text-[var(--text-secondary)]">
-          {locale === 'zh'
-            ? '当前阶段只做股市情报。先把复盘、周报和下周观察清单稳定下来，再决定是否值得继续扩展。'
-            : 'At this stage we focus only on stock intelligence. Keep the recap, weekly brief, and watchlist stable before expanding further.'}
+          {isZh
+            ? '聚焦广告合作、增长需求与资源匹配。先把真实合作机会接住，再逐步扩展系统能力。'
+            : 'Focused on advertising partnerships, growth demand, and resource matching. Capture real opportunities first, then expand the system step by step.'}
         </p>
       </div>
 
       <div>
         <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-3 uppercase tracking-wider">
-          {locale === 'zh' ? '快速入口' : 'Quick Links'}
+          {isZh ? '快速入口' : 'Quick Links'}
         </h4>
         <div class="flex flex-col gap-2 text-sm text-[var(--text-secondary)]">
-          <a href={getLocalePath('/', locale)} class="hover:text-[var(--text-primary)] transition-colors">{locale === 'zh' ? '首页' : 'Home'}</a>
-          <a href={getLocalePath('/insights/', locale)} class="hover:text-[var(--text-primary)] transition-colors">{locale === 'zh' ? '最新情报' : 'Latest Insights'}</a>
-          <a href={`${getLocalePath('/', locale)}#subscribe`} class="hover:text-[var(--text-primary)] transition-colors">
-            {locale === 'zh' ? '免费订阅' : 'Subscribe Free'}
-          </a>
+          <a href={getLocalePath('/', locale)} class="hover:text-[var(--text-primary)] transition-colors">{isZh ? '首页' : 'Home'}</a>
+          <a href={getLocalePath('/insights/', locale)} class="hover:text-[var(--text-primary)] transition-colors">{isZh ? '最新观察' : 'Insights'}</a>
+          <a href={getLocalePath('/contact/', locale)} class="hover:text-[var(--text-primary)] transition-colors">{isZh ? '提交需求' : 'Submit Request'}</a>
         </div>
       </div>
 
       <div>
         <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-3 uppercase tracking-wider">
-          {locale === 'zh' ? '反馈与合作' : 'Feedback & Contact'}
+          {isZh ? '联系与合作' : 'Contact & Partnership'}
         </h4>
         <p class="text-sm text-[var(--text-secondary)]">
-          {locale === 'zh' ? '想反馈内容方向，或沟通轻量合作，可以直接通过微信联系。' : 'Use WeChat if you want to share feedback on the content or discuss lightweight collaboration.'}
+          {isZh ? '如果你有广告合作、渠道对接或增长项目，直接提交需求，或者扫码加微信。' : 'If you have an advertising, channel, or growth project, submit your request directly or connect on WeChat.'}
         </p>
         <div class="bg-white rounded-xl p-3 inline-block mt-4">
           <img
@@ -53,7 +52,6 @@ const { locale } = Astro.props;
       </div>
     </div>
 
-    <!-- Bottom -->
     <div class="mt-8 pt-6 border-t border-white/5 flex justify-center">
       <p class="text-xs text-[var(--text-muted)]">Copyright © 2026 Bidmosaic</p>
     </div>
