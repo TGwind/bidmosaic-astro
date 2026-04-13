@@ -31,6 +31,8 @@ export const POST: APIRoute = async ({ request }) => {
     contactInfo?: string;
     summary?: string;
     bizType?: string;
+    budget?: string;
+    demandType?: string;
     cardImage?: string;
     source?: string;
   };
@@ -44,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const { companyName, customerName, position, workEmail, contactInfo, summary, bizType, cardImage, source } = body;
+  const { companyName, customerName, position, workEmail, contactInfo, summary, bizType, budget, demandType, cardImage, source } = body;
 
   if (!companyName && !customerName) {
     return new Response(JSON.stringify({ error: 'Company name or contact name required' }), {
@@ -60,6 +62,8 @@ export const POST: APIRoute = async ({ request }) => {
     ['Work Email', workEmail],
     ['Contact Info', contactInfo],
     ['Business Type', bizType],
+    ['Demand Type', demandType],
+    ['Budget / Scale', budget],
     ['Source', source || 'Website'],
     ['Summary', summary],
   ]
@@ -73,7 +77,7 @@ export const POST: APIRoute = async ({ request }) => {
   <table style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
     ${rows}
   </table>
-  <p style="color:#9ca3af;font-size:12px;margin-top:16px">Sent from bidmosaic.com contact form</p>
+  <p style="color:#9ca3af;font-size:12px;margin-top:16px">Sent from BidMosaic lead form</p>
 </div>`;
 
   const subject = `[BidMosaic Lead] ${companyName || customerName || 'New Contact'}`;

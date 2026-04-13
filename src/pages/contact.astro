@@ -1,10 +1,14 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import SmartCardContactForm from '@components/contact/SmartCardContactForm.astro';
+import LeadContactForm from '@components/LeadContactForm.astro';
 
 const locale = 'en';
 ---
 
-<BaseLayout title="Contact Us" locale={locale}>
-  <SmartCardContactForm locale={locale} />
+<BaseLayout title="Submit your request" locale={locale}>
+  <section class="pt-28 pb-20" style="background: var(--gradient-hero); min-height: 100vh;">
+    <div class="container max-w-5xl">
+      <LeadContactForm locale={locale} />
+    </div>
+  </section>
 </BaseLayout>

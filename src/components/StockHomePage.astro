@@ -2,89 +2,146 @@
 import { getCollection } from 'astro:content';
 import { getLocalePath } from '@i18n/utils';
 import type { Locale } from '@i18n/utils';
+import LeadContactForm from '@components/LeadContactForm.astro';
 
 interface Props {
   locale: Locale;
 }
 
 const { locale } = Astro.props;
+const isZh = locale === 'zh';
 
 const latestInsights = (await getCollection('insights'))
-  .filter((item) => item.data.status === 'published' && item.data.domain === 'finance')
+  .filter((item) => item.data.status === 'published')
   .sort((a, b) => new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime())
   .slice(0, 3);
 
 const toSlug = (item: (typeof latestInsights)[number]) =>
   item.id.replace(/^.*\//, '').replace(/\/index$/, '');
 
-const isZh = locale === 'zh';
-
 const copy = isZh
   ? {
-      badge: '单人公司，先把复盘、周报和观察清单做好',
-      title: '专注股市的AI情报分析系统',
+      badge: '按原则推进，只做能验证需求和转化的官网',
+      title: '先把真实合作机会接进来，再谈复杂系统',
       subtitle:
-        '不做喊单，不做全网新闻搬运。只把每天最值得看的变化、每周最该记住的重点、下周最该跟踪的线索整理给你。',
-      placeholder: '输入邮箱地址，订阅股市情报',
-      submit: '订阅股市情报',
-      note: '先从免费内容开始。当前阶段不做登录、不做付费墙。',
-      browse: '先看最新内容',
-      columnsLead: '固定栏目：收盘复盘 / 周报 / 下周观察清单',
-      sampleTitle: '今日重点样例',
-      sampleDesc: '首页不展示一堆链接，只展示你最可能想点开的 3 条内容。',
-      sampleTag: '股市情报',
-      readMore: '查看全文',
-      columnsTitle: '固定栏目',
-      columnsDesc: '先做能持续的 3 个栏目，不做晨报，不做复杂会员内容。',
-      columns: [
-        { title: '收盘复盘', desc: '每天盘后只保留最值得看的 3 个变化，帮助用户快速完成当天复盘。' },
-        { title: '周报', desc: '把一周最重要的市场线索压缩成一封能读完、能记住、能转发的邮件。' },
-        { title: '下周观察清单', desc: '提前整理下周最值得跟踪的线索，避免只在盘中被动追消息。' },
+        'BidMosaic 当前阶段聚焦一件事，帮广告主、APP 团队和渠道方更快对接增长需求、流量资源与投放执行方案。先把需求讲清楚、把线索收进来、把合作跑起来。',
+      primary: '提交需求',
+      secondary: '看最近观察',
+      trust: ['聚焦真实需求，不做泛泛展示站', '先验证转化，不先堆复杂功能', '按合作价值推进，而不是按页面数量推进'],
+      painTitle: '你现在最常遇到的问题',
+      painDesc: '这一版官网不讲空洞品牌故事，只对准用户最痛的点。',
+      pains: [
+        {
+          title: '有需求，但渠道和资源对不上',
+          desc: '广告主、APP 团队和流量方之间信息不对称，沟通成本高，推进慢。',
+        },
+        {
+          title: '投放靠关系推进，难以规模化',
+          desc: '没有稳定的线索入口和标准化沟通方式，容易错过合作机会。',
+        },
+        {
+          title: '方案很多，但没人先帮你收敛',
+          desc: '真正需要的是先判断值不值得做，再决定资源、预算和执行路径。',
+        },
       ],
-      whyTitle: '为什么值得订阅',
-      whyDesc: '当前首页不再讲“公司有多大”，只讲这份内容为什么能替用户省时间。',
-      reasons: ['先筛选重点，不做新闻搬运', '解释为什么重要，而不是只给标题', '固定栏目交付，建立阅读习惯'],
-      discardTitle: '当前阶段明确舍弃',
-      discards: ['不做晨报', '不做账号系统', '不做支付和付费墙', '不做 Enterprise'],
-      ctaTitle: '先从免费内容开始',
-      ctaDesc: '如果这份内容真的能帮你节省时间，你会自然留下来。现在先验证这件事。',
-      backTop: '返回顶部订阅',
-      success: '订阅成功！',
-      error: '订阅失败，请重试',
-      network: '网络错误，请重试',
+      solutionTitle: '当前只卖一个结果',
+      solutionDesc: '不是大而全服务清单，而是围绕合作转化做一个单点方案。',
+      solutionMain: '海外增长与广告合作落地支持',
+      solutionBullets: [
+        '帮助你快速梳理当前增长目标、合作需求和资源缺口',
+        '把广告主、APP 团队、渠道方的合作信息统一到一条沟通链路里',
+        '优先推进能最快验证价值、最快拿到反馈的合作路径',
+      ],
+      modules: [
+        {
+          title: '需求收敛',
+          desc: '先判断目标、预算、资源和约束条件，避免一开始就把精力打散。',
+        },
+        {
+          title: '合作匹配',
+          desc: '围绕广告主、渠道、流量和投放执行，优先匹配最接近成交的机会。',
+        },
+        {
+          title: '执行建议',
+          desc: '把下一步拆清楚，知道先聊谁、先做什么、先验证哪一个环节。',
+        },
+      ],
+      fitTitle: '适合什么人',
+      fitItems: [
+        '想找海外流量和增长合作机会的 APP / 产品团队',
+        '希望更快对接渠道、广告主或投放资源的业务负责人',
+        '需要先把合作路径讲清楚，再决定是否投入预算和执行资源的团队',
+      ],
+      processTitle: '合作流程尽量短',
+      processDesc: '先行动，再优化。当前流程只保留对成交有帮助的步骤。',
+      process: [
+        { step: '01', title: '提交需求', desc: '先留下项目背景、联系方式和当前目标。' },
+        { step: '02', title: '快速评估', desc: '判断值不值得继续、优先从哪条合作路径推进。' },
+        { step: '03', title: '给出方案', desc: '如果方向对，就进入具体资源匹配和执行阶段。' },
+      ],
+      insightTitle: '内容是辅助，不是主角',
+      insightDesc: '内容的价值是帮助潜在客户快速理解你的判断力，而不是把官网做成媒体站。',
+      insightTag: '最近观察',
+      readMore: '查看内容',
+      finalTitle: '如果你现在就有项目要推进，先把需求发过来',
+      finalDesc: '这一版官网的目标很简单，先验证有没有真实合作机会，先把有效线索接住。',
     }
   : {
-      badge: 'Solo company. Keep the closing recap, weekly brief, and watchlist stable first.',
-      title: 'A stock intelligence product for investors who do not have time to watch the market and filter noise all day.',
+      badge: 'Built by principles, focused on validation and conversion',
+      title: 'Bring in real opportunities first, build the bigger system later',
       subtitle:
-        'No hype calls. No full-web news dumping. Just the changes worth noticing today, the points worth remembering this week, and the signals worth tracking next week.',
-      placeholder: 'Enter your email to subscribe',
-      submit: 'Subscribe',
-      note: 'Start with free content. No login or paywall at this stage.',
-      browse: 'Browse latest insights',
-      columnsLead: 'Core formats: closing recap / weekly brief / next-week watchlist',
-      sampleTitle: 'What You Will Read',
-      sampleDesc: 'The homepage should not dump links. It should show the three pieces you are most likely to open.',
-      sampleTag: 'Stock intelligence',
-      readMore: 'Read more',
-      columnsTitle: 'Fixed Formats',
-      columnsDesc: 'Keep three repeatable formats first. No morning brief, no heavy membership system.',
-      columns: [
-        { title: 'Closing Recap', desc: 'After the close, keep only the three changes worth reviewing so users can finish the day quickly.' },
-        { title: 'Weekly Brief', desc: 'Compress the most important weekly market signals into one email worth reading and sharing.' },
-        { title: 'Next-Week Watchlist', desc: 'Prepare the signals worth tracking next week instead of reacting only in market hours.' },
+        'At this stage, BidMosaic focuses on one thing, helping advertisers, app teams, and channel partners clarify growth needs, resource gaps, and the next practical move toward cooperation.',
+      primary: 'Send your request',
+      secondary: 'Read recent notes',
+      trust: ['Focus on real demand, not a generic brochure site', 'Validate conversion before adding complexity', 'Prioritize cooperation value, not page count'],
+      painTitle: 'The problems this site should solve now',
+      painDesc: 'No vague brand storytelling. Start from the real friction users feel.',
+      pains: [
+        {
+          title: 'The need is clear, but the right partner is not',
+          desc: 'Advertisers, app teams, and traffic owners often lose time in poor matching and scattered communication.',
+        },
+        {
+          title: 'Growth still depends on relationships',
+          desc: 'Without a clear intake and qualification flow, promising opportunities slip away.',
+        },
+        {
+          title: 'There are too many options, but no clear first step',
+          desc: 'The real need is to decide what is worth doing before spending budget and execution time.',
+        },
       ],
-      whyTitle: 'Why Subscribe',
-      whyDesc: 'This homepage should not prove how big the company is. It should prove why this content saves time.',
-      reasons: ['Filter the important signals first', 'Explain why each item matters', 'Deliver on a fixed cadence'],
-      discardTitle: 'What We Are Not Doing Now',
-      discards: ['No morning brief', 'No account system', 'No payment and paywall', 'No Enterprise plan'],
-      ctaTitle: 'Start With Free Content',
-      ctaDesc: 'If this content really saves time, readers will stay. Validate that first.',
-      backTop: 'Back to top',
-      success: 'Subscribed!',
-      error: 'Subscription failed, please retry',
-      network: 'Network error, please retry',
+      solutionTitle: 'Sell one clear outcome first',
+      solutionDesc: 'Not a giant service menu. One focused landing page around cooperation and execution.',
+      solutionMain: 'Cross-border growth and advertising partnership support',
+      solutionBullets: [
+        'Clarify goals, budget, constraints, and resource gaps quickly',
+        'Bring advertiser, app, channel, and execution conversations into one practical flow',
+        'Prioritize the path that gets real validation and business feedback fastest',
+      ],
+      modules: [
+        { title: 'Demand qualification', desc: 'Clarify the goal and constraints first so effort stays focused.' },
+        { title: 'Partner matching', desc: 'Push the cooperation path that is closest to real business value.' },
+        { title: 'Execution plan', desc: 'Turn a fuzzy opportunity into a concrete next-step plan.' },
+      ],
+      fitTitle: 'Who this is for',
+      fitItems: [
+        'App or product teams looking for cross-border growth opportunities',
+        'Business owners who need faster matching with channels, advertisers, or traffic supply',
+        'Teams that want clarity before committing budget and execution resources',
+      ],
+      processTitle: 'Keep the cooperation flow short',
+      processDesc: 'Act first, optimize later. Only keep the steps that help conversion.',
+      process: [
+        { step: '01', title: 'Send request', desc: 'Share your project context, contact info, and current goal.' },
+        { step: '02', title: 'Quick evaluation', desc: 'Decide whether it is worth pursuing and where to start.' },
+        { step: '03', title: 'Practical plan', desc: 'If it makes sense, move into resource matching and execution.' },
+      ],
+      insightTitle: 'Content supports trust, it is not the main product here',
+      insightDesc: 'Use content to prove judgment, not to turn the homepage into a media project.',
+      insightTag: 'Recent notes',
+      readMore: 'Read more',
+      finalTitle: 'If you have a real project to push, send the request now',
+      finalDesc: 'The goal of this version is simple, catch real leads and validate actual cooperation opportunities.',
     };
 ---
 
@@ -94,49 +151,36 @@ const copy = isZh
     radial-gradient(circle at 80% 30%, rgba(59, 130, 246, 0.14), transparent 32%),
     radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.06), transparent 24%);
   "></div>
-  <div class="container relative z-10 max-w-5xl">
-    <div class="max-w-3xl mx-auto text-center" data-animate>
-      <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-[var(--text-secondary)]">
-        <span class="h-2 w-2 rounded-full bg-cyan-400"></span>
-        {copy.badge}
+  <div class="container relative z-10 max-w-6xl">
+    <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+      <div data-animate>
+        <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-[var(--text-secondary)]">
+          <span class="h-2 w-2 rounded-full bg-cyan-400"></span>
+          {copy.badge}
+        </div>
+        <h1 class="mt-6 text-4xl font-extrabold leading-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
+          {copy.title}
+        </h1>
+        <p class="mt-6 max-w-2xl text-lg leading-relaxed text-[var(--text-secondary)]">
+          {copy.subtitle}
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a href="#lead-form" class="btn btn-primary px-7 py-3">{copy.primary}</a>
+          <a href={getLocalePath('/insights/', locale)} class="btn btn-secondary px-7 py-3">{copy.secondary}</a>
+        </div>
+
+        <div class="mt-8 grid gap-3 sm:grid-cols-3">
+          {copy.trust.map((item) => (
+            <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm leading-6 text-[var(--text-secondary)]">
+              {item}
+            </div>
+          ))}
+        </div>
       </div>
-      <h1 class="mt-6 text-4xl font-extrabold leading-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
-        {copy.title}
-      </h1>
-      <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--text-secondary)]">
-        {copy.subtitle}
-      </p>
 
-      <form id="landing-subscribe-form" class="mx-auto mt-10 flex max-w-xl flex-col gap-3 sm:flex-row">
-        <input
-          type="email"
-          name="email"
-          required
-          placeholder={copy.placeholder}
-          class="flex-1 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-cyan-500/50 focus:outline-none"
-        />
-        <button type="submit" class="btn btn-primary whitespace-nowrap px-7 py-3">
-          {copy.submit}
-        </button>
-      </form>
-      <p class="mt-3 text-xs text-[var(--text-muted)]">{copy.note}</p>
-      <p
-        id="landing-subscribe-msg"
-        class="mt-3 hidden text-sm"
-        data-success={copy.success}
-        data-error={copy.error}
-        data-network={copy.network}
-      ></p>
-
-      <div class="mt-8 flex flex-col items-center justify-center gap-4 text-sm text-[var(--text-secondary)] sm:flex-row">
-        <a href={getLocalePath('/insights/', locale)} class="inline-flex items-center gap-1.5 hover:text-cyan-400 transition-colors">
-          {copy.browse}
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </a>
-        <span class="hidden sm:inline text-[var(--text-muted)]">|</span>
-        <span>{copy.columnsLead}</span>
+      <div id="lead-form" data-animate>
+        <LeadContactForm locale={locale} compact={true} />
       </div>
     </div>
   </div>
@@ -145,8 +189,89 @@ const copy = isZh
 <section class="py-20" style="background: var(--bg-secondary);">
   <div class="container max-w-6xl">
     <div class="mb-12 text-center" data-animate>
-      <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.sampleTitle}</h2>
-      <p class="mx-auto mt-4 max-w-2xl text-[var(--text-secondary)]">{copy.sampleDesc}</p>
+      <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.painTitle}</h2>
+      <p class="mx-auto mt-4 max-w-2xl text-[var(--text-secondary)]">{copy.painDesc}</p>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-3" data-stagger-parent>
+      {copy.pains.map((item) => (
+        <div class="glow-card h-full p-6" data-stagger-child>
+          <h3 class="text-xl font-bold text-[var(--text-primary)]">{item.title}</h3>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{item.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="py-20" style="background: var(--bg-primary);">
+  <div class="container max-w-6xl">
+    <div class="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-start">
+      <div data-animate>
+        <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.solutionTitle}</h2>
+        <p class="mt-4 max-w-2xl text-[var(--text-secondary)]">{copy.solutionDesc}</p>
+        <div class="mt-8 rounded-[28px] border border-cyan-500/20 bg-cyan-500/8 p-6">
+          <div class="text-sm font-medium uppercase tracking-[0.16em] text-cyan-400">Focused offer</div>
+          <h3 class="mt-3 text-2xl font-bold text-[var(--text-primary)]">{copy.solutionMain}</h3>
+          <ul class="mt-4 space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
+            {copy.solutionBullets.map((item) => (
+              <li class="flex gap-3"><span class="text-cyan-400">✓</span><span>{item}</span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid gap-6" data-stagger-parent>
+        {copy.modules.map((item) => (
+          <div class="glow-card p-6" data-stagger-child>
+            <h3 class="text-xl font-bold text-[var(--text-primary)]">{item.title}</h3>
+            <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-20" style="background: var(--bg-secondary);">
+  <div class="container max-w-6xl">
+    <div class="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+      <div data-animate>
+        <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.fitTitle}</h2>
+        <div class="mt-8 space-y-4">
+          {copy.fitItems.map((item) => (
+            <div class="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/4 p-4">
+              <div class="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-400">✓</div>
+              <p class="text-sm leading-7 text-[var(--text-secondary)]">{item}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div data-animate>
+        <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.processTitle}</h2>
+        <p class="mt-4 max-w-2xl text-[var(--text-secondary)]">{copy.processDesc}</p>
+        <div class="mt-8 grid gap-4">
+          {copy.process.map((item) => (
+            <div class="glow-card flex gap-4 p-6">
+              <div class="text-2xl font-extrabold text-cyan-400">{item.step}</div>
+              <div>
+                <h3 class="text-xl font-bold text-[var(--text-primary)]">{item.title}</h3>
+                <p class="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-20" style="background: var(--bg-primary);">
+  <div class="container max-w-6xl">
+    <div class="mb-12 text-center" data-animate>
+      <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.insightTitle}</h2>
+      <p class="mx-auto mt-4 max-w-2xl text-[var(--text-secondary)]">{copy.insightDesc}</p>
     </div>
 
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3" data-stagger-parent>
@@ -157,7 +282,7 @@ const copy = isZh
           data-stagger-child
         >
           <div class="mb-4 flex items-center gap-2 text-xs text-[var(--text-muted)]">
-            <span class="rounded-full bg-cyan-500/15 px-2.5 py-1 text-cyan-400">{copy.sampleTag}</span>
+            <span class="rounded-full bg-cyan-500/15 px-2.5 py-1 text-cyan-400">{copy.insightTag}</span>
             <span>{new Date(item.data.publishedAt).toLocaleDateString(isZh ? 'zh-CN' : 'en-US')}</span>
           </div>
           <h3 class="text-xl font-bold leading-snug text-[var(--text-primary)]">{item.data.title}</h3>
@@ -174,85 +299,12 @@ const copy = isZh
   </div>
 </section>
 
-<section class="py-20" style="background: var(--bg-primary);">
-  <div class="container max-w-6xl">
-    <div class="mb-12 text-center" data-animate>
-      <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.columnsTitle}</h2>
-      <p class="mx-auto mt-4 max-w-2xl text-[var(--text-secondary)]">{copy.columnsDesc}</p>
-    </div>
-
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-3" data-stagger-parent>
-      {copy.columns.map((column) => (
-        <div class="glow-card h-full p-6" data-stagger-child>
-          <h3 class="text-xl font-bold text-[var(--text-primary)]">{column.title}</h3>
-          <p class="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">{column.desc}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-</section>
-
 <section class="py-20" style="background: var(--bg-secondary);">
-  <div class="container max-w-5xl">
-    <div class="grid grid-cols-1 gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
-      <div data-animate>
-        <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.whyTitle}</h2>
-        <p class="mt-4 max-w-2xl text-[var(--text-secondary)]">{copy.whyDesc}</p>
-
-        <div class="mt-8 space-y-4">
-          {copy.reasons.map((reason) => (
-            <div class="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/4 p-4">
-              <div class="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-400">✓</div>
-              <p class="text-sm leading-relaxed text-[var(--text-secondary)]">{reason}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div class="glow-card p-6" data-animate>
-        <h3 class="text-xl font-bold text-[var(--text-primary)]">{copy.discardTitle}</h3>
-        <ul class="mt-4 space-y-3 text-sm text-[var(--text-secondary)]">
-          {copy.discards.map((item) => <li>{item}</li>)}
-        </ul>
-      </div>
+  <div class="container max-w-5xl" data-animate>
+    <div class="mb-10 text-center">
+      <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.finalTitle}</h2>
+      <p class="mx-auto mt-4 max-w-2xl text-[var(--text-secondary)]">{copy.finalDesc}</p>
     </div>
+    <LeadContactForm locale={locale} />
   </div>
 </section>
-
-<section id="subscribe" class="py-20" style="background: var(--bg-primary);">
-  <div class="container max-w-3xl text-center" data-animate>
-    <h2 class="text-3xl font-bold text-[var(--text-primary)] sm:text-4xl">{copy.ctaTitle}</h2>
-    <p class="mx-auto mt-4 max-w-xl text-[var(--text-secondary)]">{copy.ctaDesc}</p>
-    <a href="#hero" class="btn btn-primary mt-8 px-8 py-3">{copy.backTop}</a>
-  </div>
-</section>
-
-<script>
-  const form = document.getElementById('landing-subscribe-form');
-  const msg = document.getElementById('landing-subscribe-msg');
-  if (form && msg) {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = new FormData(form).get('email');
-      try {
-        const res = await fetch('/api/subscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        });
-        if (res.ok) {
-          msg.textContent = msg.dataset.success || 'Subscribed!';
-          msg.className = 'mt-3 text-sm text-green-400';
-          form.reset();
-        } else {
-          const data = await res.json().catch(() => ({}));
-          msg.textContent = data.error || msg.dataset.error || 'Subscription failed';
-          msg.className = 'mt-3 text-sm text-red-400';
-        }
-      } catch {
-        msg.textContent = msg.dataset.network || 'Network error';
-        msg.className = 'mt-3 text-sm text-red-400';
-      }
-    });
-  }
-</script>
